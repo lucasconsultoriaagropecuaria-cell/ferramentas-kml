@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de KML — Matrículas Rurais</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --green-900:#173a16; --green-800:#1f5121; --green-700:#2e7d32;
+    --green-600:#3c8b40; --green-100:#e9f3e2; --green-050:#f3f8ef;
+    --line:#d9e2d2; --bg:#eef0ec; --card:#ffffff;
+    --ink:#23291f; --ink-soft:#5d6655; --danger:#b3261e; --warn:#9a6b00;
+    --shadow:0 1px 2px rgba(20,40,15,.06),0 8px 24px rgba(20,40,15,.05);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(180deg,var(--green-800),var(--green-900));color:#fff;
+    padding:18px 22px;display:flex;align-items:center;gap:14px}
+  header .ic{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.14);
+    display:grid;place-items:center;font-size:22px;flex:none}
+  header h1{font-size:19px;margin:0;font-weight:650;letter-spacing:-.2px}
+  header p{margin:2px 0 0;font-size:13px;opacity:.82}
+  .wrap{max-width:760px;margin:24px auto 60px;padding:0 18px;display:flex;flex-direction:column;gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+  .step{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;font-weight:700;
+    letter-spacing:.7px;text-transform:uppercase;color:var(--ink-soft)}
+  .step .n{width:24px;height:24px;border-radius:50%;background:var(--green-700);color:#fff;
+    display:grid;place-items:center;font-size:13px;flex:none}
+  .drop{border:2px dashed #b9ccab;border-radius:13px;background:var(--green-050);
+    padding:30px 18px;text-align:center;cursor:pointer;transition:.15s;color:var(--green-800)}
+  .drop:hover,.drop.over{background:var(--green-100);border-color:var(--green-600)}
+  .drop .big{font-size:30px;line-height:1}
+  .drop .t{margin-top:8px;font-weight:600}
+  .drop .s{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .files{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+  .frow{display:flex;align-items:center;gap:10px;background:var(--green-050);
+    border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-size:13.5px}
+  .frow .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .frow .sz{color:var(--ink-soft);font-size:12px;font-variant-numeric:tabular-nums}
+  .frow .x{cursor:pointer;color:var(--ink-soft);font-size:17px;line-height:1;padding:0 2px}
+  .frow .x:hover{color:var(--danger)}
+  .conf{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .conf .lbl{font-weight:600}
+  .conf .hint{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .conf .inp{display:flex;align-items:center;gap:7px}
+  .conf input{width:84px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+    font:inherit;text-align:right;font-variant-numeric:tabular-nums}
+  .conf input:focus{outline:2px solid var(--green-600);outline-offset:1px;border-color:var(--green-600)}
+  .go{width:100%;padding:15px;border:0;border-radius:13px;background:var(--green-700);color:#fff;
+    font:inherit;font-weight:700;font-size:15.5px;cursor:pointer;transition:.15s;letter-spacing:.2px}
+  .go:hover:not(:disabled){background:var(--green-600)}
+  .go:disabled{opacity:.5;cursor:not-allowed}
+  .bar{height:8px;background:var(--green-100);border-radius:99px;overflow:hidden;margin-top:14px;display:none}
+  .bar.show{display:block}
+  .bar i{display:block;height:100%;width:0;background:var(--green-600);transition:width .25s}
+  .log{font-size:13px;color:var(--ink-soft);margin-top:10px;min-height:18px}
+  .summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .chip{padding:7px 13px;border-radius:99px;font-size:13px;font-weight:650;border:1px solid var(--line)}
+  .chip.ok{background:var(--green-100);color:var(--green-800);border-color:#cfe2c2}
+  .chip.warn{background:#fbf3df;color:var(--warn);border-color:#eddfb6}
+  .chip.err{background:#fbe6e4;color:var(--danger);border-color:#f0cdc9}
+  .res{border:1px solid var(--line);border-radius:13px;padding:14px;margin-top:12px;display:flex;gap:14px}
+  .res .prev{width:118px;height:118px;flex:none;border:1px solid var(--line);border-radius:9px;background:#fbfdf9;overflow:hidden}
+  .res .meta{flex:1;min-width:0}
+  .res .ttl{font-weight:650;font-size:14.5px;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .tag{font-size:11.5px;font-weight:650;padding:3px 9px;border-radius:6px;background:#eef1ea;color:var(--ink-soft)}
+  .tag.geo{background:#e3eefb;color:#1c4f86}
+  .tag.utm{background:#efe7f7;color:#5a3a86}
+  .tag.nat{background:var(--green-100);color:var(--green-800)}
+  .tag.scan{background:#fbf0e0;color:#8a5a12}
+  .tag.cut{background:#fbe6e4;color:var(--danger)}
+  .res .note{font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+  .res .note b{color:var(--danger);font-weight:600}
+  .dl{margin-top:9px;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:650;
+    color:var(--green-700);cursor:pointer;background:none;border:0;padding:0}
+  .dl:hover{color:var(--green-600);text-decoration:underline}
+  .res.bad{border-color:#f0cdc9;background:#fdf6f5}
+  .dlall{margin-top:16px;width:100%;padding:13px;border:1px solid var(--green-600);border-radius:12px;
+    background:#fff;color:var(--green-700);font:inherit;font-weight:700;cursor:pointer}
+  .dlall:hover{background:var(--green-050)}
+  .banner{background:#fbf3df;border:1px solid #eddfb6;color:#7a5500;border-radius:11px;
+    padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:4px;display:none}
+  .banner.show{display:block}
+  .hidden{display:none}
+  @media(max-width:520px){.res{flex-direction:column}.res .prev{width:100%;height:150px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="ic">🗺️</div>
+  <div>
+    <h1>Gerador de KML — Matrículas Rurais</h1>
+    <p>Extração automática de perímetros georreferenciados</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="banner" id="loadWarn"></div>
+
+  <div class="card">
+    <div class="step"><span class="n">1</span> Limite certificado (CAR ou perímetro INCRA)</div>
+    <div class="drop" id="dropCar">
+      <div class="big">🗂️</div>
+      <div class="t" id="carName">Solte o KML do limite aqui</div>
+      <div class="s" id="carHint">CAR ou o perímetro certificado do INCRA — define a borda válida</div>
+    </div>
+    <input type="file" id="fileCar" accept=".kml" class="hidden">
+  </div>
+
+  <div class="card">
+    <div class="step"><span class="n">2</span> CCIR (PDF) — conferência de área <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-soft)">· opcional</span></div>
+    <div class="drop" id="dropCcir">
+      <div class="big">📋</div>
+      <div class="t" id="ccirName">Solte o CCIR (PDF) aqui</div>
+      <div class="s" id="ccirHint">lê a tabela matrícula→área e confere a leitura de cada matrícula</div>
+    </div>
+    <input type="file" id="fileCcir" accept=".pdf" class="hidden">
+  </div>
+
+  <div class="card">
+    <div class="step"><span class="n">3</span> Matrículas (PDF)</div>
+    <div class="drop" id="dropPdf">
+      <div class="big">📄</div>
+      <div class="t" id="pdfTitle">Solte os PDFs das matrículas aqui</div>
+      <div class="s">ou clique para selecionar — pode escolher vários</div>
+    </div>
+    <input type="file" id="filePdf" accept=".pdf" multiple class="hidden">
+    <div class="files" id="pdfList"></div>
+  </div>
+
+  <div class="card">
+    <div class="step"><span class="n">4</span> Configurações</div>
+    <div class="conf">
+      <div>
+        <div class="lbl">Distância máxima do limite</div>
+        <div class="hint">Vértices além desse limite são descartados como erro de leitura</div>
+      </div>
+      <div class="inp"><input type="number" id="margin" value="300" min="0" step="50"> <span>m</span></div>
+    </div>
+    <div class="conf" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
+      <div>
+        <div class="lbl">Qualidade do OCR (escaneados)</div>
+        <div class="hint">Mais alto lê melhor os dígitos, porém mais lento</div>
+      </div>
+      <div class="inp">
+        <select id="ocrScale" style="padding:9px 11px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff">
+          <option value="2">Rápido</option>
+          <option value="3" selected>Bom</option>
+          <option value="4">Máximo</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <button class="go" id="run" disabled>Gerar KMLs</button>
+    <div class="bar" id="bar"><i id="barFill"></i></div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <div class="card hidden" id="resultsCard">
+    <div class="step"><span class="n">✓</span> Resultados</div>
+    <div class="summary" id="summary"></div>
+    <div id="results"></div>
+    <button class="dlall hidden" id="dlAll">Baixar todos os KMLs (.zip)</button>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let carText=null, carPolys=[], pdfFiles=[];
+
+window.addEventListener("load", ()=>{
+  if(typeof pdfjsLib==="undefined"){
+    $("#loadWarn").classList.add("show");
+    $("#loadWarn").innerHTML="A biblioteca de leitura de PDF não carregou neste ambiente. "+
+      "Use o botão <b>Copiar</b> (canto superior) para salvar este arquivo .html e abrir direto no seu navegador — aí funciona normal.";
+    $("#run").disabled=true; return;
+  }
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+});
+
+wireDrop($("#dropCar"), $("#fileCar"), files=>{
+  const f=files[0]; if(!f) return;
+  f.text().then(t=>{
+    carText=t; carPolys=parseCarKml(t);
+    $("#carName").textContent=f.name;
+    $("#carHint").textContent=carPolys.length
+      ? `${carPolys.length} polígono(s) lido(s) — ${(f.size/1024).toFixed(0)} KB`
+      : "⚠ nenhum polígono encontrado no arquivo";
+  });
+});
+wireDrop($("#dropPdf"), $("#filePdf"), files=>{
+  for(const f of files) if(f.name.toLowerCase().endsWith(".pdf")) pdfFiles.push(f);
+  renderPdfList(); refresh();
+});
+
+let ccirTable = {};   // { matricula(digitos): area_ha }
+wireDrop($("#dropCcir"), $("#fileCcir"), async files=>{
+  const f=files[0]; if(!f) return;
+  $("#ccirName").textContent=f.name;
+  $("#ccirHint").textContent="lendo o CCIR…";
+  try{
+    const buf=await f.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    let txt=""; for(let p=1;p<=pdf.numPages;p++){const pg=await pdf.getPage(p);
+      const c=await pg.getTextContent(); txt+=c.items.map(it=>it.str).join(" ")+"\n";}
+    ccirTable=parseCcir(txt);
+    const n=Object.keys(ccirTable).length;
+    $("#ccirHint").textContent = n
+      ? `${n} matrícula(s) lida(s) — a conferência de área está ativa`
+      : "⚠ não encontrei a tabela de matrículas neste PDF";
+  }catch(e){ $("#ccirHint").textContent="⚠ erro ao ler o CCIR: "+e.message; }
+});
+
+function parseCcir(text){
+  const tab={};
+  let m;
+  // ordem visual: data  cns  matrícula  av  livro  área
+  const re1=/\d{2}\/\d{2}\/\d{4}\s+\d{6}\s+(\d{3,6})\s+(?:-|AV-?\d+|\S+)\s+\d+\s+(\d{1,3}(?:\.\d{3})*,\d{2,4})/g;
+  while((m=re1.exec(text))){
+    const mat=m[1].replace(/\D/g,"");
+    const area=parseFloat(m[2].replace(/\./g,"").replace(",","."));
+    if(mat && isFinite(area)) tab[mat]=area;
+  }
+  // ordem do pdf.js: área  livro  uf/município  data  cns  matrícula  av
+  const re2=/(\d{1,3}(?:\.\d{3})*,\d{2,4})\s+\d+\s+\S+\s+\d{2}\/\d{2}\/\d{4}\s+\d{6}\s+(\d{3,6})\s+(?:-|AV-?\d+)/g;
+  while((m=re2.exec(text))){
+    const mat=m[2].replace(/\D/g,"");
+    const area=parseFloat(m[1].replace(/\./g,"").replace(",","."));
+    if(mat && isFinite(area) && tab[mat]==null) tab[mat]=area;
+  }
+  return tab;
+}
+function matriculaDoNome(nome){
+  // pega o número da matrícula do nome do arquivo (ex.: "Matricula 30.004 - ...")
+  const m=nome.replace(/\.pdf$/i,"").match(/(\d{1,3}(?:[.\s]?\d{3})+|\d{3,6})/);
+  return m ? m[1].replace(/\D/g,"") : null;
+}
+
+function renderPdfList(){
+  const box=$("#pdfList"); box.innerHTML="";
+  if(pdfFiles.length){
+    const total=pdfFiles.reduce((a,f)=>a+f.size,0)/1024/1024;
+    $("#pdfTitle").textContent=`${pdfFiles.length} arquivo(s) — ${total.toFixed(1)} MB`;
+  } else $("#pdfTitle").textContent="Solte os PDFs das matrículas aqui";
+  pdfFiles.forEach((f,i)=>{
+    const r=document.createElement("div"); r.className="frow";
+    r.innerHTML=`<span>📄</span><span class="nm">${f.name}</span>
+      <span class="sz">${(f.size/1024/1024).toFixed(1)} MB</span><span class="x" data-i="${i}">×</span>`;
+    r.querySelector(".x").onclick=e=>{pdfFiles.splice(+e.target.dataset.i,1);renderPdfList();refresh();};
+    box.appendChild(r);
+  });
+}
+function wireDrop(zone,input,cb){
+  zone.onclick=()=>input.click();
+  input.onchange=()=>{cb([...input.files]);input.value="";};
+  ["dragover","dragenter"].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.add("over");}));
+  ["dragleave","drop"].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.remove("over");}));
+  zone.addEventListener("drop",e=>cb([...e.dataTransfer.files]));
+}
+function refresh(){ $("#run").disabled = !pdfFiles.length || typeof pdfjsLib==="undefined"; }
+
+/* ===== parsing ===== */
+function parseCarKml(text){
+  const polys=[]; const re=/<coordinates>([\s\S]*?)<\/coordinates>/gi; let m;
+  while((m=re.exec(text))){
+    const pts=[];
+    m[1].trim().split(/\s+/).forEach(tok=>{const p=tok.split(",");
+      if(p.length>=2){const lon=parseFloat(p[0]),lat=parseFloat(p[1]);
+        if(isFinite(lon)&&isFinite(lat)) pts.push([lon,lat]);}});
+    if(pts.length>=3) polys.push(pts);
+  }
+  return polys;
+}
+const RE_GEO=/Long[a-zç]*\.?\s*:?\s*(-?\d{1,3})\s*[°ºoO*\s]+(\d{1,2})\s*['´`’\s]+(\d{1,2}(?:[.,]\d{1,4})?)\s*["”'´`’]{0,2}\s*,?\s*Lat[a-zíi]*\.?\s*:?\s*(-?\d{1,2})\s*[°ºoO*\s]+(\d{1,2})\s*['´`’\s]+(\d{1,2}(?:[.,]\d{1,4})?)\s*["”'´`’]{0,2}/gi;
+// UTM: varredura tolerante a ruído de OCR — acha "coordenadas", coleta os números
+// próximos e valida pela faixa UTM (N 7.4–7.8M, E 100–900k), em vez de regex rígida.
+function dmsToDec(deg,mn,sec){const neg=String(deg).trim().startsWith("-");
+  const d=Math.abs(parseFloat(String(deg).replace(",",".")));
+  const v=d+parseFloat(String(mn).replace(",","."))/60+parseFloat(String(sec).replace(",","."))/3600;
+  return neg?-v:v;}
+function numUtm(s){return parseFloat(String(s).replace(/m$/,"").trim()
+  .replace(/\./g,"").replace(",",".").replace(/[lI]/g,"1").replace(/\s/g,""));}
+function extractGeo(text){const out=[],seen=new Set();let m;RE_GEO.lastIndex=0;
+  while((m=RE_GEO.exec(text))){const lon=dmsToDec(m[1],m[2],m[3]),lat=dmsToDec(m[4],m[5],m[6]);
+    if(!(lat>-26&&lat<-19)||!(lon>-54&&lon<-44))continue;
+    const k=lat.toFixed(7)+","+lon.toFixed(7);
+    if(!seen.has(k)){seen.add(k);out.push({nome:null,lat,lon});}}return out;}
+function countLongBlocks(text){const g=text.match(/Long[a-zç]*\.?\s*:?\s*-?\d/gi);
+  const u=text.match(/coordenadas?\s+N\b/gi);
+  return Math.max(g?g.length:0, u?u.length:0);}
+function extractUtm(text){const out=[],seen=new Set();
+  const rx=/coordenadas?/gi;let m;
+  while((m=rx.exec(text))){
+    const win=text.slice(m.index,m.index+80);
+    const nums=(win.match(/\d[\d.,lI]*\d/g)||[]).map(numUtm).filter(isFinite);
+    const n=nums.find(v=>v>7400000&&v<7800000);
+    const e=nums.find(v=>v>100000&&v<900000);
+    if(n==null||e==null)continue;
+    const back=text.slice(Math.max(0,m.index-50),m.index);
+    const bm=back.match(/v[eé]rtice\s+([\w-]{2,})\s*,?\s*(?:de\s*)?$/i);
+    const k=Math.round(n*10)+","+Math.round(e*10);
+    if(!seen.has(k)){seen.add(k);const g=utmToWgs84(n,e);out.push({nome:bm?bm[1]:null,lat:g.lat,lon:g.lon});}}
+  return out;}
+function extractVertices(text){const geo=extractGeo(text),utm=extractUtm(text);
+  if(geo.length>=utm.length&&geo.length)return{v:geo,fmt:"geografico"};
+  if(utm.length)return{v:utm,fmt:"utm"};return{v:[],fmt:"nenhum"};}
+function utmToWgs84(n,e){const zona=e>500000?22:23;
+  const a=6378137.0,f=1/298.257223563,b=a*(1-f);
+  const e2=(a*a-b*b)/(a*a),ep2=(a*a-b*b)/(b*b),k0=0.9996;
+  const x=e-500000.0,y=n-10000000.0,M=y/k0;
+  const mu=M/(a*(1-e2/4-3*e2*e2/64-5*e2*e2*e2/256));
+  const e1=(1-Math.sqrt(1-e2))/(1+Math.sqrt(1-e2));
+  const phi1=mu+(3*e1/2-27*e1**3/32)*Math.sin(2*mu)+(21*e1*e1/16-55*e1**4/32)*Math.sin(4*mu)
+    +(151*e1**3/96)*Math.sin(6*mu)+(1097*e1**4/512)*Math.sin(8*mu);
+  const N1=a/Math.sqrt(1-e2*Math.sin(phi1)**2);
+  const T1=Math.tan(phi1)**2,C1=ep2*Math.cos(phi1)**2;
+  const R1=a*(1-e2)/Math.pow(1-e2*Math.sin(phi1)**2,1.5),D=x/(N1*k0);
+  const lat=phi1-(N1*Math.tan(phi1)/R1)*(D*D/2-(5+3*T1+10*C1-4*C1*C1-9*ep2)*D**4/24
+    +(61+90*T1+298*C1+45*T1*T1-252*ep2-3*C1*C1)*D**6/720);
+  const lon=(D-(1+2*T1+C1)*D**3/6+(5-2*C1+28*T1-3*C1*C1+8*ep2+24*T1*T1)*D**5/120)/Math.cos(phi1);
+  return {lat:lat*180/Math.PI, lon:lon*180/Math.PI+(zona*6-183)};}
+
+/* ===== filtro CAR ===== */
+function areaHa(verts){
+  if(verts.length<3) return 0;
+  const lat0=verts.reduce((a,v)=>a+v.lat,0)/verts.length;
+  const mLon=111320*Math.cos(lat0*Math.PI/180), mLat=110540;
+  const pts=verts.map(v=>[v.lon*mLon, v.lat*mLat]);
+  let s=0;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    s += pts[j][0]*pts[i][1] - pts[i][0]*pts[j][1];
+  }
+  return Math.abs(s/2)/10000;
+}
+function projector(polys){let sx=0,sy=0,n=0;polys.forEach(p=>p.forEach(([lo,la])=>{sx+=lo;sy+=la;n++;}));
+  const lon0=sx/n,lat0=sy/n,mLon=111320*Math.cos(lat0*Math.PI/180),mLat=110540;
+  return (lon,lat)=>[(lon-lon0)*mLon,(lat-lat0)*mLat];}
+function pip(x,y,poly){let ins=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+  const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+  if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))ins=!ins;}return ins;}
+function distSeg(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;
+  let t=l2>0?((px-ax)*dx+(py-ay)*dy)/l2:0;t=Math.max(0,Math.min(1,t));
+  return Math.hypot(px-(ax+t*dx),py-(ay+t*dy));}
+function filterByCar(verts,polys,margin){if(!polys.length)return{kept:verts,removed:[]};
+  const proj=projector(polys);const pXY=polys.map(p=>p.map(([lo,la])=>proj(lo,la)));
+  const kept=[],removed=[];
+  verts.forEach(v=>{const [x,y]=proj(v.lon,v.lat);let ok=pXY.some(p=>pip(x,y,p));
+    if(!ok){let d=Infinity;pXY.forEach(p=>{for(let i=0,j=p.length-1;i<p.length;j=i++)
+      d=Math.min(d,distSeg(x,y,p[j][0],p[j][1],p[i][0],p[i][1]));});ok=d<=margin;}
+    (ok?kept:removed).push(v);});
+  return {kept,removed};}
+
+/* ===== KML ===== */
+function buildKml(nome,verts){const pmarks=[],coords=[];
+  verts.forEach((v,i)=>{const nv=v.nome||("V-"+(i+1));
+    pmarks.push(`    <Placemark><name>${nv}</name><Point><coordinates>${v.lon.toFixed(8)},${v.lat.toFixed(8)},0</coordinates></Point></Placemark>`);
+    coords.push(`      ${v.lon.toFixed(8)},${v.lat.toFixed(8)},0`);});
+  if(coords.length)coords.push(coords[0]);
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>${nome}</name>
+    <Style id="s"><LineStyle><color>ff0000ff</color><width>2</width></LineStyle><PolyStyle><color>400000ff</color></PolyStyle></Style>
+${pmarks.join("\n")}
+    <Placemark><name>Perímetro</name><styleUrl>#s</styleUrl>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>
+${coords.join("\n")}
+      </coordinates></LinearRing></outerBoundaryIs></Polygon>
+    </Placemark>
+  </Document>
+</kml>`;}
+
+async function pdfText(pdf){let txt="";
+  for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p);
+    const c=await page.getTextContent();txt+=c.items.map(it=>it.str).join(" ")+"\n";}
+  return txt;}
+
+/* ===== prévia ===== */
+function previewSvg(verts,polys){const all=[];verts.forEach(v=>all.push([v.lon,v.lat]));
+  polys.forEach(p=>p.forEach(c=>all.push(c)));if(!all.length)return"";
+  let minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+  all.forEach(([x,y])=>{minx=Math.min(minx,x);maxx=Math.max(maxx,x);miny=Math.min(miny,y);maxy=Math.max(maxy,y);});
+  const w=maxx-minx||1,h=maxy-miny||1,pad=0.08,S=118;
+  const tx=x=>((x-minx)/w*(1-2*pad)+pad)*S, ty=y=>(1-((y-miny)/h*(1-2*pad)+pad))*S;
+  let s=`<svg viewBox="0 0 ${S} ${S}" xmlns="http://www.w3.org/2000/svg">`;
+  polys.forEach(p=>{const d=p.map(c=>`${tx(c[0]).toFixed(1)},${ty(c[1]).toFixed(1)}`).join(" ");
+    s+=`<polygon points="${d}" fill="#3c8b40" fill-opacity="0.10" stroke="#3c8b40" stroke-width="0.8"/>`;});
+  if(verts.length){const d=verts.map(v=>`${tx(v.lon).toFixed(1)},${ty(v.lat).toFixed(1)}`).join(" ");
+    s+=`<polygon points="${d}" fill="#d8261e" fill-opacity="0.18" stroke="#d8261e" stroke-width="1"/>`;
+    verts.forEach(v=>{s+=`<circle cx="${tx(v.lon).toFixed(1)}" cy="${ty(v.lat).toFixed(1)}" r="1.3" fill="#b3261e"/>`;});}
+  return s+"</svg>";}
+
+/* ===== OCR sob demanda (Tesseract.js) ===== */
+let _tessReady=null, _ocrWorker=null;
+function loadTesseract(){
+  if(_tessReady) return _tessReady;
+  _tessReady=new Promise((resolve,reject)=>{
+    if(typeof Tesseract!=="undefined") return resolve();
+    const s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+    s.onload=()=>resolve();
+    s.onerror=()=>reject(new Error("OCR indisponível neste ambiente"));
+    document.head.appendChild(s);
+  });
+  return _tessReady;
+}
+async function getOcrWorker(){
+  if(_ocrWorker) return _ocrWorker;
+  await loadTesseract();
+  _ocrWorker=await Tesseract.createWorker("por",1,{
+    workerPath:"https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js",
+    corePath:"https://cdn.jsdelivr.net/npm/tesseract.js-core@5",
+    langPath:"https://tessdata.projectnaptha.com/4.0.0",
+    logger:m=>{ if(m.status==="recognizing text") setLog(`OCR ${(m.progress*100|0)}%…`); }
+  });
+  await _ocrWorker.setParameters({ tessedit_pageseg_mode:"6" }); // PSM 6, igual ao Python
+  return _ocrWorker;
+}
+function grayscale(ctx,w,h){
+  const im=ctx.getImageData(0,0,w,h),d=im.data;
+  for(let i=0;i<d.length;i+=4){const g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];d[i]=d[i+1]=d[i+2]=g;}
+  ctx.putImageData(im,0,0);
+}
+async function ocrPdf(pdf,nome){
+  const worker=await getOcrWorker();
+  const scale=+(($("#ocrScale")||{}).value||3);
+  let txt="";
+  for(let p=1;p<=pdf.numPages;p++){
+    setLog(`${nome}: OCR página ${p}/${pdf.numPages} (qualidade ${scale}x)…`);
+    const page=await pdf.getPage(p);
+    const vp=page.getViewport({scale});
+    const cv=document.createElement("canvas"); cv.width=vp.width; cv.height=vp.height;
+    const ctx=cv.getContext("2d");
+    await page.render({canvasContext:ctx,viewport:vp}).promise;
+    grayscale(ctx,cv.width,cv.height);
+    const {data:{text}}=await worker.recognize(cv);
+    txt+=text+"\n";
+  }
+  return txt;
+}
+
+/* ===== execução ===== */
+const generated=[];
+$("#run").onclick=async()=>{
+  $("#run").disabled=true;$("#bar").classList.add("show");
+  $("#resultsCard").classList.remove("hidden");
+  $("#results").innerHTML="";$("#summary").innerHTML="";$("#dlAll").classList.add("hidden");
+  generated.length=0;
+  const margin=+$("#margin").value||300;
+  let nOk=0,nWarn=0,nErr=0;
+
+  for(let i=0;i<pdfFiles.length;i++){
+    const f=pdfFiles[i];const nome=f.name.replace(/\.pdf$/i,"");
+    setLog(`Processando ${i+1}/${pdfFiles.length}: ${nome}`);setBar(i/pdfFiles.length*100);
+    try{
+      const buf=await f.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+      const texto=await pdfText(pdf);
+      let {v,fmt}=extractVertices(texto);
+      let metodo="nativo", incompleta=null;
+
+      if(!v.length){ // escaneado → tenta OCR no navegador
+        try{
+          setLog(`${nome}: PDF escaneado, rodando OCR (lento)…`);
+          const t2=await ocrPdf(pdf,nome);
+          const r2=extractVertices(t2); v=r2.v; fmt=r2.fmt; metodo="ocr";
+          const esperados=countLongBlocks(t2);
+          if(esperados>v.length) incompleta={lidos:v.length,esperados};
+        }catch(err){
+          addResult({nome,bad:true,scan:true,note:"PDF escaneado e o OCR não baixou neste ambiente. Salve este .html (botão Copiar) e abra no Chrome para o OCR rodar — ou processe no script Python."});
+          nWarn++;continue;
+        }
+        if(!v.length){
+          addResult({nome,bad:true,scan:true,note:"PDF escaneado: o OCR rodou mas não reconheceu coordenadas. Confira a página do memorial descritivo, ou rode no script Python."});
+          nWarn++;continue;
+        }
+      }
+      let removed=[];
+      if(carPolys.length){const r=filterByCar(v,carPolys,margin);v=r.kept;removed=r.removed;}
+      if(!v.length){addResult({nome,bad:true,note:"Todos os vértices caíram fora do CAR — verificar manualmente."});nWarn++;continue;}
+
+      const kml=buildKml(nome,v);generated.push({name:nome+".kml",kml});
+
+      // conferência de área pelo CCIR (casa pelo número da matrícula no nome do arquivo)
+      let confere=null;
+      const matnum=matriculaDoNome(f.name);
+      const haOcr=areaHa(v);
+      if(matnum && ccirTable[matnum]!=null){
+        const haCcir=ccirTable[matnum];
+        const div=haCcir>0 ? Math.abs(haOcr-haCcir)/haCcir*100 : 0;
+        confere={mat:matnum, haOcr, haCcir, div, ok: div<=3};
+      } else {
+        confere={mat:matnum, haOcr, haCcir:null};
+      }
+
+      addResult({nome,fmt,metodo,count:v.length,removed,incompleta,confere,kml,verts:v});
+      if(removed.length||incompleta||(confere&&confere.haCcir!=null&&!confere.ok))nWarn++;else nOk++;
+    }catch(e){addResult({nome,bad:true,note:"Erro ao ler o PDF: "+e.message});nErr++;}
+  }
+  setBar(100);setLog(`Concluído — ${generated.length} KML(s) gerado(s).`);
+  if(_ocrWorker){ try{ await _ocrWorker.terminate(); }catch(e){} _ocrWorker=null; }
+  $("#summary").innerHTML=`<span class="chip ok">✓ ${nOk} ok</span>`+
+    (nWarn?`<span class="chip warn">⚠ ${nWarn} com ressalva</span>`:"")+
+    (nErr?`<span class="chip err">✗ ${nErr} erro</span>`:"");
+  if(generated.length>1)$("#dlAll").classList.remove("hidden");
+  $("#run").disabled=false;
+};
+
+function addResult(o){
+  const div=document.createElement("div");div.className="res"+(o.bad?" bad":"");
+  if(o.bad){
+    div.innerHTML=`<div class="meta"><div class="ttl">${o.nome}</div>
+      <div class="tags">${o.scan?'<span class="tag scan">escaneado</span>':''}</div>
+      <div class="note"><b>${o.note}</b></div></div>`;
+  }else{
+    const remTxt=o.removed.length
+      ?`<div class="note"><b>${o.removed.length} vértice(s)</b> fora do CAR descartado(s) como erro de leitura.</div>`
+      :`<div class="note">Todos os vértices dentro do CAR.</div>`;
+    div.innerHTML=`
+      <div class="prev">${previewSvg(o.verts,carPolys)}</div>
+      <div class="meta">
+        <div class="ttl">${o.nome}</div>
+        <div class="tags">
+          <span class="tag ${o.fmt==="utm"?"utm":"geo"}">${o.fmt==="utm"?"UTM / INCRA":"Geográfico"}</span>
+          ${o.metodo==="ocr"?'<span class="tag scan">OCR (escaneado)</span>':'<span class="tag nat">texto nativo</span>'}
+          <span class="tag">${o.count} vértices</span>
+          ${o.removed.length?`<span class="tag cut">−${o.removed.length} fora</span>`:""}
+          ${o.incompleta?`<span class="tag cut">incompleta</span>`:""}
+          ${o.confere&&o.confere.haCcir!=null?(o.confere.ok?`<span class="tag nat">✓ área confere</span>`:`<span class="tag cut">⚠ área diverge ${o.confere.div.toFixed(0)}%</span>`):""}
+        </div>
+        ${o.confere&&o.confere.haCcir!=null?`<div class="note">Matríc. ${o.confere.mat}: lida <b style="color:var(--ink)">${o.confere.haOcr.toFixed(1)} ha</b> · CCIR ${o.confere.haCcir.toFixed(1)} ha · diferença ${o.confere.div.toFixed(1)}%</div>`:(o.confere&&o.confere.haOcr?`<div class="note">Área lida: ${o.confere.haOcr.toFixed(1)} ha${o.confere.mat?` (matríc. ${o.confere.mat}, sem referência no CCIR)`:""}</div>`:"")}
+        ${o.incompleta?`<div class="note"><b>Leitura possivelmente incompleta:</b> ${o.incompleta.lidos} de ~${o.incompleta.esperados} vértices reconhecidos. Aumente a qualidade do OCR e reprocesse, ou rode no Python.</div>`:""}
+        ${remTxt}
+        <button class="dl">⬇ Baixar ${o.nome}.kml</button>
+      </div>`;
+    div.querySelector(".dl").onclick=()=>downloadKml(o.nome+".kml",o.kml);
+  }
+  $("#results").appendChild(div);
+}
+function downloadKml(name,content){
+  const blob=new Blob([content],{type:"application/vnd.google-earth.kml+xml"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+}
+$("#dlAll").onclick=async()=>{
+  if(typeof JSZip==="undefined"){setLog("ZIP indisponível — baixe os KMLs individualmente.");return;}
+  const zip=new JSZip();generated.forEach(g=>zip.file(g.name,g.kml));
+  const blob=await zip.generateAsync({type:"blob"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="kmls_matriculas.zip";a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+};
+function setBar(p){$("#barFill").style.width=p+"%";}
+function setLog(t){$("#log").textContent=t;}
+</script>
+</body>
+</html>

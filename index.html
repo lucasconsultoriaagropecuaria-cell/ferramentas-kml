@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramentas — Geradores de KML</title>
+<style>
+  :root{--green-900:#173a16;--green-800:#1f5121;--green-700:#2e7d32;--green-100:#e9f3e2;
+    --line:#d9e2d2;--bg:#eef0ec;--ink:#23291f;--ink-soft:#5d6655}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(180deg,var(--green-800),var(--green-900));color:#fff;
+    padding:22px;text-align:center}
+  header h1{font-size:20px;margin:0;font-weight:650}
+  header p{margin:4px 0 0;font-size:13px;opacity:.82}
+  .wrap{max-width:640px;margin:28px auto 60px;padding:0 18px;display:flex;flex-direction:column;gap:16px}
+  a.card{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);
+    border-radius:16px;padding:20px;text-decoration:none;color:var(--ink);
+    box-shadow:0 1px 2px rgba(20,40,15,.06),0 8px 24px rgba(20,40,15,.05);transition:.15s}
+  a.card:hover{border-color:var(--green-700);transform:translateY(-1px)}
+  .ic{width:48px;height:48px;border-radius:12px;background:var(--green-100);
+    display:grid;place-items:center;font-size:24px;flex:none}
+  .t{font-weight:650;font-size:15.5px}
+  .s{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .note{font-size:12.5px;color:var(--ink-soft);text-align:center;margin-top:8px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗺️ Geradores de KML</h1>
+  <p>Ferramentas da consultoria — tudo roda no seu navegador, nenhum documento sai do seu computador</p>
+</header>
+<div class="wrap">
+  <a class="card" href="matriculas.html">
+    <div class="ic">📄</div>
+    <div>
+      <div class="t">Matrículas Rurais → KML</div>
+      <div class="s">Extrai o perímetro georreferenciado do memorial descritivo (PDF, inclusive escaneado), filtra pelo CAR e confere a área pelo CCIR</div>
+    </div>
+  </a>
+  <a class="card" href="glebas.html">
+    <div class="ic">🌱</div>
+    <div>
+      <div class="t">BB Pl@ntar (glebas) → KML</div>
+      <div class="s">Converte os PDFs do BB Pl@ntar (ou KMLs) nos arquivos KML das glebas, um por gleba + consolidado</div>
+    </div>
+  </a>
+  <div class="note">Precisa de internet apenas para carregar a página.<br>Os PDFs e KMLs processados nunca são enviados a nenhum servidor.</div>
+</div>
+</body>
+</html>
