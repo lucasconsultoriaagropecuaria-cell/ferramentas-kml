@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — A matrícula vira KML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  /* ---------- identidade (mesma paleta das ferramentas) ---------- */
+  :root{
+    --g900:#0d2410; --g800:#173a16; --g700:#1f5121; --g600:#2e7d32;
+    --lime:#c5f26b; --cream:#f3f1e6; --mute:#a9bb9f; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(197,242,107,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a1f 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+
+  /* ---------- chrome (igual em todos) ---------- */
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+
+  /* ---------- chips / cards ---------- */
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:34px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .chip .ck{width:40px;height:40px;flex:none}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:36px 40px}
+  .badge{position:relative;padding:16px 30px;border-radius:16px;background:var(--lime);color:var(--g900);font-weight:900;font-size:40px;letter-spacing:.04em;transform:rotate(-8deg)}
+  .badge-wrap{position:absolute}
+
+  /* ---------- slide 1 ---------- */
+  .s1 .map{position:absolute;inset:0;width:1080px;height:1350px}
+  .s1 .poly{fill:none;stroke:var(--lime);stroke-width:9;stroke-linejoin:round;stroke-linecap:round}
+  .s1 .polyfill{fill:rgba(197,242,107,.16)}
+  .s1 .v{fill:var(--cream);stroke:var(--g900);stroke-width:6;transform-box:fill-box;transform-origin:center}
+  .s1 .vl{font:700 24px Inter,sans-serif;fill:var(--mute);letter-spacing:.06em}
+  .s1 .h1{font-size:92px}
+
+  /* ---------- slide 2 ---------- */
+  .paper{background:var(--paper);color:var(--ink);border-radius:14px;padding:48px 52px 60px;transform:rotate(-2deg);box-shadow:0 30px 60px rgba(0,0,0,.45);font:500 27px/1.5 "Courier 10 Pitch","Liberation Mono",ui-monospace,monospace;min-height:380px}
+  .paper .l{min-height:1.5em;margin:0 0 14px;white-space:nowrap}
+  .paper .l.more{color:#8a8f84}
+  .stamp{position:absolute;right:40px;bottom:-46px;border:8px solid var(--red);color:var(--red);padding:14px 26px;border-radius:14px;font:900 34px/1.1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;transform:rotate(9deg);text-align:center;background:rgba(255,253,246,.9)}
+
+  /* ---------- slide 3 ---------- */
+  .dropzone{border:4px dashed rgba(255,255,255,.3);border-radius:32px;padding:50px 46px;min-height:470px;display:flex;flex-direction:column;gap:30px;align-items:center;justify-content:center}
+  .file{display:flex;align-items:center;gap:22px;background:var(--paper);color:var(--ink);padding:24px 36px;border-radius:20px;font-weight:700;font-size:36px;box-shadow:0 20px 40px rgba(0,0,0,.4)}
+  .file i{font-style:normal;font-size:48px}
+  .bar{width:100%;height:22px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--lime);transform-origin:left}
+  .count{font-weight:900;font-size:64px;color:var(--lime);line-height:1}
+  .count small{font-weight:700;font-size:30px;color:var(--mute);margin-left:14px}
+
+  /* ---------- slide 4 ---------- */
+  .row{display:flex;align-items:center;gap:24px;padding:30px 40px;border-radius:24px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12)}
+  .row .lbl{flex:1;font-weight:600;font-size:36px}
+  .row .val{font-weight:800;font-size:40px;color:var(--lime);font-variant-numeric:tabular-nums}
+  .ck{width:56px;height:56px;flex:none}
+  .ck circle{fill:var(--lime)}
+  .ck path{fill:none;stroke:var(--g900);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- slide 5 ---------- */
+  .mapbox{position:relative;height:470px;border-radius:32px;overflow:hidden;background:#0a1a0c;border:2px solid rgba(255,255,255,.12)}
+  .mapbox .grid{mask-image:none;background-size:70px 70px;opacity:.9}
+  .mapbox svg{position:absolute;inset:0;width:100%;height:100%}
+  .mapbox .poly{fill:rgba(197,242,107,.22);stroke:var(--lime);stroke-width:7;stroke-linejoin:round}
+  .mapbox svg.pin{position:absolute;left:430px;top:120px;width:84px;height:110px}
+  .maplabel{position:absolute;left:50%;bottom:36px;transform:translateX(-50%);white-space:nowrap}
+  .apps{display:flex;flex-wrap:wrap;gap:18px}
+
+  /* ---------- slide 6 ---------- */
+  .s6 .h1{font-size:100px;line-height:1.1}
+  .tools{display:flex;flex-direction:column;gap:18px}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:46px;padding:30px 54px;border-radius:999px;box-shadow:0 20px 50px rgba(197,242,107,.25)}
+</style>
+</head>
+<body data-music="cinematic" data-bpm="120">
+<div class="deck">
+
+<!-- =============================== 1 · CAPA =============================== -->
+<section class="slide s1" data-dur="6" data-hold="3.9" data-label="Capa">
+  <div class="grid"></div>
+  <svg class="map" viewBox="0 0 1080 1350" fill="none">
+    <path class="polyfill" d="M200 300 L520 215 L850 300 L890 560 L740 690 L420 725 L210 590 Z" data-in="fade" data-at="2.2" data-dur="0.6" data-out="fade"/>
+    <path class="poly" d="M200 300 L520 215 L850 300 L890 560 L740 690 L420 725 L210 590 Z" data-in="draw" data-at="0.4" data-dur="1.8" data-sfx="rise" data-out="fade"/>
+    <circle class="v" cx="200" cy="300" r="16" data-in="pop" data-at="0.4"  data-sfx="tick" data-out="fade"/>
+    <circle class="v" cx="520" cy="215" r="16" data-in="pop" data-at="0.65" data-sfx="tick" data-out="fade"/>
+    <circle class="v" cx="850" cy="300" r="16" data-in="pop" data-at="0.9"  data-sfx="tick" data-out="fade"/>
+    <circle class="v" cx="890" cy="560" r="16" data-in="pop" data-at="1.15" data-sfx="tick" data-out="fade"/>
+    <circle class="v" cx="740" cy="690" r="16" data-in="pop" data-at="1.4"  data-sfx="tick" data-out="fade"/>
+    <circle class="v" cx="420" cy="725" r="16" data-in="pop" data-at="1.65" data-sfx="tick" data-out="fade"/>
+    <circle class="v" cx="210" cy="590" r="16" data-in="pop" data-at="1.9"  data-sfx="tick" data-out="fade"/>
+    <text class="vl" x="160" y="268" data-in="fade" data-at="0.5" data-out="fade">M-01</text>
+    <text class="vl" x="490" y="180" data-in="fade" data-at="0.75" data-out="fade">M-02</text>
+    <text class="vl" x="870" y="268" data-in="fade" data-at="1.0" data-out="fade">M-03</text>
+    <text class="vl" x="920" y="570" data-in="fade" data-at="1.25" data-out="fade">M-04</text>
+    <text class="vl" x="770" y="738" data-in="fade" data-at="1.5" data-out="fade">M-05</text>
+    <text class="vl" x="380" y="775" data-in="fade" data-at="1.75" data-out="fade">M-06</text>
+    <text class="vl" x="130" y="640" data-in="fade" data-at="2.0" data-out="fade">M-07</text>
+    <text class="vl" x="530" y="480" style="font-size:34px;fill:#f3f1e6" text-anchor="middle" data-in="fade" data-at="2.5" data-out="fade">312,4 ha</text>
+  </svg>
+  <div class="badge-wrap" style="right:110px;top:150px" data-in="pop" data-at="3.0" data-sfx="pop" data-out="shrink"><div class="badge">GRÁTIS</div></div>
+
+  <div class="col bottom" style="gap:22px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">matrícula → KML</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">A matrícula vira</span>
+      <span style="display:block" data-in="rise" data-at="0.8" data-out="up"><span class="lime">KML</span> <em data-in="marker" data-at="1.4" data-sfx="swipe">em 2 min.</em></span>
+    </h1>
+    <p class="p mute" data-in="fade" data-at="1.9" data-out="fade">Sem AutoCAD. Sem digitar vértice.<br>Sem mandar o documento pra ninguém.</p>
+  </div>
+</section>
+
+<!-- =============================== 2 · PROBLEMA =============================== -->
+<section class="slide s2" data-dur="6" data-hold="5.0" data-label="Problema">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O memorial descritivo<br>chega <span class="lime">assim:</span></h2>
+    <div style="position:relative;margin-top:30px" data-in="drop" data-at="0.9" data-sfx="thud" data-out="down">
+      <div class="paper">
+        <p class="l" data-type data-at="1.3" data-cps="100" data-sfx="type">Do M-01, az. 87°12'34" e 234,56 m, ao M-02;</p>
+        <p class="l" data-type data-at="1.85" data-cps="100">deste, az. 142°05'10" e 318,20 m, ao M-03;</p>
+        <p class="l" data-type data-at="2.4" data-cps="100" data-sfx="type">deste, az. 201°48'52" e 412,07 m, ao M-04;</p>
+        <p class="l more" data-type data-at="2.95" data-cps="100">… e mais 180 vértices.</p>
+      </div>
+      <div class="stamp" data-in="spin" data-at="3.4" data-dur="0.4" data-sfx="impact">PDF escaneado<br>38 páginas</div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="h3" data-in="rise" data-at="3.9" data-sfx="whoosh" data-out="up">Digitar 184 vértices na mão?<br><em data-in="marker" data-at="4.3" data-sfx="pop">Nem pensar.</em></p>
+  </div>
+</section>
+
+<!-- =============================== 3 · PASSO 1 =============================== -->
+<section class="slide s3" data-dur="6" data-hold="4.8" data-label="Passo 1">
+  <div class="grid"></div>
+  <div class="col top">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">passo 1</p>
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Arraste o PDF<br>da <span class="lime">matrícula</span></h2>
+    <div class="dropzone" data-in="fade" data-at="0.8" data-out="fade" style="margin-top:20px">
+      <div data-in="drop" data-at="1.2" data-sfx="thud"><div class="file"><i>📄</i>matricula_28417.pdf</div></div>
+      <div class="bar"><i data-in="grow" data-at="1.9" data-dur="1.5" data-ease="inout" data-sfx="rise"></i></div>
+      <div class="count" data-in="fade" data-at="1.9"><span class="num" data-count="184" data-at="1.9" data-dur="1.5" data-sfx="ticker">0</span><small>vértices lidos</small></div>
+    </div>
+  </div>
+  <div class="col bottom" style="gap:18px">
+    <div class="chip" data-in="pop" data-at="3.7" data-sfx="ding" data-out="down"><svg class="ck" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28"/><path d="M16 29l8 8 16-17"/></svg>OCR automático em PDF escaneado</div>
+    <div class="chip" data-in="pop" data-at="4.1" data-sfx="pop" data-out="down"><svg class="ck" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28"/><path d="M16 29l8 8 16-17"/></svg>Azimute + distância → coordenadas</div>
+    <p class="small mute" data-in="fade" data-at="4.5" data-out="fade">Memorial descritivo de qualquer cartório.</p>
+  </div>
+</section>
+
+<!-- =============================== 4 · PASSO 2 =============================== -->
+<section class="slide s4" data-dur="6" data-hold="5.0" data-label="Passo 2">
+  <div class="grid"></div>
+  <div class="col top">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">passo 2</p>
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Ele confere<br><span class="lime">antes</span> de gerar</h2>
+    <div style="display:flex;flex-direction:column;gap:20px;margin-top:20px">
+      <div class="row" data-in="left" data-at="1.0" data-sfx="swipe" data-out="left"><span class="lbl">Área da matrícula</span><span class="val">312,4 ha</span>
+        <svg class="ck" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" data-in="pop" data-at="1.4"/><path d="M16 29l8 8 16-17" data-in="draw" data-at="1.45" data-dur="0.35" data-sfx="ding"/></svg></div>
+      <div class="row" data-in="left" data-at="1.8" data-sfx="swipe" data-out="left"><span class="lbl">Área no CCIR</span><span class="val">312,4 ha</span>
+        <svg class="ck" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" data-in="pop" data-at="2.2"/><path d="M16 29l8 8 16-17" data-in="draw" data-at="2.25" data-dur="0.35" data-sfx="ding"/></svg></div>
+      <div class="row" data-in="left" data-at="2.6" data-sfx="swipe" data-out="left"><span class="lbl">Perímetro dentro do CAR</span><span class="val">ok</span>
+        <svg class="ck" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" data-in="pop" data-at="3.0"/><path d="M16 29l8 8 16-17" data-in="draw" data-at="3.05" data-dur="0.35" data-sfx="ding"/></svg></div>
+      <div class="row" data-in="left" data-at="3.4" data-sfx="swipe" data-out="left"><span class="lbl">Fechamento do polígono</span><span class="val">0,03 m</span>
+        <svg class="ck" viewBox="0 0 56 56"><circle cx="28" cy="28" r="28" data-in="pop" data-at="3.8"/><path d="M16 29l8 8 16-17" data-in="draw" data-at="3.85" data-dur="0.35" data-sfx="success"/></svg></div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="rise" data-at="4.5" data-out="fade">Se alguma coisa não bater,<br>ele avisa <span class="lime">antes</span> de gerar o arquivo.</p>
+  </div>
+</section>
+
+<!-- =============================== 5 · PASSO 3 =============================== -->
+<section class="slide s5" data-dur="6" data-hold="4.8" data-label="Passo 3">
+  <div class="grid"></div>
+  <div class="col top">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">passo 3</p>
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Baixa o <span class="lime">KML</span><br>e abre onde quiser</h2>
+    <div class="mapbox" data-in="zoom" data-at="0.8" data-sfx="whoosh" data-out="shrink" style="margin-top:20px">
+      <div class="grid"></div>
+      <svg viewBox="0 0 900 560" preserveAspectRatio="none">
+        <path class="poly" d="M150 150 L420 90 L720 160 L780 360 L620 480 L330 500 L130 380 Z" data-in="draw" data-at="1.1" data-dur="1.0" data-sfx="rise"/>
+        <path style="fill:rgba(197,242,107,.2)" d="M150 150 L420 90 L720 160 L780 360 L620 480 L330 500 L130 380 Z" data-in="fade" data-at="1.9" data-dur="0.5"/>
+      </svg>
+      <svg class="pin" viewBox="0 0 84 110" data-in="drop" data-at="2.0" data-sfx="thud"><path d="M42 108C42 108 6 62 6 40a36 36 0 0 1 72 0c0 22-36 68-36 68z" fill="#d9442b" stroke="#fff" stroke-width="5"/><circle cx="42" cy="40" r="13" fill="#fff"/></svg>
+      <div class="chip lime maplabel" data-in="pop" data-at="2.5" data-sfx="pop">Santa Luzia · 312,4 ha</div>
+    </div>
+  </div>
+  <div class="col bottom" style="gap:22px">
+    <div class="apps">
+      <div class="chip" data-in="rise" data-at="3.2"  data-sfx="pop" data-sfx-gain=".5" data-out="down">Google Earth</div>
+      <div class="chip" data-in="rise" data-at="3.45" data-sfx="pop" data-sfx-gain=".5" data-out="down">QGIS</div>
+      <div class="chip" data-in="rise" data-at="3.7"  data-sfx="pop" data-sfx-gain=".5" data-out="down">CAR / SICAR</div>
+      <div class="chip" data-in="rise" data-at="3.95" data-sfx="pop" data-sfx-gain=".5" data-out="down">BB Pl@ntar</div>
+    </div>
+    <p class="small mute" data-in="fade" data-at="4.4" data-out="fade">Um KML por gleba + o consolidado da propriedade.</p>
+  </div>
+</section>
+
+<!-- =============================== 6 · CTA =============================== -->
+<section class="slide s6" data-dur="6" data-hold="4.6" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:0">
+    <h1 class="h1" style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Grátis.</h1>
+    <h1 class="h1" style="display:block" data-in="rise" data-at="0.7" data-sfx="whoosh" data-sfx-gain=".6" data-out="up">No navegador.</h1>
+    <h1 class="h1" style="display:block" data-in="rise" data-at="1.0" data-sfx="whoosh" data-sfx-gain=".6" data-out="up"><em data-in="marker" data-at="1.6" data-dur="0.8" data-sfx="swipe">Nada sai do seu computador.</em></h1>
+  </div>
+  <div class="col bottom" style="gap:26px">
+    <div class="tools">
+      <div class="chip" data-in="rise" data-at="2.4" data-sfx="pop" data-sfx-gain=".6" data-out="down">📄 Matrícula → KML</div>
+      <div class="chip" data-in="rise" data-at="2.65" data-sfx="pop" data-sfx-gain=".6" data-out="down">🌱 BB Pl@ntar → KML das glebas</div>
+      <div class="chip" data-in="rise" data-at="2.9" data-sfx="pop" data-sfx-gain=".6" data-out="down">📐 KML → planilha de coordenadas</div>
+    </div>
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="3.6" data-sfx="success" data-out="shrink">Link na bio →</div></div>
+    <p class="small mute" data-in="fade" data-at="4.2" data-out="fade">Salva este post pra quando precisar.</p>
+  </div>
+</section>
+
+</div>
+
+<!-- chrome comum (marca, contador, "arraste", barra de progresso) -->
+<template id="chrome">
+  <div class="chrome-top"><span>🗺️ <b>Ferramentas da Consultoria</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){
+    const tpl=document.getElementById('chrome'), slides=document.querySelectorAll('.slide');
+    slides.forEach((s,i)=>{
+      const c=tpl.content.cloneNode(true);
+      c.querySelector('.n').textContent=i+1; c.querySelector('.total').textContent=slides.length;
+      if(s.hasAttribute('data-no-swipe')) c.querySelector('.chrome-bottom').remove();
+      s.appendChild(c);
+    });
+  })();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>

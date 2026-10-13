@@ -1,0 +1,103 @@
+/* ==========================================================================
+   engine.css — base + presets de animação para carrosséis animados
+   Formato: 1080 x 1350 (4:5). Tudo é @keyframes (nunca transition),
+   porque o engine.js pausa todas as animações e "navega" nelas
+   (currentTime) para preview em loop e para exportar frame a frame.
+   ========================================================================== */
+
+:root{
+  --w:1080px; --h:1350px;
+  --pad:90px;                 /* margem segura */
+  --ease-out:cubic-bezier(.2,.8,.2,1);
+  --ease-in:cubic-bezier(.6,0,.9,.4);
+  --ease-pop:cubic-bezier(.34,1.56,.64,1);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#111;font-family:Inter,"Inter Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ---- Palco ---------------------------------------------------------- */
+.slide{
+  width:var(--w);height:var(--h);position:relative;overflow:hidden;
+  flex:none;display:block;isolation:isolate;
+}
+.slide > *{position:relative}
+.layer{position:absolute;inset:0}
+.pad{position:absolute;inset:0;padding:var(--pad)}
+
+/* ---- Modo preview (navegador) --------------------------------------- */
+body.preview{background:#0b0b0b;padding:72px 0 80px}
+body.preview .deck{display:flex;flex-direction:column;align-items:center;gap:36px}
+body.preview .slide{box-shadow:0 20px 60px rgba(0,0,0,.6);cursor:pointer;border-radius:4px}
+body.preview .slide::after{content:attr(data-label);position:absolute;left:0;top:-30px;color:#888;font:600 14px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.preview-bar{position:fixed;top:0;left:0;right:0;height:56px;z-index:99;display:flex;align-items:center;gap:14px;
+  padding:0 18px;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);color:#ddd;font:14px/1 Inter,sans-serif;border-bottom:1px solid #222}
+.preview-bar b{color:#fff}
+.preview-bar button{background:#1f5121;border:0;color:#fff;font:600 13px Inter,sans-serif;padding:9px 14px;border-radius:8px;cursor:pointer}
+.preview-bar button.off{background:#333}
+.preview-bar .hint{color:#888;margin-left:auto}
+.preview-bar .t{font-variant-numeric:tabular-nums;color:#aaa;min-width:90px;white-space:nowrap}
+.preview-bar{white-space:nowrap;overflow:hidden}
+@media (max-width:900px){.preview-bar .hint,.preview-bar > span:first-of-type{display:none}}
+
+/* ---- Modo export (Playwright) --------------------------------------- */
+body.export{background:#000;padding:0}
+body.export .deck{display:flex;flex-direction:column;gap:0}
+body.export .preview-bar{display:none}
+
+/* ---- Presets de ENTRADA (data-in) ----------------------------------- */
+@keyframes in-fade  {from{opacity:0}to{opacity:1}}
+@keyframes in-rise  {from{opacity:0;transform:translateY(48px)}to{opacity:1;transform:none}}
+@keyframes in-sink  {from{opacity:0;transform:translateY(-48px)}to{opacity:1;transform:none}}
+@keyframes in-left  {from{opacity:0;transform:translateX(-80px)}to{opacity:1;transform:none}}
+@keyframes in-right {from{opacity:0;transform:translateX(80px)}to{opacity:1;transform:none}}
+@keyframes in-pop   {from{opacity:0;transform:scale(.6)}60%{opacity:1}to{opacity:1;transform:scale(1)}}
+@keyframes in-zoom  {from{opacity:0;transform:scale(1.25)}to{opacity:1;transform:scale(1)}}
+@keyframes in-blur  {from{opacity:0;filter:blur(18px);transform:scale(.98)}to{opacity:1;filter:blur(0);transform:none}}
+@keyframes in-wipe  {from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes in-wipe-up{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes in-grow  {from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes in-grow-y{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes in-drop  {from{opacity:0;transform:translateY(-220px)}55%{opacity:1;transform:translateY(0)}72%{transform:translateY(-26px)}86%{transform:translateY(0)}94%{transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes in-draw  {from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+@keyframes in-spin  {from{opacity:0;transform:rotate(-12deg) scale(.8)}to{opacity:1;transform:none}}
+@keyframes in-marker{from{background-size:0% 100%}to{background-size:100% 100%}}
+
+/* ---- Presets de SAÍDA (data-out) ------------------------------------ */
+@keyframes out-fade  {to{opacity:0}}
+@keyframes out-up    {to{opacity:0;transform:translateY(-40px)}}
+@keyframes out-down  {to{opacity:0;transform:translateY(40px)}}
+@keyframes out-left  {to{opacity:0;transform:translateX(-80px)}}
+@keyframes out-shrink{to{opacity:0;transform:scale(.8)}}
+@keyframes out-blur  {to{opacity:0;filter:blur(14px)}}
+@keyframes out-wipe  {to{clip-path:inset(0 0 0 100%)}}
+
+/* ---- Loops (data-loop) ---------------------------------------------- */
+@keyframes loop-pulse {0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes loop-float {0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes loop-blink {0%,49%{opacity:1}50%,100%{opacity:.25}}
+@keyframes loop-nudge {0%,60%,100%{transform:translateX(0)}75%{transform:translateX(12px)}}
+@keyframes loop-spin  {to{transform:rotate(360deg)}}
+@keyframes loop-shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+
+/* ---- Utilidades de texto (tamanhos pensados para 1080px) ------------ */
+.h1{font-weight:800;font-size:96px;line-height:1.02;letter-spacing:-.035em;margin:0}
+.h2{font-weight:800;font-size:76px;line-height:1.06;letter-spacing:-.03em;margin:0}
+.h3{font-weight:700;font-size:54px;line-height:1.12;letter-spacing:-.02em;margin:0}
+.p {font-weight:500;font-size:40px;line-height:1.3;margin:0}
+.small{font-weight:600;font-size:28px;line-height:1.3;letter-spacing:.02em;margin:0}
+.eyebrow{font-weight:700;font-size:26px;letter-spacing:.18em;text-transform:uppercase;margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+/* marcador de texto (data-in="marker") */
+.marker{background-image:linear-gradient(var(--marker,#c5f26b),var(--marker,#c5f26b));background-repeat:no-repeat;background-size:0% 100%;background-position:0 0;padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* barra de progresso do slide (data-progress) */
+.progress{position:absolute;left:0;right:0;bottom:0;height:10px;background:rgba(255,255,255,.12)}
+.progress > i{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--accent,#c5f26b);transform-origin:left;transform:scaleX(0)}
+
+/* elemento oculto de origem para o typewriter */
+[data-type]{white-space:pre-wrap}
+[data-type]::after{content:"▍";opacity:.7}
+[data-type].done::after{content:""}
