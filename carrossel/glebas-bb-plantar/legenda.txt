@@ -1,0 +1,10 @@
+O projeto do BB Pl@ntar vira mapa em 1 minuto — grátis. 🎬
+
+As coordenadas das glebas estão no PDF do banco, mas em tabelas de números página após página. A nossa ferramenta lê o arquivo, desenha cada gleba com nome e área e gera um KML por gleba + o consolidado — pronto pro Google Earth, QGIS, CAR e o próprio Pl@ntar. Tudo no navegador: nenhum documento sai do seu computador.
+
+Sem cadastro. Sem digitar vértice. Feita por quem monta projeto todo dia.
+
+🔗 Link na bio.
+📌 Salva e manda pro projetista parceiro.
+
+#bbplantar #kml #googleearth #projetotecnico #creditorural #consultoriaagropecuaria #agrosp

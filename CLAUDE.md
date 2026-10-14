@@ -25,7 +25,7 @@ Ao criar ou editar um carrossel, leia `carrossel/README.md` e use a skill
 
 **Som**
 - Efeito sonoro somente em momentos que o olho acompanha: título principal (`whoosh`), chips/selos (`pop`), check (`ding`), objeto que cai (`thud`), carimbo (`impact`), contador (`ticker`), digitação (`type`), CTA final (`success`). Máximo 1 SFX por elemento, ~6–12 por slide; use `data-sfx-gain=".5"` em séries.
-- Música: `cinematic` por padrão; `intimista` para conteúdo calmo/educativo; `urbano` para promessas fortes. Mesma música em todos os slides.
+- Música: `cinematic` por padrão; `intimista` para conteúdo calmo/educativo; `urbano` para promessas fortes; `viola` para temas leves/do campo (arpejo dedilhado, sem bateria); `tenso` para alertas e erros (pulso grave). Mesma música em todos os slides. Alternar estilos entre posts da mesma semana.
 
 **Copy e estrutura**
 - Slide 1 = gancho (promessa ou dor em uma frase + prova visual). Último = CTA ("link na bio", "salva", "manda pra alguém"). No meio: um passo/ideia por slide.

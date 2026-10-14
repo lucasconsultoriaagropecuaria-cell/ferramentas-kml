@@ -198,6 +198,8 @@
     cinematic: { pad: .045, padLp: 620, bass: .16, kick: [0, 2], snare: [], hat: [.5, 1.5, 2.5, 3.5], hatG: .05, arp: 0, arpBeats: [] },
     intimista: { pad: .05, padLp: 900, bass: 0, kick: [], snare: [], hat: [], hatG: 0, arp: .11, arpBeats: [0, 1, 2.5, 3] },
     urbano:    { pad: .02, padLp: 1400, bass: .2, kick: [0, 1.5, 2.5], snare: [1, 3], hat: [0, .5, 1, 1.5, 2, 2.5, 3, 3.5], hatG: .07, arp: .09, arpBeats: [.5, 2] },
+    viola:     { pad: .028, padLp: 1100, bass: .1, kick: [], snare: [], hat: [], hatG: 0, arp: .14, arpBeats: [0, .5, 1, 2, 2.5, 3] },
+    tenso:     { pad: .055, padLp: 420, bass: .22, kick: [0, 1, 2, 3], snare: [], hat: [.5, 1.5, 2.5, 3.5], hatG: .04, arp: 0, arpBeats: [] },
   };
 
   function music(ctx, dest, mood, t0, dur, bpm) {
@@ -263,7 +265,7 @@
     const bar = document.createElement('div'); bar.className = 'preview-bar';
     bar.innerHTML = `<b>Carrossel</b><span>o navegador só libera áudio depois de um clique: clique num slide (ou no botão) para ouvir</span>
       <button id="pv-sound" class="off">🔇 som</button>
-      <label>música <select id="pv-music"><option value="cinematic">cinematográfica</option><option value="intimista">intimista</option><option value="urbano">urbana</option><option value="none">sem música</option></select></label>
+      <label>música <select id="pv-music"><option value="cinematic">cinematográfica</option><option value="intimista">intimista</option><option value="urbano">urbana</option><option value="viola">viola (calma)</option><option value="tenso">tensa (alerta)</option><option value="none">sem música</option></select></label>
       <span class="t" id="pv-time"></span><span class="hint">abra com ?export para o modo de exportação</span>`;
     document.body.prepend(bar);
     const fit = () => { document.querySelector('.deck').style.zoom = Math.min(1, (innerWidth - 40) / 1080); };

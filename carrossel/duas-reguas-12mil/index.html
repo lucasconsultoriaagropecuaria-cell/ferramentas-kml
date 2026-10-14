@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — As duas réguas dos 12 mil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:34px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:34px 38px}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:42px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+  .s1 .h1{font-size:90px}
+  .ruler{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .ruler .lbl{font-weight:600;font-size:32px;color:var(--mute)}
+  .ruler .track{position:relative;height:56px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+  .ruler .track i{display:block;height:100%;background:var(--lime);transform-origin:left;border-radius:999px}
+  .ruler .cap{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-weight:800;font-size:27px;color:var(--mute)}
+  .ruler .val{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-weight:900;font-size:29px;color:var(--g900)}
+  .duel{display:flex;gap:24px;margin-top:8px}
+  .duel .tx{flex:1;border-radius:26px;padding:30px 20px;text-align:center}
+  .duel .tx .n{font-weight:900;font-size:96px;line-height:1}
+  .duel .tx .d{font-weight:700;font-size:26px;margin-top:8px}
+  .duel .a{background:rgba(203,233,106,.14);border:3px solid var(--lime);color:var(--lime)}
+  .duel .b{background:rgba(255,255,255,.07);border:3px solid rgba(255,255,255,.2);color:var(--cream)}
+</style>
+</head>
+<body data-music="urbano" data-bpm="120">
+<div class="deck">
+
+<section class="slide s1" data-dur="6" data-hold="4.8" data-label="Capa">
+  <div class="grid"></div>
+  <div class="col top" style="gap:22px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">pca · armazém</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">O juro do seu silo:</span>
+      <span style="display:block" data-in="rise" data-at="0.8" data-out="up">quem decide são</span>
+      <span style="display:block" data-in="rise" data-at="1.1" data-out="up"><em data-in="marker" data-at="1.7" data-sfx="swipe">12 mil toneladas.</em></span>
+    </h1>
+  </div>
+  <div class="col bottom" style="gap:18px">
+    <div class="duel" data-out="fade">
+      <div class="tx a" data-in="pop" data-at="2.5" data-sfx="pop"><div class="n">8%</div><div class="d">dentro da régua</div></div>
+      <div class="tx b" data-in="pop" data-at="2.9" data-sfx="pop" data-sfx-gain=".6"><div class="n">9,5%</div><div class="d">fora dela</div></div>
+    </div>
+    <p class="p mute" data-in="fade" data-at="3.8" data-out="fade">Taxas-teto do programa. E a régua tem pegadinha — a seu favor.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="Réguas">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">São DUAS réguas —<br>e <span class="lime">separadas</span></h2>
+    <div class="ruler" style="margin-top:22px" data-in="fade" data-at="1.0" data-out="fade">
+      <p class="lbl">1 · o armazém que você JÁ TEM</p>
+      <div class="track"><i data-in="grow" data-at="1.3" data-dur="0.9" style="width:66%" data-sfx="rise"></i><span class="val">8.000 t</span><span class="cap">12.000 t</span></div>
+    </div>
+    <div class="ruler" style="margin-top:20px" data-in="fade" data-at="2.3" data-out="fade">
+      <p class="lbl">2 · o que você vai FINANCIAR</p>
+      <div class="track"><i data-in="grow" data-at="2.6" data-dur="0.9" style="width:42%" data-sfx="rise" data-sfx-gain=".5"></i><span class="val">5.000 t</span><span class="cap">12.000 t</span></div>
+    </div>
+    <div class="chip lime" style="margin-top:26px" data-in="pop" data-at="3.9" data-sfx="success" data-out="down">As duas passam → até 8% a.a.</div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.5" data-out="fade">Circular BNDES 97/2026, item 5.1.1 — réguas independentes.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="Pegadinha">
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">A pegadinha<br><span class="lime">a seu favor</span></h2>
+    <div class="card" data-in="drop" data-at="1.1" data-sfx="thud" data-out="down">
+      <p class="p" style="line-height:1.55">Elas <b style="color:var(--lime)">NÃO se somam</b>. No exemplo: 8.000 t existentes + 5.000 t novas = <b style="color:var(--lime)">13.000 t de capacidade final</b> — e o juro continua em até 8%.</p>
+    </div>
+    <div class="chip" data-in="rise" data-at="2.7" data-sfx="pop" data-out="down">Estourou QUALQUER uma das duas? Vai pra até 9,5%</div>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="rise" data-at="3.8" data-out="fade">Por isso a capacidade estática se mede<br><span class="lime">antes do orçamento</span> — ela define seu juro.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="4.6" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h1 class="h1" style="font-size:86px;line-height:1.14">
+      <span style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Meça o que tem.</span>
+      <span style="display:block" data-in="rise" data-at="0.7" data-out="up"><em data-in="marker" data-at="1.3" data-sfx="swipe">Depois orce.</em></span>
+    </h1>
+    <p class="p mute" data-in="fade" data-at="2.0" data-out="fade">Silo, graneleiro, armazém da outra fazenda:<br>tudo conta na régua 1 — e o banco confere.</p>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="3.0" data-sfx="success" data-out="shrink">Salva pra hora de orçar o silo</div></div>
+    <p class="foot" data-in="fade" data-at="3.8" data-out="fade">Sujeito à análise do banco · agricultura familiar: Pronaf<br>Fontes: Circular BNDES 97/2026 e MCR 11-9</p>
+  </div>
+</section>
+
+</div>
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){const tpl=document.getElementById('chrome'),slides=document.querySelectorAll('.slide');slides.forEach((s,i)=>{const c=tpl.content.cloneNode(true);c.querySelector('.n').textContent=i+1;c.querySelector('.total').textContent=slides.length;if(s.hasAttribute('data-no-swipe'))c.querySelector('.chrome-bottom').remove();s.appendChild(c);});})();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>

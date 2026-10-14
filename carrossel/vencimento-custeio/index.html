@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — Colheita + 60 não é o vencimento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .h1 .red{color:#ff8d73}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:33px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:34px 38px}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:42px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+  .s1 .h1{font-size:92px}
+  .riscado{position:relative;display:inline-block}
+  .riscado .x{position:absolute;left:-3%;top:52%;width:106%;height:12px;background:#ff8d73;border-radius:8px;transform:rotate(-4deg);transform-origin:left center}
+  /* linha do tempo contrato */
+  .linha{position:relative;height:150px;margin-top:26px}
+  .linha .trilho{position:absolute;left:0;right:0;top:70px;height:10px;border-radius:99px;background:rgba(255,255,255,.14)}
+  .linha .marco{position:absolute;top:34px;display:flex;flex-direction:column;align-items:center;gap:10px;transform:translateX(-50%)}
+  .linha .marco i{width:26px;height:26px;border-radius:50%;background:var(--lime);border:5px solid var(--g900);box-shadow:0 0 0 3px var(--lime)}
+  .linha .marco span{font-weight:700;font-size:25px;color:var(--mute);white-space:nowrap}
+  .linha .marco.red i{background:#ff8d73;box-shadow:0 0 0 3px #ff8d73}
+  .regras{display:flex;flex-direction:column;gap:16px}
+</style>
+</head>
+<body data-music="tenso" data-bpm="120">
+<div class="deck">
+
+<section class="slide s1" data-dur="6" data-hold="4.8" data-label="Capa">
+  <div class="grid"></div>
+  <div class="col top" style="gap:26px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">custeio agrícola · o mito dos 60 dias</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">O custeio vence</span>
+      <span style="display:block;position:relative" data-in="rise" data-at="0.8" data-out="up"><span class="riscado">"na colheita + 60"<span class="x" data-in="grow" data-at="2.2" data-dur="0.4" data-sfx="error"></span></span></span>
+    </h1>
+    <p class="h3" data-in="rise" data-at="3.0" data-sfx="whoosh" data-out="up">Quase. E o "quase"<br><em data-in="marker" data-at="3.6" data-sfx="swipe">custa caro.</em></p>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="fade" data-at="4.2" data-out="fade">As 3 palavras da norma que todo mundo pula. Arrasta.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="A regra">
+  <div class="grid"></div>
+  <div class="col top" style="gap:22px">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O que a norma<br>diz <span class="lime">de verdade</span></h2>
+    <div class="card" data-in="drop" data-at="1.0" data-sfx="thud" data-out="down">
+      <p class="small mute" style="margin-bottom:12px">MCR 3-2-14</p>
+      <p class="p" style="line-height:1.55" data-type data-at="1.4" data-cps="55" data-sfx="type">"O vencimento DEVE SER FIXADO por prazo NÃO SUPERIOR a 60 dias após o TÉRMINO da colheita."</p>
+    </div>
+    <div class="regras">
+      <div class="chip" data-in="rise" data-at="3.2" data-sfx="pop" data-sfx-gain=".5" data-out="down">FIXADO = cravado no contrato, pela colheita PREVISTA</div>
+      <div class="chip" data-in="rise" data-at="3.6" data-sfx="pop" data-sfx-gain=".5" data-out="down">NÃO SUPERIOR = teto, não fórmula</div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.5" data-out="fade">A colheita real, depois, não reescreve a data do contrato.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="Linha do tempo">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">E pode vencer<br><span class="lime">ANTES</span></h2>
+    <div class="linha" data-out="fade">
+      <div class="trilho" data-in="grow" data-at="1.0" data-dur="0.8"></div>
+      <div class="marco" style="left:12%" data-in="pop" data-at="1.4" data-sfx="tick"><i></i><span>plantio</span></div>
+      <div class="marco red" style="left:52%" data-in="pop" data-at="1.8" data-sfx="thud"><i></i><span>vendeu o produto</span></div>
+      <div class="marco" style="left:80%" data-in="pop" data-at="2.2" data-sfx="tick"><i></i><span style="white-space:normal;text-align:center;line-height:1.3">vencimento<br>do contrato</span></div>
+    </div>
+    <div class="card" style="margin-top:26px" data-in="fade" data-at="2.9" data-out="fade">
+      <p class="p" style="line-height:1.5">Comercializou <b style="color:#ff8d73">antes</b> do vencimento? O saldo deve ser <b style="color:var(--lime)">amortizado na hora</b> (MCR 3-2-18).</p>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.3" data-out="fade">E dá pra reprogramar: pedido após a colheita, até 15 dias antes do vencimento (MCR 3-2-15).</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="4.8" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h1 class="h1" style="font-size:84px;line-height:1.14">
+      <span style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">A data que vale é a</span>
+      <span style="display:block" data-in="rise" data-at="0.7" data-out="up"><em data-in="marker" data-at="1.3" data-sfx="swipe">do seu contrato.</em></span>
+    </h1>
+    <p class="p mute" data-in="fade" data-at="2.0" data-out="fade">Confira a cédula antes de planejar a venda —<br>e negocie o prazo pela ÉPOCA REAL da sua renda.</p>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="3.0" data-sfx="success" data-out="shrink">Salva antes da próxima cédula</div></div>
+    <p class="foot" data-in="fade" data-at="3.8" data-out="fade">Sujeito à análise do banco · Fontes: MCR 3-2-13 a 18 e 2-6-1</p>
+  </div>
+</section>
+
+</div>
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){const tpl=document.getElementById('chrome'),slides=document.querySelectorAll('.slide');slides.forEach((s,i)=>{const c=tpl.content.cloneNode(true);c.querySelector('.n').textContent=i+1;c.querySelector('.total').textContent=slides.length;if(s.hasAttribute('data-no-swipe'))c.querySelector('.chrome-bottom').remove();s.appendChild(c);});})();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>

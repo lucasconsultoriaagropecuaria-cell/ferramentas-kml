@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — Reforma de canavial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:34px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:34px 38px}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:44px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+  /* cana */
+  .cana{position:absolute;right:70px;top:150px;width:420px;height:600px}
+  .cana path{stroke-linecap:round}
+  .colmo{stroke:var(--lime);stroke-width:16;fill:none}
+  .no{stroke:#9dbf4e;stroke-width:4;fill:none}
+  .folha{stroke:#8fd18a;stroke-width:8;fill:none}
+  .s1 .h1{font-size:94px}
+  /* duelo soca x reforma */
+  .vs{display:flex;gap:24px;margin-top:16px}
+  .vs .lado{flex:1;border-radius:26px;padding:32px 26px;display:flex;flex-direction:column;gap:14px;border:3px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
+  .vs .lado h4{font-weight:900;font-size:36px;color:var(--cream)}
+  .vs .lado p{font-weight:600;font-size:27px;color:var(--mute);line-height:1.4}
+  .vs .lado .tag{font-weight:900;font-size:34px;color:var(--lime);margin-top:auto}
+  .vs .lado.dir{border-color:var(--lime);background:rgba(203,233,106,.1)}
+</style>
+</head>
+<body data-music="viola" data-bpm="120">
+<div class="deck">
+
+<section class="slide s1" data-dur="6" data-hold="4.6" data-label="Capa">
+  <div class="grid"></div>
+  <svg class="cana" viewBox="0 0 420 600" data-out="fade">
+    <path class="colmo" d="M210 560 L210 140" data-in="draw" data-at="0.5" data-dur="1.6" data-sfx="rise"/>
+    <path class="no" d="M186 470 L234 470" data-in="fade" data-at="1.0"/>
+    <path class="no" d="M186 380 L234 380" data-in="fade" data-at="1.2"/>
+    <path class="no" d="M186 290 L234 290" data-in="fade" data-at="1.4"/>
+    <path class="no" d="M186 200 L234 200" data-in="fade" data-at="1.6"/>
+    <path class="folha" d="M210 160 Q300 90 380 110" data-in="draw" data-at="2.1" data-dur="0.6"/>
+    <path class="folha" d="M210 180 Q120 100 50 130" data-in="draw" data-at="2.3" data-dur="0.6"/>
+    <path class="folha" d="M210 240 Q310 200 370 230" data-in="draw" data-at="2.5" data-dur="0.6"/>
+  </svg>
+  <div class="col bottom" style="gap:22px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">você sabia? · cana</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">Reformar canavial</span>
+      <span style="display:block" data-in="rise" data-at="0.8" data-out="up"><em data-in="marker" data-at="1.5" data-sfx="swipe">não é custeio.</em></span>
+    </h1>
+    <p class="p mute" data-in="fade" data-at="2.1" data-out="fade">E enquadrar errado sufoca o caixa<br>por anos. Arrasta.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="Duelo">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">A mesma cana,<br>dois <span class="lime">créditos</span></h2>
+    <div class="vs" data-out="fade">
+      <div class="lado" data-in="left" data-at="1.1" data-sfx="pop">
+        <h4>SOCA</h4>
+        <p>a cana que rebrota após o corte: tratos, colheita, replantios parciais</p>
+        <p class="tag">= CUSTEIO<br>prazo do ciclo</p>
+      </div>
+      <div class="lado dir" data-in="right" data-at="1.6" data-sfx="pop">
+        <h4>REFORMA</h4>
+        <p>canavial esgotado: arranca, prepara e planta de novo, até a 1ª safra</p>
+        <p class="tag">= INVESTIMENTO<br>prazo longo</p>
+      </div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.2" data-out="fade">MCR 3-2-3 (soca) e MCR 3-3-9 (fundação, ampliação e renovação)</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="Por que importa">
+  <div class="grid"></div>
+  <div class="col top" style="gap:26px">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Por que isso<br>muda o <span class="lime">caixa</span></h2>
+    <div class="card" data-in="drop" data-at="1.1" data-sfx="thud" data-out="down">
+      <p class="p" style="line-height:1.5">A reforma se paga em <b style="color:var(--lime)">vários cortes</b> — espremer esse gasto num prazo de custeio é pagar lavoura de 5 anos com dinheiro de 1.</p>
+    </div>
+    <div class="chip lime" data-in="pop" data-at="2.6" data-sfx="ding" data-out="down">Como investimento: até 8 anos, com até 2 de carência</div>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="rise" data-at="3.8" data-out="fade">O canavial novo paga o financiamento<br><span class="lime">no ritmo dele</span> — não no seu sufoco.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="4.6" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h1 class="h1" style="font-size:88px;line-height:1.12">
+      <span style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Enquadramento</span>
+      <span style="display:block" data-in="rise" data-at="0.7" data-out="up">certo = fôlego<br><em data-in="marker" data-at="1.4" data-sfx="swipe">pra crescer.</em></span>
+    </h1>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="2.4" data-sfx="success" data-out="shrink">Salva e manda pra quem é da cana</div></div>
+    <p class="foot" data-in="fade" data-at="3.2" data-out="fade">Prazo do Pronamp equalizado · sujeito à análise do banco<br>Fontes: MCR 3-2-3, 3-3-9 e 8-1</p>
+  </div>
+</section>
+
+</div>
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){const tpl=document.getElementById('chrome'),slides=document.querySelectorAll('.slide');slides.forEach((s,i)=>{const c=tpl.content.cloneNode(true);c.querySelector('.n').textContent=i+1;c.querySelector('.total').textContent=slides.length;if(s.hasAttribute('data-no-swipe'))c.querySelector('.chrome-bottom').remove();s.appendChild(c);});})();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — 7 itens que se financiam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:33px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .chip .n{width:52px;height:52px;border-radius:50%;background:var(--lime);color:var(--g900);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;flex:none}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:42px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+  .s1 .h1{font-size:94px}
+  .big7{font-weight:900;font-size:360px;line-height:.9;color:var(--lime);opacity:.9}
+  .lista{display:flex;flex-direction:column;gap:16px}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:34px 38px}
+</style>
+</head>
+<body data-music="viola" data-bpm="120">
+<div class="deck">
+
+<section class="slide s1" data-dur="6" data-hold="4.6" data-label="Capa">
+  <div class="grid"></div>
+  <div style="position:absolute;right:90px;top:150px" class="big7" data-in="pop" data-at="1.8" data-sfx="impact" data-out="shrink">7</div>
+  <div class="col bottom" style="gap:22px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">inovagro · itens escondidos</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">7 coisas que você</span>
+      <span style="display:block" data-in="rise" data-at="0.8" data-out="up">não sabia que</span>
+      <span style="display:block" data-in="rise" data-at="1.1" data-out="up"><em data-in="marker" data-at="1.6" data-sfx="swipe">se financiam.</em></span>
+    </h1>
+    <p class="p mute" data-in="fade" data-at="2.4" data-out="fade">A 5ª é um poço artesiano. Sério. Arrasta.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="1 a 4">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Do curral<br>pro <span class="lime">projeto</span></h2>
+    <div class="lista" style="margin-top:14px">
+      <div class="chip" data-in="left" data-at="1.1" data-sfx="pop" data-sfx-gain=".5" data-out="down"><span class="n">1</span>Cerca elétrica completa</div>
+      <div class="chip" data-in="left" data-at="1.5" data-sfx="pop" data-sfx-gain=".5" data-out="down"><span class="n">2</span>Brinco e microchip do rebanho</div>
+      <div class="chip" data-in="left" data-at="1.9" data-sfx="pop" data-sfx-gain=".5" data-out="down"><span class="n">3</span>Ventilação e sombra (bem-estar)</div>
+      <div class="chip" data-in="left" data-at="2.3" data-sfx="pop" data-sfx-gain=".5" data-out="down"><span class="n">4</span>Água: captação e tratamento</div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.0" data-out="fade">Circular BNDES 98/2026, item 4.2 — lista expressa da norma.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="5 a 7">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">E os três que<br><span class="lime">ninguém acredita</span></h2>
+    <div class="lista" style="margin-top:14px">
+      <div class="chip lime" data-in="left" data-at="1.1" data-sfx="ding" data-out="down"><span class="n" style="background:var(--g900);color:var(--lime)">5</span>POÇO ARTESIANO</div>
+      <div class="chip" data-in="left" data-at="1.6" data-sfx="pop" data-sfx-gain=".5" data-out="down"><span class="n">6</span>Kit de análise de solo</div>
+      <div class="chip" data-in="left" data-at="2.0" data-sfx="pop" data-sfx-gain=".5" data-out="down"><span class="n">7</span>Estação meteorológica própria</div>
+    </div>
+    <div class="card" style="margin-top:20px" data-in="fade" data-at="2.9" data-out="fade">
+      <p class="p" style="line-height:1.5">Até 11,5% a.a., até 100% financiado, até 10 anos — e a norma já considera a lista <b style="color:var(--lime)">aprovada nos programas de qualidade</b>: sem burocracia extra.</p>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.4" data-out="fade">Estação do tempo tem 1 condição: compartilhar os dados com órgãos públicos.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="4.6" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h1 class="h1" style="font-size:86px;line-height:1.14">
+      <span style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Junte as miudezas</span>
+      <span style="display:block" data-in="rise" data-at="0.7" data-out="up">num projeto só.<br><em data-in="marker" data-at="1.4" data-sfx="swipe">O banco analisa um.</em></span>
+    </h1>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="2.4" data-sfx="success" data-out="shrink">Marca quem vive pedindo um poço</div></div>
+    <p class="foot" data-in="fade" data-at="3.2" data-out="fade">Sujeito à análise do banco · agricultura familiar: Pronaf<br>Fontes: Circular BNDES 98/2026 (Inovagro) e MCR 11-4</p>
+  </div>
+</section>
+
+</div>
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){const tpl=document.getElementById('chrome'),slides=document.querySelectorAll('.slide');slides.forEach((s,i)=>{const c=tpl.content.cloneNode(true);c.querySelector('.n').textContent=i+1;c.querySelector('.total').textContent=slides.length;if(s.hasAttribute('data-no-swipe'))c.querySelector('.chrome-bottom').remove();s.appendChild(c);});})();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>
