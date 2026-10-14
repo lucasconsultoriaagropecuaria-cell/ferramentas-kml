@@ -1,0 +1,10 @@
+A matrícula vira KML em 2 minutos — sem AutoCAD, sem digitar vértice, de graça. 🎬
+
+O memorial descritivo chega como ele chega: azimutes e distâncias, página após página, às vezes 180 vértices num PDF escaneado. A nossa ferramenta lê o documento (com OCR), converte azimute + distância em coordenadas, CONFERE antes de gerar (área da matrícula × CCIR, perímetro dentro do CAR, fechamento do polígono) e entrega o KML pronto pro Google Earth, QGIS, CAR e BB Pl@ntar.
+
+Tudo no navegador: nenhum documento sai do seu computador.
+
+🔗 Link na bio.
+📌 Salva e manda pro projetista parceiro.
+
+#matricula #kml #georreferenciamento #googleearth #creditorural #consultoriaagropecuaria #agrosp
