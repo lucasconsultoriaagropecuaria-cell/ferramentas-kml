@@ -261,7 +261,7 @@
   function preview() {
     document.body.classList.add('preview');
     const bar = document.createElement('div'); bar.className = 'preview-bar';
-    bar.innerHTML = `<b>Carrossel</b><span>clique num slide para reiniciar e ouvir o áudio sincronizado</span>
+    bar.innerHTML = `<b>Carrossel</b><span>o navegador só libera áudio depois de um clique: clique num slide (ou no botão) para ouvir</span>
       <button id="pv-sound" class="off">🔇 som</button>
       <label>música <select id="pv-music"><option value="cinematic">cinematográfica</option><option value="intimista">intimista</option><option value="urbano">urbana</option><option value="none">sem música</option></select></label>
       <span class="t" id="pv-time"></span><span class="hint">abra com ?export para o modo de exportação</span>`;
@@ -273,7 +273,12 @@
     const now0 = performance.now(); S.forEach(s => { s.t0 = now0; });
     const sel = bar.querySelector('#pv-music'); sel.value = S[0].music;
     sel.onchange = () => { S.forEach(s => s.music = sel.value); if (playing) restart(playing.idx); };
-    bar.querySelector('#pv-sound').onclick = e => { soundOn = !soundOn; e.target.className = soundOn ? '' : 'off'; e.target.textContent = soundOn ? '🔊 som' : '🔇 som'; if (!soundOn && playing) { playing.h.stop(); playing = null; } };
+    const nearest = () => { const mid = innerHeight / 2; let best = 0, bd = Infinity; S.forEach((s, i) => { const r = s.el.getBoundingClientRect(); const d = Math.abs((r.top + r.bottom) / 2 - mid); if (d < bd) { bd = d; best = i; } }); return best; };
+    bar.querySelector('#pv-sound').onclick = e => {
+      soundOn = !soundOn; e.target.className = soundOn ? '' : 'off'; e.target.textContent = soundOn ? '🔊 som' : '🔇 som';
+      if (!soundOn && playing) { playing.h.stop(); playing = null; }
+      if (soundOn) restart(nearest());
+    };
 
     function restart(i) {
       const s = S[i];
