@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — O silo na conta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  /* ---------- identidade @creditoruralsp (verdes da marca + creme) ---------- */
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:34px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:36px 40px}
+  .badge-wrap{position:absolute}
+  .badge{padding:16px 30px;border-radius:16px;background:var(--lime);color:var(--g900);font-weight:900;font-size:36px;letter-spacing:.04em;transform:rotate(-8deg)}
+  .ck{width:56px;height:56px;flex:none}
+  .ck circle{fill:var(--lime)}
+  .ck path{fill:none;stroke:var(--g900);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+
+  /* silo (capa) */
+  .s1 .silo{position:absolute;right:90px;top:170px;width:360px;height:560px}
+  .s1 .silo .shell{fill:none;stroke:var(--cream);stroke-width:8;stroke-linejoin:round}
+  .s1 .silo .fill{fill:rgba(203,233,106,.75)}
+  .s1 .silo .roof{fill:none;stroke:var(--lime);stroke-width:8;stroke-linejoin:round}
+  .s1 .h1{font-size:96px}
+  .s1 .fillbox{transform-origin:bottom}
+
+  /* contadores grandes */
+  .big{font-weight:900;font-size:110px;line-height:1;color:var(--lime);font-variant-numeric:tabular-nums}
+  .big small{font-weight:700;font-size:38px;color:var(--mute);margin-left:16px}
+
+  /* réguas (slide 3) */
+  .ruler{display:flex;flex-direction:column;gap:14px}
+  .ruler .lbl{font-weight:600;font-size:34px;color:var(--mute)}
+  .ruler .track{position:relative;height:56px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+  .ruler .track i{display:block;height:100%;background:var(--lime);transform-origin:left;border-radius:999px}
+  .ruler .cap{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-weight:800;font-size:28px;color:var(--mute)}
+  .ruler .val{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-weight:900;font-size:30px;color:var(--g900)}
+  .ruler .val.out{color:var(--cream)}
+
+  /* linha do tempo (slide 4) */
+  .tl{display:flex;gap:10px;margin-top:10px}
+  .tl .yr{flex:1;height:84px;border-radius:16px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:var(--mute)}
+  .tl .yr.car{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+
+  /* barras decrescentes (slide 5) */
+  .bars{display:flex;align-items:flex-end;gap:18px;height:430px;margin-top:16px}
+  .bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;height:100%;justify-content:flex-end}
+  .bars .stick{width:100%;border-radius:14px 14px 6px 6px;background:linear-gradient(180deg,var(--lime),#9dbf4e);transform-origin:bottom}
+  .bars .v{font-weight:800;font-size:26px;color:var(--cream);font-variant-numeric:tabular-nums}
+  .bars .y{font-weight:600;font-size:24px;color:var(--mute)}
+
+  .s6 .h1{font-size:88px;line-height:1.12}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:44px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+</style>
+</head>
+<body data-music="intimista" data-bpm="120">
+<div class="deck">
+
+<!-- ============ 1 · CAPA ============ -->
+<section class="slide s1" data-dur="6" data-hold="4.6" data-label="Capa">
+  <div class="grid"></div>
+  <svg class="silo" viewBox="0 0 360 560" data-out="fade">
+    <clipPath id="siloclip"><rect x="80" y="150" width="200" height="360" rx="18"/></clipPath>
+    <g clip-path="url(#siloclip)">
+      <g class="fillbox" data-in="grow-y" data-at="1.2" data-dur="2.2" data-ease="inout" data-sfx="rise">
+        <rect class="fill" x="80" y="150" width="200" height="360"/>
+      </g>
+    </g>
+    <rect class="shell" x="80" y="150" width="200" height="360" rx="18" data-in="draw" data-at="0.4" data-dur="1.0"/>
+    <path class="roof" d="M60 150 L180 60 L300 150" data-in="draw" data-at="0.9" data-dur="0.7"/>
+    <line class="shell" x1="120" y1="510" x2="120" y2="548" data-in="fade" data-at="1.1"/>
+    <line class="shell" x1="240" y1="510" x2="240" y2="548" data-in="fade" data-at="1.1"/>
+    <text x="180" y="345" text-anchor="middle" style="font:900 56px Inter;fill:#0e2318" data-in="fade" data-at="3.0">3.000 t</text>
+  </svg>
+  <div class="badge-wrap" style="left:90px;top:160px" data-in="pop" data-at="3.4" data-sfx="pop" data-out="shrink"><div class="badge">EXEMPLO<br>ILUSTRATIVO</div></div>
+  <div class="col bottom" style="gap:22px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">PCA · linha na prática</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">O silo se paga?</span>
+      <span style="display:block" data-in="rise" data-at="0.8" data-out="up"><em data-in="marker" data-at="1.5" data-sfx="swipe">A conta na mesa.</em></span>
+    </h1>
+    <p class="p mute" data-in="fade" data-at="2.1" data-out="fade">3.000 toneladas, até 8% ao ano,<br>sem tirar um real do bolso agora.</p>
+  </div>
+</section>
+
+<!-- ============ 2 · O CASO ============ -->
+<section class="slide s2" data-dur="6" data-hold="5.0" data-label="O caso">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O projeto<br><span class="lime">(ilustrativo)</span></h2>
+    <div style="display:flex;flex-direction:column;gap:18px;margin-top:16px">
+      <div class="chip" data-in="rise" data-at="1.0" data-sfx="pop" data-sfx-gain=".5" data-out="down">Silo de 3.000 t</div>
+      <div class="chip" data-in="rise" data-at="1.3" data-sfx="pop" data-sfx-gain=".5" data-out="down">+ secador</div>
+      <div class="chip" data-in="rise" data-at="1.6" data-sfx="pop" data-sfx-gain=".5" data-out="down">+ balança</div>
+    </div>
+    <div style="margin-top:36px" data-in="fade" data-at="2.3" data-out="fade">
+      <p class="small mute" style="margin-bottom:8px">orçamento do exemplo</p>
+      <div class="big">R$ <span data-count="2400000" data-at="2.5" data-dur="1.6" data-sfx="ticker">0</span></div>
+    </div>
+  </div>
+  <div class="col bottom" style="gap:16px">
+    <div class="chip lime" data-in="pop" data-at="4.4" data-sfx="ding" data-out="down">PCA Grãos: até 8% a.a. · até 100% financiado</div>
+    <p class="foot" data-in="fade" data-at="4.8" data-out="fade">Programa federal do armazém · Circular BNDES 97/2026</p>
+  </div>
+</section>
+
+<!-- ============ 3 · AS DUAS RÉGUAS ============ -->
+<section class="slide s3" data-dur="6" data-hold="5.0" data-label="Réguas">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O juro de 8% tem<br>uma régua: <span class="lime">12.000 t</span></h2>
+    <div class="ruler" style="margin-top:30px" data-in="fade" data-at="1.0" data-out="fade">
+      <p class="lbl">o que você JÁ TEM de armazém</p>
+      <div class="track"><i data-in="grow" data-at="1.3" data-dur="0.8" data-ease="out" style="width:6%"></i><span class="val out" data-in="fade" data-at="2.0">0 t</span><span class="cap">12.000 t</span></div>
+    </div>
+    <div class="ruler" style="margin-top:26px" data-in="fade" data-at="2.4" data-out="fade">
+      <p class="lbl">o que você vai FINANCIAR</p>
+      <div class="track"><i data-in="grow" data-at="2.7" data-dur="1.0" data-ease="out" style="width:25%" data-sfx="rise"></i><span class="val" data-in="fade" data-at="3.4">3.000 t</span><span class="cap">12.000 t</span></div>
+    </div>
+  </div>
+  <div class="col bottom" style="gap:16px">
+    <div class="chip lime" data-in="pop" data-at="4.1" data-sfx="success" data-out="down"><svg class="ck" viewBox="0 0 56 56" style="width:40px;height:40px"><circle cx="28" cy="28" r="28" style="fill:#0e2318"/><path d="M16 29l8 8 16-17" style="stroke:#cbe96a"/></svg>Dentro das duas réguas → até 8% a.a.</div>
+    <p class="foot" data-in="fade" data-at="4.6" data-out="fade">Estourou qualquer uma? A taxa vai a até 9,5%.</p>
+  </div>
+</section>
+
+<!-- ============ 4 · A CARÊNCIA ============ -->
+<section class="slide s4" data-dur="6" data-hold="5.0" data-label="Carência">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">2 anos de fôlego<br>pra <span class="lime">começar</span></h2>
+    <div class="tl" data-in="fade" data-at="1.0" data-out="fade">
+      <div class="yr car" data-in="pop" data-at="1.2" data-sfx="tick">1</div>
+      <div class="yr car" data-in="pop" data-at="1.35" data-sfx="tick">2</div>
+      <div class="yr" data-in="pop" data-at="1.5">3</div>
+      <div class="yr" data-in="pop" data-at="1.6">4</div>
+      <div class="yr" data-in="pop" data-at="1.7">5</div>
+      <div class="yr" data-in="pop" data-at="1.8">6</div>
+      <div class="yr" data-in="pop" data-at="1.9">7</div>
+      <div class="yr" data-in="pop" data-at="2.0">8</div>
+      <div class="yr" data-in="pop" data-at="2.1">9</div>
+      <div class="yr" data-in="pop" data-at="2.2">10</div>
+    </div>
+    <div style="margin-top:40px" data-in="fade" data-at="2.6" data-out="fade">
+      <p class="small mute" style="margin-bottom:8px">na carência, só os juros</p>
+      <div class="big" style="font-size:96px">R$ <span data-count="192000" data-at="2.8" data-dur="1.4" data-sfx="ticker">0</span><small>/ano</small></div>
+      <p class="p mute" style="margin-top:14px" data-in="fade" data-at="4.0">≈ R$ 16 mil por mês — enquanto o silo<br>já trabalha duas safras pra você.</p>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.7" data-out="fade">Prazo total de até 10 anos · carência de até 2 (Circular 97/2026)</p>
+  </div>
+</section>
+
+<!-- ============ 5 · AS PARCELAS ============ -->
+<section class="slide s5" data-dur="6" data-hold="5.0" data-label="Parcelas">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Depois, 8 parcelas<br>que só <span class="lime">diminuem</span></h2>
+    <div class="bars" data-out="fade">
+      <div class="b"><span class="v" data-in="fade" data-at="1.5">492</span><div class="stick" style="height:100%" data-in="grow-y" data-at="1.2" data-sfx="rise"></div><span class="y">ano 3</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="1.8">468</span><div class="stick" style="height:95%" data-in="grow-y" data-at="1.5" data-sfx-gain=".4" data-sfx="tick"></div><span class="y">4</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="2.1">444</span><div class="stick" style="height:90%" data-in="grow-y" data-at="1.8" data-sfx-gain=".4" data-sfx="tick"></div><span class="y">5</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="2.4">420</span><div class="stick" style="height:85%" data-in="grow-y" data-at="2.1" data-sfx-gain=".4" data-sfx="tick"></div><span class="y">6</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="2.7">396</span><div class="stick" style="height:80%" data-in="grow-y" data-at="2.4" data-sfx-gain=".4" data-sfx="tick"></div><span class="y">7</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="3.0">372</span><div class="stick" style="height:76%" data-in="grow-y" data-at="2.7" data-sfx-gain=".4" data-sfx="tick"></div><span class="y">8</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="3.3">348</span><div class="stick" style="height:71%" data-in="grow-y" data-at="3.0" data-sfx-gain=".4" data-sfx="tick"></div><span class="y">9</span></div>
+      <div class="b"><span class="v" data-in="fade" data-at="3.6">324</span><div class="stick" style="height:66%" data-in="grow-y" data-at="3.3" data-sfx="ding"></div><span class="y">10</span></div>
+    </div>
+    <p class="small mute" data-in="fade" data-at="4.0" data-out="fade">valores em R$ mil · R$ 300 mil de principal + juros sobre o que falta</p>
+  </div>
+  <div class="col bottom">
+    <p class="p" data-in="rise" data-at="4.5" data-out="fade">O silo fica. <span class="lime">A parcela encolhe.</span></p>
+  </div>
+</section>
+
+<!-- ============ 6 · CTA ============ -->
+<section class="slide s6" data-dur="6" data-hold="4.8" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:26px">
+    <h1 class="h1" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">50 mil sacas<br>guardadas por safra.</h1>
+    <p class="h3" data-in="rise" data-at="1.2" data-out="up">Cada <em data-in="marker" data-at="1.9" data-sfx="swipe">R$ 1 por saca</em> capturado<br>= <span class="lime">R$ 50 mil no ano.</span></p>
+    <p class="p mute" data-in="fade" data-at="2.6" data-out="fade">Espera, secagem própria, frete fora do pico.<br>A viabilidade é essa comparação — sem promessa de preço.</p>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="3.6" data-sfx="success" data-out="shrink">Salva e faz a conta da sua colheita</div></div>
+    <p class="foot" data-in="fade" data-at="4.2" data-out="fade">Números ilustrativos · operação sujeita à análise do banco<br>Fontes: Circular BNDES 97/2026 · MCR 11-9 e 7-7</p>
+  </div>
+</section>
+
+</div>
+
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){
+    const tpl=document.getElementById('chrome'), slides=document.querySelectorAll('.slide');
+    slides.forEach((s,i)=>{
+      const c=tpl.content.cloneNode(true);
+      c.querySelector('.n').textContent=i+1; c.querySelector('.total').textContent=slides.length;
+      if(s.hasAttribute('data-no-swipe')) c.querySelector('.chrome-bottom').remove();
+      s.appendChild(c);
+    });
+  })();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>

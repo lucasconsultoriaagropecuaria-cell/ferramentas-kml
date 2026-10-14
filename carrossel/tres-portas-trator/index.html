@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — As portas do trator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  /* ---------- identidade @creditoruralsp ---------- */
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .h1 .red,.h2 .red{color:#ff8d73}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:34px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+
+  /* capa: taxas em duelo */
+  .s1 .h1{font-size:92px}
+  .duel{display:flex;gap:26px;margin-top:10px}
+  .duel .tx{flex:1;border-radius:28px;padding:34px 20px;text-align:center;font-variant-numeric:tabular-nums}
+  .duel .tx .n{font-weight:900;font-size:108px;line-height:1}
+  .duel .tx .d{font-weight:700;font-size:28px;margin-top:10px}
+  .duel .quer{background:rgba(203,233,106,.14);border:3px solid var(--lime);color:var(--lime)}
+  .duel .saiu{background:rgba(217,68,43,.14);border:3px solid #ff8d73;color:#ff8d73}
+
+  /* portas */
+  .portas{display:flex;gap:24px;margin-top:14px}
+  .porta{flex:1;border-radius:26px 26px 10px 10px;border:3px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);padding:30px 20px 26px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;position:relative;min-height:330px;justify-content:flex-start}
+  .porta .nome{font-weight:800;font-size:32px}
+  .porta .quem{font-weight:600;font-size:25px;color:var(--mute);line-height:1.35}
+  .porta .taxa{font-weight:900;font-size:46px;color:var(--lime);margin-top:auto}
+  .porta.aberta{border-color:var(--lime);background:rgba(203,233,106,.1)}
+  .porta.fechada{border-color:#ff8d73;background:rgba(217,68,43,.08)}
+  .porta.fechada .taxa{color:#ff8d73}
+  .lock{position:absolute;top:-34px;left:50%;transform:translateX(-50%);width:76px;height:76px}
+  .lock circle{fill:#d9442b}
+  .lock path{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+
+  .vedado{position:absolute;border:8px solid var(--red);color:var(--red);padding:14px 30px;border-radius:14px;font:900 44px/1.1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;transform:rotate(-9deg);background:rgba(255,253,246,.92)}
+
+  .lista{display:flex;flex-direction:column;gap:18px}
+  .big{font-weight:900;font-size:120px;line-height:1;color:var(--lime);font-variant-numeric:tabular-nums}
+  .big small{font-weight:700;font-size:40px;color:var(--mute)}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:44px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+</style>
+</head>
+<body data-music="cinematic" data-bpm="120">
+<div class="deck">
+
+<!-- ============ 1 · CAPA ============ -->
+<section class="slide s1" data-dur="6" data-hold="4.8" data-label="Capa">
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <p class="eyebrow mute" data-in="fade" data-at="0.3" data-out="fade">a pergunta que ouço toda semana</p>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.5" data-sfx="whoosh" data-out="up">"Se o Pronamp é 9%,</span>
+      <span style="display:block" data-in="rise" data-at="0.8" data-out="up">por que meu trator</span>
+      <span style="display:block" data-in="rise" data-at="1.1" data-out="up">saiu a <em data-in="marker" data-at="1.8" data-sfx="swipe">11,5%?"</em></span>
+    </h1>
+  </div>
+  <div class="col bottom" style="gap:20px">
+    <div class="duel" data-out="fade">
+      <div class="tx quer" data-in="pop" data-at="2.5" data-sfx="pop"><div class="n"><span data-count="9" data-at="2.6" data-dur="0.8">0</span>%</div><div class="d">a taxa que você quer</div></div>
+      <div class="tx saiu" data-in="pop" data-at="3.1" data-sfx="thud"><div class="n">11,5%</div><div class="d">a taxa que o trator paga</div></div>
+    </div>
+    <p class="p mute" data-in="fade" data-at="3.9" data-out="fade">Não é o gerente. É a norma. Arrasta que eu te mostro.</p>
+  </div>
+</section>
+
+<!-- ============ 2 · AS PORTAS ============ -->
+<section class="slide s2" data-dur="6" data-hold="5.0" data-label="Portas">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O trator tem<br><span class="lime">portas próprias</span></h2>
+    <div class="portas" data-out="fade">
+      <div class="porta aberta" data-in="rise" data-at="1.1" data-sfx="pop">
+        <p class="nome">PRONAF</p><p class="quem">agricultura familiar com CAF</p><p class="taxa">até 5%</p>
+      </div>
+      <div class="porta aberta" data-in="rise" data-at="1.5" data-sfx="pop">
+        <p class="nome">MODERFROTA</p><p class="quem">os demais produtores · novos e usados na idade</p><p class="taxa">11,5–12,5%</p>
+      </div>
+      <div class="porta fechada" data-in="rise" data-at="1.9" data-sfx="thud">
+        <svg class="lock" viewBox="0 0 76 76" data-in="drop" data-at="2.9" data-sfx="impact"><circle cx="38" cy="38" r="38"/><path d="M26 36v-8a12 12 0 0 1 24 0v8M22 36h32v22H22z"/></svg>
+        <p class="nome">PRONAMP</p><p class="quem">o 9% do investimento</p><p class="taxa" style="font-size:36px;line-height:1.25">FECHADA<br>pra máquina</p>
+      </div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="rise" data-at="4.0" data-out="fade">A porta mais barata existe —<br>mas <span class="lime">não é porta de trator.</span></p>
+  </div>
+</section>
+
+<!-- ============ 3 · O PORQUÊ ============ -->
+<section class="slide s3" data-dur="6" data-hold="5.0" data-label="Por quê">
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Está escrito<br>na <span class="lime">norma</span></h2>
+    <div class="card" style="position:relative;margin-top:14px" data-in="drop" data-at="1.1" data-sfx="thud" data-out="down">
+      <p class="small mute" style="margin-bottom:14px">MCR 8-1-5 (resumo)</p>
+      <p class="p" data-type data-at="1.5" data-cps="60" data-sfx="type">Fica vedado financiar pelo Pronamp máquina que cabe no Moderfrota: trator, colheitadeira, autopropelidas…</p>
+      <div class="vedado" style="right:-20px;bottom:-40px" data-in="spin" data-at="3.6" data-dur="0.4" data-sfx="impact">VEDADO</div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="rise" data-at="4.2" data-out="fade">Na prática: <span class="lime">o 9% não compra máquina.</span><br>Nem a 8 anos, nem com laudo, nem insistindo.</p>
+  </div>
+</section>
+
+<!-- ============ 4 · O QUE O 9% COMPRA ============ -->
+<section class="slide s4" data-dur="6" data-hold="5.0" data-label="O que compra">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O que o 9%<br><span class="lime">compra</span> de verdade</h2>
+    <div class="lista" style="margin-top:20px">
+      <div class="chip" data-in="rise" data-at="1.2" data-sfx="pop" data-sfx-gain=".5" data-out="down">🏗️ Barracão e benfeitorias</div>
+      <div class="chip" data-in="rise" data-at="1.5" data-sfx="pop" data-sfx-gain=".5" data-out="down">🌱 Formar e recuperar pastagem</div>
+      <div class="chip" data-in="rise" data-at="1.8" data-sfx="pop" data-sfx-gain=".5" data-out="down">🪨 Calcário e correção de solo</div>
+      <div class="chip" data-in="rise" data-at="2.1" data-sfx="pop" data-sfx-gain=".5" data-out="down">🎋 Reforma de canavial</div>
+      <div class="chip" data-in="rise" data-at="2.4" data-sfx="pop" data-sfx-gain=".5" data-out="down">💧 Irrigação e energia própria</div>
+    </div>
+  </div>
+  <div class="col bottom" style="gap:16px">
+    <div class="chip lime" data-in="pop" data-at="3.6" data-sfx="ding" data-out="down">Até R$ 600 mil/ano · até 8 anos · 2 de carência</div>
+    <p class="foot" data-in="fade" data-at="4.2" data-out="fade">Pronamp investimento: renda até R$ 3,5 mi, 80% do campo</p>
+  </div>
+</section>
+
+<!-- ============ 5 · A PORTA CERTA ============ -->
+<section class="slide s5" data-dur="6" data-hold="5.0" data-label="Porta certa">
+  <div class="grid"></div>
+  <div class="col top" style="gap:20px">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">E o trator? Sai pelo<br><span class="lime">Moderfrota Pronamp</span></h2>
+    <div style="margin-top:20px" data-in="fade" data-at="1.2" data-out="fade">
+      <p class="small mute" style="margin-bottom:8px">financiamento do bem</p>
+      <div class="big"><span data-count="100" data-from="85" data-at="1.4" data-dur="1.4" data-sfx="ticker">85</span><small>%</small></div>
+      <p class="p mute" style="margin-top:10px">sem entrada — pra quem cabe na régua do Pronamp</p>
+    </div>
+    <div class="lista" style="margin-top:20px">
+      <div class="chip" data-in="rise" data-at="3.0" data-sfx="pop" data-sfx-gain=".5" data-out="down">Taxa: até 11,5% a.a.</div>
+      <div class="chip" data-in="rise" data-at="3.3" data-sfx="pop" data-sfx-gain=".5" data-out="down">1ª parcela: em até 14 meses</div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="rise" data-at="4.2" data-out="fade">Comprou no plantio?<br><span class="lime">A colheita paga a primeira parcela.</span></p>
+  </div>
+</section>
+
+<!-- ============ 6 · CTA ============ -->
+<section class="slide s6" data-dur="6" data-hold="4.6" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h1 class="h1" style="font-size:86px;line-height:1.14">
+      <span style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Cada dinheiro</span>
+      <span style="display:block" data-in="rise" data-at="0.7" data-out="up">tem a sua porta.</span>
+    </h1>
+    <p class="h3" data-in="rise" data-at="1.4" data-out="up">O enquadramento vem<br><em data-in="marker" data-at="2.0" data-sfx="swipe">antes do orçamento.</em></p>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="3.0" data-sfx="success" data-out="shrink">Salva pra mostrar na concessionária</div></div>
+    <p class="foot" data-in="fade" data-at="3.8" data-out="fade">Taxas-teto da norma · operação sujeita à análise do banco<br>Fontes: MCR 8-1-5, 7-4 e 7-7 · agricultura familiar: Pronaf</p>
+  </div>
+</section>
+
+</div>
+
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){
+    const tpl=document.getElementById('chrome'), slides=document.querySelectorAll('.slide');
+    slides.forEach((s,i)=>{
+      const c=tpl.content.cloneNode(true);
+      c.querySelector('.n').textContent=i+1; c.querySelector('.total').textContent=slides.length;
+      if(s.hasAttribute('data-no-swipe')) c.querySelector('.chrome-bottom').remove();
+      s.appendChild(c);
+    });
+  })();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>
