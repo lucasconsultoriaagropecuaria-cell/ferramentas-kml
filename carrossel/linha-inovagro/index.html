@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Carrossel — Linha em 1 minuto: Inovagro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../engine.css">
+<style>
+  :root{
+    --g900:#0e2318; --g800:#143524; --g700:#1f5c3a; --g600:#2e7d4f;
+    --lime:#cbe96a; --cream:#f3f1e6; --mute:#a3b8a4; --paper:#fffdf6; --ink:#23291f; --red:#d9442b;
+    --accent:var(--lime); --marker:rgba(203,233,106,.9);
+  }
+  .slide{background:radial-gradient(120% 90% at 20% 0%, #1b4a33 0%, var(--g800) 45%, var(--g900) 100%);color:var(--cream)}
+  .slide .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);background-size:90px 90px;mask-image:radial-gradient(80% 70% at 50% 40%,#000 40%,transparent 100%)}
+  .h1 em,.h2 em,.h3 em{font-style:normal;color:var(--g900)}
+  .h1 .lime,.h2 .lime,.h3 .lime{color:var(--lime)}
+  .mute{color:var(--mute)}
+  .col{position:absolute;left:var(--pad);right:var(--pad);display:flex;flex-direction:column;gap:28px}
+  .col.top{top:180px}.col.bottom{bottom:150px}
+  .chrome-top{position:absolute;top:70px;left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--mute)}
+  .chrome-top b{color:var(--cream)}
+  .chrome-bottom{position:absolute;bottom:60px;right:var(--pad);font-weight:700;font-size:26px;letter-spacing:.08em;color:var(--lime);text-transform:uppercase}
+  .chrome-bottom span{display:inline-block}
+  .chip{display:inline-flex;align-items:center;gap:16px;padding:18px 30px;border-radius:999px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);font-weight:700;font-size:33px;color:var(--cream);width:max-content;max-width:100%}
+  .chip.lime{background:var(--lime);border-color:var(--lime);color:var(--g900)}
+  .card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:28px;padding:34px 38px}
+  .cta{display:inline-flex;align-items:center;gap:18px;background:var(--lime);color:var(--g900);font-weight:900;font-size:42px;padding:28px 50px;border-radius:999px;box-shadow:0 20px 50px rgba(203,233,106,.25)}
+  .foot{font-weight:600;font-size:24px;color:var(--mute);line-height:1.5}
+  .s1 .h1{font-size:88px;line-height:1.14}
+  .selo{display:inline-flex;align-items:center;gap:14px;padding:14px 28px;border-radius:999px;background:var(--lime);color:var(--g900);font-weight:900;font-size:30px;letter-spacing:.06em;text-transform:uppercase;width:max-content}
+  .lista{display:flex;flex-direction:column;gap:16px}
+  .cond{display:flex;flex-direction:column;gap:18px;margin-top:14px}
+  .cond .row{display:flex;align-items:center;gap:24px;padding:26px 34px;border-radius:22px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12)}
+  .cond .lbl{flex:1;font-weight:600;font-size:34px}
+  .cond .val{font-weight:900;font-size:40px;color:var(--lime);font-variant-numeric:tabular-nums;white-space:nowrap}
+</style>
+</head>
+<body data-music="intimista" data-bpm="120">
+<div class="deck">
+
+<section class="slide s1" data-dur="6" data-hold="4.6" data-label="Capa">
+  <div class="grid"></div>
+  <div class="col top" style="gap:26px">
+    <div class="selo" data-in="pop" data-at="0.4" data-sfx="pop" data-out="shrink">A linha em 1 minuto</div>
+    <h1 class="h1">
+      <span style="display:block" data-in="rise" data-at="0.8" data-sfx="whoosh" data-out="up">INOVAGRO:</span>
+      <span style="display:block" data-in="rise" data-at="1.1" data-out="up">a fazenda <span class="lime">conectada</span></span>
+    </h1>
+    <p class="h3 mute" data-in="rise" data-at="2.0" data-out="up">Automação, energia e gestão —<br>até R$ 4 mi por ano, fora dos outros limites.</p>
+  </div>
+  <div class="col bottom">
+    <p class="p mute" data-in="fade" data-at="3.0" data-out="fade">Salva a coleção: uma linha por fim de semana.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="O que compra">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O que ela<br><span class="lime">compra</span></h2>
+    <div class="lista" style="margin-top:16px">
+      <div class="chip" data-in="rise" data-at="1.2" data-sfx="pop" data-sfx-gain=".5" data-out="down">🤖 Automação de granja, ordenha e corte</div>
+      <div class="chip" data-in="rise" data-at="1.5" data-sfx="pop" data-sfx-gain=".5" data-out="down">☀️ Energia renovável p/ consumo próprio</div>
+      <div class="chip" data-in="rise" data-at="1.8" data-sfx="pop" data-sfx-gain=".5" data-out="down">📡 Precisão e internet no campo</div>
+      <div class="chip" data-in="rise" data-at="2.1" data-sfx="pop" data-sfx-gain=".5" data-out="down">💻 Softwares, consultorias e genética</div>
+      <div class="chip" data-in="rise" data-at="2.4" data-sfx="pop" data-sfx-gain=".5" data-out="down">🏗️ Galpões de máquinas e insumos</div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.0" data-out="fade">Produtores e cooperativas — sem régua de renda pra entrar.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="Condições">
+  <div class="grid"></div>
+  <div class="col top">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">As condições<br><span class="lime">(sempre "até")</span></h2>
+    <div class="cond" data-out="fade">
+      <div class="row" data-in="left" data-at="1.1" data-sfx="swipe"><span class="lbl">Taxa</span><span class="val">até 11,5% a.a.</span></div>
+      <div class="row" data-in="left" data-at="1.5" data-sfx="swipe" data-sfx-gain=".5"><span class="lbl">Financiamento do bem</span><span class="val">até 100%</span></div>
+      <div class="row" data-in="left" data-at="1.9" data-sfx="swipe" data-sfx-gain=".5"><span class="lbl">Limite individual/ano</span><span class="val">R$ 4 milhões</span></div>
+      <div class="row" data-in="left" data-at="2.3" data-sfx="swipe" data-sfx-gain=".5"><span class="lbl">Prazo</span><span class="val">até 10 anos</span></div>
+    </div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.2" data-out="fade">Carência de até 24 meses · pecuária leiteira amortiza até MENSALMENTE.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="5.0" data-label="O truque">
+  <div class="grid"></div>
+  <div class="col top" style="gap:26px">
+    <h2 class="h2" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">O detalhe que<br><span class="lime">ninguém te conta</span></h2>
+    <div class="card" data-in="drop" data-at="1.2" data-sfx="thud" data-out="down">
+      <p class="p" style="line-height:1.55">Cerca elétrica, brinco, poço artesiano e estação do tempo estão na lista expressa — e a norma já os considera <b style="color:var(--lime)">aprovados nos programas de qualidade</b>, sem burocracia extra.</p>
+    </div>
+    <div class="chip lime" data-in="pop" data-at="3.0" data-sfx="ding" data-out="down">Trator aqui? Só pra forragem, e no máx. 30%</div>
+  </div>
+  <div class="col bottom">
+    <p class="foot" data-in="fade" data-at="4.3" data-out="fade">O que cabe no Moderfrota é vedado no Inovagro — cada bem na sua porta.</p>
+  </div>
+</section>
+
+<section class="slide" data-dur="6" data-hold="4.6" data-label="CTA" data-no-swipe>
+  <div class="grid"></div>
+  <div class="col top" style="gap:24px">
+    <h1 class="h1" style="font-size:84px;line-height:1.14">
+      <span style="display:block" data-in="rise" data-at="0.4" data-sfx="whoosh" data-out="up">Junte as miudezas</span>
+      <span style="display:block" data-in="rise" data-at="0.7" data-out="up"><em data-in="marker" data-at="1.3" data-sfx="swipe">num projeto só.</em></span>
+    </h1>
+  </div>
+  <div class="col bottom" style="gap:24px">
+    <div data-loop="pulse 1.5" style="width:max-content"><div class="cta" data-in="pop" data-at="2.4" data-sfx="success" data-out="shrink">Salva — linha 3 da coleção</div></div>
+    <p class="foot" data-in="fade" data-at="3.2" data-out="fade">Sujeito à análise do banco · agricultura familiar: Pronaf<br>Fontes: MCR 11-4 e 7-7 · Circular BNDES 98/2026</p>
+  </div>
+</section>
+
+</div>
+<template id="chrome">
+  <div class="chrome-top"><span>🌱 <b>@creditoruralsp</b></span><span><b class="n"></b> / <span class="total"></span></span></div>
+  <div class="chrome-bottom" data-in="fade" data-at="1.6" data-out="fade"><span data-loop="nudge 1.5">arraste →</span></div>
+  <div class="progress" data-progress><i></i></div>
+</template>
+<script>
+  (function(){const tpl=document.getElementById('chrome'),slides=document.querySelectorAll('.slide');slides.forEach((s,i)=>{const c=tpl.content.cloneNode(true);c.querySelector('.n').textContent=i+1;c.querySelector('.total').textContent=slides.length;if(s.hasAttribute('data-no-swipe'))c.querySelector('.chrome-bottom').remove();s.appendChild(c);});})();
+</script>
+<script src="../engine.js"></script>
+</body>
+</html>
