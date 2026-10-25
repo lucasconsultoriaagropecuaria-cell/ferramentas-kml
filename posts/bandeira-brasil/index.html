@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Bandeira do Brasil — LR Consultoria</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1350px;background:#0f2a10}
+  body{font-family:Inter,"Inter Display",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .post{position:relative;width:1080px;height:1350px;overflow:hidden;
+    background:
+      radial-gradient(900px 700px at 50% 30%, rgba(255,223,0,.16), transparent 70%),
+      linear-gradient(180deg,#1f5121 0%,#173a16 55%,#0f2a10 100%)}
+  /* raios de luz atrás da bandeira */
+  .rays{position:absolute;left:50%;top:400px;width:1800px;height:1800px;margin:-900px 0 0 -900px;
+    background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.05) 0 6deg,transparent 6deg 18deg);
+    -webkit-mask:radial-gradient(circle,#000 0,transparent 62%);mask:radial-gradient(circle,#000 0,transparent 62%)}
+  #flag{position:absolute;left:90px;top:110px;width:900px;height:640px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.45))}
+  .msg{position:absolute;left:90px;right:90px;top:800px;text-align:center;color:#fff}
+  .msg h1{font-family:"Inter Display",Inter,sans-serif;font-weight:800;font-size:78px;line-height:1.05;letter-spacing:-1.5px}
+  .msg h1 em{font-style:normal;color:#ffdf00}
+  .msg p{margin-top:26px;font-size:40px;font-weight:500;line-height:1.3;color:#e9f3e2}
+  .msg p b{font-weight:800;color:#fff}
+  .brand{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);
+    background:#fff;border-radius:22px;padding:14px 34px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  .brand img{display:block;height:118px;width:auto}
+  .rule{position:absolute;left:50%;top:1120px;width:120px;height:6px;margin-left:-60px;border-radius:3px;
+    background:linear-gradient(90deg,#009c3b,#ffdf00,#002776)}
+</style>
+</head>
+<body>
+<div class="post">
+  <div class="rays"></div>
+  <canvas id="flag" width="1800" height="1280"></canvas>
+  <div class="msg">
+    <h1>Que Deus dê <em>sabedoria</em><br>ao nosso povo</h1>
+    <p>para construirmos um <b>Brasil melhor<br>para todos</b>.</p>
+  </div>
+  <div class="rule"></div>
+  <div class="brand"><img src="logo.jpg" alt="LR Consultoria Agropecuária"></div>
+</div>
+
+<!-- Bandeira em módulos (M = 40): 20M × 14M -->
+<svg id="src" xmlns="http://www.w3.org/2000/svg" width="800" height="560" viewBox="0 0 800 560" style="display:none">
+  <defs>
+    <clipPath id="disc"><circle cx="400" cy="280" r="140"/></clipPath>
+    <path id="arcTxt" d="M -10 560 A 330 330 0 0 1 650 560"/>
+    <polygon id="s" points="0,-1 0.2245,-0.309 0.951,-0.309 0.363,0.118 0.588,0.809 0,0.382 -0.588,0.809 -0.363,0.118 -0.951,-0.309 -0.2245,-0.309" fill="#fff"/>
+  </defs>
+  <rect width="800" height="560" fill="#009c3b"/>
+  <polygon points="68,280 400,68 732,280 400,492" fill="#ffdf00"/>
+  <circle cx="400" cy="280" r="140" fill="#002776"/>
+  <g clip-path="url(#disc)">
+    <!-- faixa: arcos com centro em (320,560), raios 320 e 340 -->
+    <path d="M -20 560 A 340 340 0 0 1 660 560 L 640 560 A 320 320 0 0 0 0 560 Z" fill="#fff"/>
+  </g>
+  <text font-family="Inter, sans-serif" font-weight="800" font-size="14.5" fill="#009c3b" letter-spacing="1">
+    <textPath href="#arcTxt" startOffset="55.2%" text-anchor="middle">ORDEM E PROGRESSO</textPath>
+  </text>
+  <g>
+    <!-- Espiga, acima da faixa -->
+    <use href="#s" transform="translate(452 214) scale(6)"/>
+    <!-- Cruzeiro do Sul -->
+    <use href="#s" transform="translate(412 382) scale(7.5)"/>
+    <use href="#s" transform="translate(412 318) scale(6.5)"/>
+    <use href="#s" transform="translate(436 352) scale(6)"/>
+    <use href="#s" transform="translate(390 346) scale(5)"/>
+    <use href="#s" transform="translate(422 362) scale(3.2)"/>
+    <!-- Escorpião -->
+    <use href="#s" transform="translate(484 268) scale(6.5)"/>
+    <use href="#s" transform="translate(498 286) scale(4)"/>
+    <use href="#s" transform="translate(506 304) scale(4)"/>
+    <use href="#s" transform="translate(500 322) scale(4)"/>
+    <use href="#s" transform="translate(480 334) scale(4)"/>
+    <use href="#s" transform="translate(470 258) scale(4)"/>
+    <use href="#s" transform="translate(492 252) scale(3.5)"/>
+    <!-- Cão Maior -->
+    <use href="#s" transform="translate(322 292) scale(7.5)"/>
+    <use href="#s" transform="translate(304 312) scale(5)"/>
+    <use href="#s" transform="translate(330 322) scale(4)"/>
+    <use href="#s" transform="translate(312 336) scale(4)"/>
+    <use href="#s" transform="translate(300 290) scale(3.5)"/>
+    <!-- Procyon, Canopus, Triângulo, Oitante -->
+    <use href="#s" transform="translate(290 262) scale(6)"/>
+    <use href="#s" transform="translate(336 368) scale(7.5)"/>
+    <use href="#s" transform="translate(458 392) scale(4)"/>
+    <use href="#s" transform="translate(474 376) scale(4)"/>
+    <use href="#s" transform="translate(448 374) scale(3.5)"/>
+    <use href="#s" transform="translate(400 408) scale(3.5)"/>
+    <use href="#s" transform="translate(368 392) scale(4.5)"/>
+  </g>
+</svg>
+
+<script>
+(async function(){
+  // Rasteriza a bandeira e desenha tremulando (onda senoidal + sombreado de tecido)
+  const svg = document.getElementById('src');
+  svg.style.display='';
+  const xml = new XMLSerializer().serializeToString(svg);
+  svg.style.display='none';
+  const img = new Image();
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+  await img.decode();
+
+  const W = 1800, H = 1280, fw = 1600, fh = 1120, ox = 100, oy = 80;
+  const off = document.createElement('canvas'); off.width = fw; off.height = fh;
+  off.getContext('2d').drawImage(img, 0, 0, fw, fh);
+
+  const c = document.getElementById('flag').getContext('2d');
+  const amp = 34, waves = 1.6;
+  const wave = x => Math.sin((x / fw) * Math.PI * 2 * waves + 0.6) * amp * (0.35 + 0.65 * x / fw);
+  const slope = x => Math.cos((x / fw) * Math.PI * 2 * waves + 0.6);
+  for (let x = 0; x < fw; x += 2) {
+    const dy = wave(x);
+    c.drawImage(off, x, 0, 2, fh, ox + x, oy + dy, 2, fh);
+    const s = slope(x) * (0.35 + 0.65 * x / fw);
+    c.fillStyle = s > 0 ? `rgba(255,255,255,${0.16 * s})` : `rgba(0,0,0,${-0.26 * s})`;
+    c.fillRect(ox + x, oy + dy, 2, fh);
+  }
+  // mastro sutil à esquerda
+  c.fillStyle = '#d9d2c3'; c.fillRect(ox - 22, oy - 40, 16, fh + 120);
+  c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(ox - 10, oy - 40, 4, fh + 120);
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>
