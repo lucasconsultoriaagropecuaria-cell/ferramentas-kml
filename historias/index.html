@@ -72,6 +72,11 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .photo label.pick{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px dashed #9cc38d;border-radius:12px;padding:10px 14px;cursor:pointer;color:#1d3320}
 .photo input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
 #pPrev{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.gamebar{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:10px;background:#fffbe9;color:#3a3220;border-radius:999px;padding:8px 10px 8px 18px;font-weight:800;font-size:1.15rem;box-shadow:0 8px 24px rgba(0,0,0,.25);white-space:nowrap;max-width:94%}
+.gamebar .stars{color:#e8a400;font-size:1rem;overflow:hidden;text-overflow:ellipsis}
+.gamebar button{border:0;border-radius:999px;background:#1f5121;color:#fff;font-weight:800;padding:6px 12px;font-size:.85rem}
+#printArea{display:none}
+@media print{ body *{visibility:hidden!important} #printArea,#printArea *{visibility:visible!important} #printArea{display:block!important;position:fixed;inset:0;background:#fff} #printArea img{width:100%;height:auto} }
 .stop{position:absolute;left:12px;top:12px;z-index:6;border:0;border-radius:999px;background:rgba(15,30,15,.7);color:#fff;font-weight:800;padding:9px 16px}
 .tip{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:7;background:#fffbe9;color:#3a3220;border-radius:14px;padding:11px 15px;font-weight:700;width:max-content;max-width:min(92%,540px);box-shadow:0 10px 30px rgba(0,0,0,.3);line-height:1.4;font-size:.92rem}
 
@@ -91,12 +96,13 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 @media (max-width:560px){
   .brand{font-size:1rem}
   .chip .t{display:none}
-  .btn{min-width:44px;padding:5px 4px 4px;font-size:.62rem;border-radius:13px}
-  .btn span{font-size:1.25rem}
-  .l,.r{gap:5px}
-  .dock{gap:6px}
-  .mic{width:68px;height:68px;font-size:2rem}
+  .btn{min-width:40px;padding:5px 3px 4px;font-size:.58rem;border-radius:12px}
+  .btn span{font-size:1.15rem}
+  .l,.r{gap:4px}
+  .dock{gap:5px}
+  .mic{width:60px;height:60px;font-size:1.8rem}
 }
+@media (max-width:380px){ .btn{min-width:36px;font-size:.54rem} .btn span{font-size:1.05rem} .mic{width:56px;height:56px} }
 @media (prefers-reduced-motion:reduce){.go,.mic.on{animation:none}}
 </style>
 </head>
@@ -164,9 +170,22 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
     </div>
 
     <button class="stop" id="stopPlay" type="button" hidden>⏹ Parar</button>
+    <div class="gamebar" id="gameBar" hidden><span id="gameQ">Cadê?</span><span class="stars" id="gameScore"></span><button type="button" id="gameExit">Sair</button></div>
+    <div class="over" id="colorOver" hidden>
+      <div class="card">
+        <h1 style="font-size:1.6rem;margin-bottom:10px">🖍️ Para colorir</h1>
+        <img id="colorImg" alt="Desenho da história só com contornos, para colorir" style="width:100%;border-radius:12px;border:2px solid #dbe8d3;background:#fff">
+        <div class="row" style="margin-top:12px">
+          <button class="pill" id="printBtn" type="button">🖨️ Imprimir</button>
+          <button class="pill" id="saveColor" type="button">⬇️ Salvar</button>
+          <button class="pill alt" id="closeColor" type="button">Fechar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
+<div id="printArea"><img id="printImg" alt=""></div>
 <footer class="side">
   <form class="type" id="typeForm" autocomplete="off" hidden>
     <input id="typeIn" type="text" enterkeyhint="send" placeholder="Escreva um pedaço da história ou cole uma história inteira">
@@ -175,11 +194,13 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
   <div class="dock">
     <div class="l">
       <button class="btn" id="kbBtn" type="button"><span>⌨️</span>Escrever</button>
+      <button class="btn" id="gameBtn" type="button"><span>🔍</span>Cadê?</button>
     </div>
     <button class="mic" id="mic" type="button" aria-label="Ligar o microfone">🎙️</button>
     <div class="r">
       <button class="btn" id="playBtn" type="button" disabled><span>▶️</span>Assistir</button>
       <button class="btn" id="vidBtn" type="button" disabled><span>🎬</span>Vídeo</button>
+      <button class="btn" id="colorBtn" type="button"><span>🖍️</span>Colorir</button>
       <button class="btn" id="newBtn" type="button"><span>✨</span>Nova</button>
     </div>
   </div>
@@ -441,6 +462,7 @@ function ghost(e,T,quick){
   S.ghosts.push(e);
 }
 const GENERIC = new Set(['menina','menino']);
+const APPOS = new Set(['menino','menina','cobra','mae','pai','bebe']);   // descrições comuns logo depois de um nome
 const ALIAS = {sapo:{mae:'sapo'}, urso:{ursinho:'urso',pai:'urso',mae:'urso',bebe:'urso'}, 'patinho feio':{patinho:'patinho feio',pato:'patinho feio'}, pato:{mae:'pato',bebe:'patinho'}, coelho:{mae:'coelho',bebe:'coelho'}};
 function mention(ev,T){
   if (ev.key==='casa' && SET[S.set].indoor) return [];
@@ -521,7 +543,7 @@ function applySentence(s,T){
     if (from){ Object.assign(from,{hero:true,key:to.key,label:to.label,em:pick(to.em),sz:to.sz*1.35,fly:to.fly,swim:to.swim,born:T,seen:S.sent});
       from.bub = {em:'✨',t0:T,dur:2600}; sfx('chime'); S.last = [from]; ev.splice(0,ev.length,...ev.filter(e=>e.type!=='ent')); } }
   for (const e of ev){
-    if (e.type==='ent' && lastNamed && e.i - lastNamed.i <= 4 && !ENT[e.key].named && ENT[e.key].char && e.num<=1){ continue; }   // "o Saci, um menino de uma perna só": é o próprio Saci
+    if (e.type==='ent' && lastNamed && e.i - lastNamed.i <= 2 && APPOS.has(e.key) && e.num<=1){ continue; }   // "o Saci, um menino de uma perna só": é o próprio Saci
     if (e.type==='ent' && ENT[e.key].named) lastNamed = e;
     if (e.type==='ent'){ if (S.eaten.has(e.key)) continue;   // quem foi engolido só volta quando for salvo
       const m = mention(e,T); m.forEach(x=>{ keep.add(x.id); made.push(x); }); const ch = m.filter(x=>x.char);
@@ -1044,7 +1066,7 @@ function drawLand(c,W,H,u,key,T){
   const D = SET[key];
   if (D.rays){ c.save(); c.globalAlpha = .08; c.fillStyle = '#fff'; for (let i=0;i<7;i++){ const x = W*(i/6)+Math.sin(T/4000+i)*W*.02; c.beginPath(); c.moveTo(x,0); c.lineTo(x+W*.06,0); c.lineTo(x-W*.05,H*.8); c.lineTo(x-W*.12,H*.8); c.fill(); } c.restore(); }
   // só o pedaço que a câmera mostra (mais leve no celular)
-  const L = landLayer(key,W,H), k = L.width/W, vx = Math.max(0,CAM.ox), vy = Math.max(0,CAM.oy), vw = Math.min(W-vx, W/CAM.z+2), vh = Math.min(H-vy, H/CAM.z+2);
+  const L = landLayer(key,W,H), k = L.width/W, cz = FULLVIEW ? 1 : CAM.z, vx = FULLVIEW ? 0 : Math.max(0,CAM.ox), vy = FULLVIEW ? 0 : Math.max(0,CAM.oy), vw = Math.min(W-vx, W/cz+2), vh = Math.min(H-vy, H/cz+2);
   c.drawImage(L, vx*k, vy*k, vw*k, vh*k, vx, vy, vw, vh);
 }
 function wrapLines(c,text,maxW){
@@ -1100,6 +1122,17 @@ function drawEnt(c,e,W,H,u,T,alpha){
     if (!(e.bub && T-e.bub.t0 < e.bub.dur) && e.mood==='sono'){ fl = (T/2400)%1; bx += fl*u*3; by -= fl*u*5; ba *= Math.sin(fl*Math.PI); }
     else { const k = clamp((T-Math.max(e.moodT,e.bub?e.bub.t0:0))/500); if (k<1) ba *= k; }
     c.save(); c.globalAlpha = ba; emoji(c,bub,bx,by,bs); c.restore(); }
+  // caixa para o toque (em coordenadas da cena)
+  { const art = e.em[0]==='@' ? (ART[e.em.slice(1)] || {w:100,h:140}) : null, hh = art ? size*1.25*(art.h+4)/140 : size*1.1, ww = art ? hh*(art.w+4)/(art.h+4) : size*1.1;
+    e._box = [x+ox-ww/2, y+oy-hh, x+ox+ww/2, y+oy+u]; e._hh = hh;
+    // balão de fala ("Muuu!", "Oi, eu sou a Maria!")
+    if (e.say && !FULLVIEW && T-e.say.t0 < 2000){ const fs = Math.max(13,u*2.6); c.save(); c.font = `800 ${fs}px ${UIF}`; const tw2 = c.measureText(e.say.text).width+fs*1.2, bx2 = Math.min(Math.max(x+ox, tw2/2+4), W-tw2/2-4), by2 = y+oy-hh-fs*2.2;
+      c.globalAlpha = a*clamp((T-e.say.t0)/150)*clamp((2000-(T-e.say.t0))/250); c.fillStyle = '#fff'; c.strokeStyle = 'rgba(29,51,32,.5)'; c.lineWidth = 1.5;
+      rrect(c,bx2-tw2/2,by2-fs*.85,tw2,fs*1.7,fs*.85); c.fill(); c.stroke(); c.beginPath(); c.moveTo(bx2-fs*.4,by2+fs*.8); c.lineTo(bx2,by2+fs*1.5); c.lineTo(bx2+fs*.4,by2+fs*.8); c.fill();
+      c.fillStyle = '#1d3320'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(e.say.text,bx2,by2); c.restore(); }
+    // festa de estrelinhas quando acerta no jogo
+    if (e.cheer && !FULLVIEW && T-e.cheer < 1100){ const k = (T-e.cheer)/1100; c.save(); c.globalAlpha = 1-k;
+      for (let i=0;i<10;i++){ const ang = i/10*TAU, rr = (u*4 + hh*.9*easeOut(k)); emoji(c, i%2?'⭐':'✨', x+ox+Math.cos(ang)*rr, y+oy-hh*.55+Math.sin(ang)*rr*.8, u*4.5); } c.restore(); } }
 }
 
 /* fundo de um cenário: céu, estrelas, sol/lua, nuvens e chão */
@@ -1111,11 +1144,11 @@ function drawBack(c,W,H,u,T,skyStops,key){
   if (sa>.01){ c.fillStyle = '#fff'; STARS.forEach(s => { c.globalAlpha = sa*(.55+.45*Math.sin(T/420+s.p)); c.beginPath(); c.arc(s.x*W,s.y*H,s.r*u*.25+.6,0,TAU); c.fill(); }); c.globalAlpha = 1; }
   const sunVis = cOut && !night && !['tempestade','chuva','nublado'].includes(S.wx) ? 1 : 0;
   const sA = tw('sunA',sunVis,T), sY = tw('sunY',S.time==='tarde'?.46:.14,T,1600), sS = tw('sunS',S.time==='tarde'?1.35:1,T,1600);
-  if (sA>.01 && outdoor){ const r = u*6.5*sS/CAM.z, x = CAM.ox + W/CAM.z*.8, y = CAM.oy + H/CAM.z*(sY+.12); c.save(); c.globalAlpha = sA;
+  if (sA>.01 && outdoor){ const r = u*6.5*sS/(FULLVIEW?1:CAM.z), x = FULLVIEW ? W*.8 : CAM.ox + W/CAM.z*.8, y = FULLVIEW ? H*(sY+.06) : CAM.oy + H/CAM.z*(sY+.12); c.save(); c.globalAlpha = sA;
     const g = c.createRadialGradient(x,y,r*.2,x,y,r*2.2); g.addColorStop(0,'rgba(255,214,90,.55)'); g.addColorStop(1,'rgba(255,214,90,0)'); c.fillStyle = g; c.fillRect(x-r*2.3,y-r*2.3,r*4.6,r*4.6);
     const g2 = c.createRadialGradient(x-r*.3,y-r*.3,r*.1,x,y,r); g2.addColorStop(0,'#fff3b0'); g2.addColorStop(.55,'#ffc43d'); g2.addColorStop(1,'#ff9f1c'); c.fillStyle = g2; c.beginPath(); c.arc(x,y,r,0,TAU); c.fill(); c.restore(); }
   const mA = tw('moonA',cOut&&night?1:0,T);
-  if (mA>.01 && outdoor){ c.save(); c.globalAlpha = mA; emoji(c,'🌙',CAM.ox + W/CAM.z*.8, CAM.oy + H/CAM.z*.34, u*11/CAM.z); c.restore(); }
+  if (mA>.01 && outdoor){ c.save(); c.globalAlpha = mA; emoji(c,'🌙',FULLVIEW ? W*.8 : CAM.ox + W/CAM.z*.8, FULLVIEW ? H*.25 : CAM.oy + H/CAM.z*.34, u*11/(FULLVIEW?1:CAM.z)); c.restore(); }
   if (D.clouds){ const many = ['nublado','chuva','tempestade'].includes(S.wx), n = many?7:3;
     const col = S.wx==='tempestade' ? '#8d94a3' : (many ? '#e6ebf2' : '#ffffff');
     for (let i=0;i<n;i++){ const cl = CLOUDS[i], x = (((cl.off+T/cl.dur)%1)*1.6-.3)*W; cloud(c,x,H*cl.y+cl.s*u*.5,cl.s*u*.85,col); } }
@@ -1153,7 +1186,7 @@ function drawLabels(c,W){
   c.globalAlpha = 1;
   LABELS = [];
 }
-let CROWD = 1, CROWDP = 1;
+let CROWD = 1, CROWDP = 1, FULLVIEW = false;
 let T_NOW = 0, CAM = {z:1,ox:0,oy:0};
 const GRAIN = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 160; const g = cv.getContext('2d'), d = g.createImageData(160,160);
   for (let i=0;i<d.data.length;i+=4){ const v = 120+Math.random()*120; d.data[i] = v; d.data[i+1] = v*.96; d.data[i+2] = v*.88; d.data[i+3] = 255; } g.putImageData(d,0,0); return cv; })();
@@ -1172,9 +1205,9 @@ function render(c,W,H,T){
   const u = Math.min(W,H)/100, D = SET[S.set], night = S.time==='noite', outdoor = !D.fixed;
   const basePX = PX;
   // câmera suave
-  const [tz,tcx] = camTarget(W,H,u), z = tw('camZ'+(c===xc?'x':''),tz,T,1800), cxw = tw('camX'+(c===xc?'x':''),tcx,T,1800);
+  const [tz,tcx] = camTarget(W,H,u), z = FULLVIEW ? 1 : tw('camZ'+(c===xc?'x':''),tz,T,1800), cxw = FULLVIEW ? W/2 : tw('camX'+(c===xc?'x':''),tcx,T,1800);
   const ox = Math.min(Math.max(cxw - W/(2*z), 0), W - W/z), oy = H - H/z;
-  CAM = {z,ox,oy};
+  if (!FULLVIEW) CAM = {z,ox,oy, W, H};
   c.save(); c.scale(z,z); c.translate(-ox,-oy);
   PX = basePX*Math.max(1,Math.round(z*4)/4);
   // cenário: troca de cenário vira página (da direita para a esquerda); troca de hora/tempo funde devagar
@@ -1221,7 +1254,7 @@ function render(c,W,H,T){
   }
   c.restore(); PX = basePX;
   // acabamento de livro: cantos levemente escuros e textura de papel
-  c.drawImage(paperOverlay(W,H),0,0,W,H);
+  if (!FULLVIEW) c.drawImage(paperOverlay(W,H),0,0,W,H);
   // legenda
   const lines = S.subs.slice(-1).concat(S.interim ? [S.interim] : []);
   if (lines.length){ const fs = Math.max(14,u*(c===xc?4.4:3.6)); c.font = `800 ${fs}px ${UIF}`; c.textAlign = 'center'; c.textBaseline = 'middle';
@@ -1536,7 +1569,7 @@ $('mic').onclick = () => rec.on ? micOff() : micOn();
 $('goMic').onclick = () => micOn();
 $('playBtn').onclick = () => mode==='replay' ? stopPlayback() : startPlayback(false);
 $('vidBtn').onclick = () => startPlayback(true);
-$('newBtn').onclick = () => { demoTok++; if (rec.on) micOff(); stopPlayback(); try{ speechSynthesis.cancel(); }catch(e){} story = null; newScene(1); idleLife(); mode = 'idle'; $('result').hidden = true; $('welcome').hidden = false; updateButtons(); };
+$('newBtn').onclick = () => { endGame(); demoTok++; if (rec.on) micOff(); stopPlayback(); try{ speechSynthesis.cancel(); }catch(e){} story = null; newScene(1); idleLife(); mode = 'idle'; $('result').hidden = true; $('welcome').hidden = false; updateButtons(); };
 $('kbBtn').onclick = () => { const f = $('typeForm'); f.hidden = !f.hidden; if (!f.hidden) $('typeIn').focus(); };
 $('typeForm').addEventListener('submit', ev => { ev.preventDefault(); audio(); const v = $('typeIn').value; $('typeIn').value = '';
   // história colada inteira: vira uma apresentação lida em voz alta
@@ -1548,6 +1581,98 @@ $('typeIn').addEventListener('paste', ev => { const t = (ev.clipboardData||windo
 const cv = $('cv'), cx = cv.getContext('2d'); let dpr = 1, VW = 0, VH = 0;
 function resize(){ const r = cv.getBoundingClientRect(); dpr = Math.min(window.devicePixelRatio||1, 2); VW = r.width; VH = r.height; cv.width = Math.round(VW*dpr); cv.height = Math.round(VH*dpr); }
 new ResizeObserver(resize).observe(cv); resize();
+
+/* =========================================================
+   Tocar e ouvir · Cadê o…? · Colorir
+   ========================================================= */
+const SOUNDS = {vaca:'Muuu!',cachorro:'Au au!',gato:'Miau!',pato:'Quá quá!',patinho:'Quá quá!','patinho feio':'Quá?',marreco:'Quá quá!',ganso:'Quén quén!',cisne:'Quá!',
+  galinha:'Có có ró có!',pintinho:'Piu piu!',porco:'Oinc oinc!',cavalo:'Iiirrí!',ovelha:'Méééé!',bode:'Méééé!',sapo:'Croac croac!',leao:'Roarrr!',tigre:'Roarrr!',lobo:'Auuuu!',
+  passaro:'Piu piu!','beija-flor':'Piu!',coruja:'Uhu uhu!',abelha:'Bzzzz!',mosquito:'Zzzz!',dragao:'Roarrr!',burro:'Ió ió!',urso:'Grrr!',macaco:'Uh uh ah ah!',elefante:'Fuuuu!',
+  cobra:'Ssssss!',boitata:'Sssss! Eu cuido da mata!',saci:'Hihihi!',curupira:'Uuuu! Eu cuido da floresta!',iara:'Lá lá lá!',pombo:'Ru ru!',pomba:'Ru ru!',grilo:'Cri cri!',
+  dinossauro:'Roarrr!',baleia:'Uuuuum!',golfinho:'Ih ih ih!',rato:'Quic quic!','rato da cidade':'Quic!',coelho:'Fuc fuc!',pedro:'Fuc fuc!',arara:'Currupaco!',onca:'Roarrr!',
+  camelo:'Grunf!',pinguim:'Quá!',foca:'Ark ark!',raposa:'Ah ah!',panda:'Nham!',fantasma:'Buuu!',monstro:'Grrr! Brincadeira!',robo:'Bip bop!',alien:'Bip bip!',unicornio:'Iiirrí!',
+  tubarao:'Nhac!',peixe:'Blub blub!',polvo:'Blub!',tartaruga:'Devagarinho…',joaninha:'Oi!',borboleta:'Voa, voa!',caracol:'Devagar…',formiga:'Oi, oi!',esquilo:'Nhac nhac!'};
+const FEM = new Set(['mãe','vovó','Cachinhos','Chapeuzinho','Maria','Iara','foca','onça','pomba','garça','preguiça','arara']);
+const art = e => { const l = e.label; if (FEM.has(l)) return 'a'; if (/^(panda|Boitatá|Saci|Curupira|Pedro|João|pai|vovô|dia)$/.test(l)) return 'o'; return /a$/.test(norm(l).trim()) ? 'a' : 'o'; };
+function sayOf(e){ const k = norm(e.key).trim(); if (SOUNDS[k] || SOUNDS[e.key]) return SOUNDS[k] || SOUNDS[e.key];
+  if (e.char) return `Oi! Eu sou ${art(e)} ${e.label}!`; return e.label.charAt(0).toUpperCase()+e.label.slice(1)+'!'; }
+function speakShort(t){ try{ if (!window.speechSynthesis || quiet) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t.replace(/!/g,'')); u.lang = 'pt-BR'; u.rate = 1; u.pitch = 1.3;
+  const v = speechSynthesis.getVoices().find(v=>/pt[-_]BR/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.speak(u); }catch(e){} }
+function entAt(px,py){
+  const r = cv.getBoundingClientRect(), sx = px - r.left, sy = py - r.top;
+  const wx = CAM.ox + sx/CAM.z, wy = CAM.oy + sy/CAM.z, pad = 6/CAM.z;
+  const hits = S.ents.filter(e=>e._box && wx>=e._box[0]-pad && wx<=e._box[2]+pad && wy>=e._box[1]-pad && wy<=e._box[3]+pad);
+  if (!hits.length) return null;
+  // o mais da frente (mais embaixo na cena) e, empatando, o menor
+  hits.sort((a,b)=>(twv(a.y,T_NOW)-twv(b.y,T_NOW)) || ((a._box[2]-a._box[0])-(b._box[2]-b._box[0]))); return hits[0];
+}
+let game = null;
+cv.addEventListener('pointerdown', ev => {
+  if (mode==='export') return; audio();
+  const e = entAt(ev.clientX, ev.clientY); if (!e) return;
+  const T = clockLive();
+  if (game){
+    if (e===game.target){ e.cheer = T; e.say = {text:'Muito bem! ⭐', t0:T}; act(e,'pular',T); sfx('chime'); setTimeout(()=>sfx('chime'),180);
+      game.score++; $('gameScore').textContent = '⭐'.repeat(Math.min(game.score,10)); speakShort('Muito bem! Achou '+art(e)+' '+e.label);
+      setTimeout(nextRound, 2200); game.target = null; }
+    else if (game.target){ e.say = {text:'Eu sou '+art(e)+' '+e.label+'!', t0:T}; act(e,'pular',T); sfx('boing'); speakShort('Esse é '+art(e)+' '+e.label+'. Cadê '+art(game.target)+' '+game.target.label+'?'); }
+    return; }
+  const t = sayOf(e); e.say = {text:t, t0:T}; act(e, e.fly ? 'voar' : 'pular', T); sfx('pop'); speakShort(t);
+});
+const GAME_SCENES = [
+  'Na floresta estavam o Saci, o Curupira, o Boitatá e um macaco.',
+  'No rio estavam a Iara, um sapo, um peixe e um pato.',
+  'Na fazenda tinha uma vaca, um porco, um cavalo e uma galinha.',
+  'Na floresta estavam o Saci, a Iara, uma onça e uma coruja.',
+  'No campo tinha um cachorro, um gato, um coelho e uma borboleta.',
+  'Na floresta estavam o Curupira, o Boitatá, um tatu e uma arara.',
+];
+let lastScene = -1;
+function startGame(){
+  audio(); hideWelcome(); $('result').hidden = true; $('colorOver').hidden = true;
+  if (mode==='replay'||mode==='export') stopPlayback();
+  const chars = (S ? S.ents.filter(e=>e.char) : []);
+  if (!story || chars.length < 3){ demoTok++; let i; do { i = Math.floor(Math.random()*GAME_SCENES.length); } while (i===lastScene); lastScene = i; newStory(true); addText(GAME_SCENES[i]); }
+  game = {score:0, target:null, last:null}; $('gameScore').textContent = ''; $('gameBar').hidden = false;
+  setTimeout(nextRound, 1500);
+}
+function nextRound(){
+  if (!game) return; const chars = S.ents.filter(e=>e.char); if (!chars.length){ endGame(); return; }
+  let t; do { t = chars[Math.floor(Math.random()*chars.length)]; } while (chars.length>1 && t===game.last);
+  game.target = t; game.last = t; const q = `Cadê ${art(t)} ${t.label}?`; $('gameQ').textContent = '🔍 '+q; speakShort(q);
+}
+function endGame(){ game = null; $('gameBar').hidden = true; }
+$('gameBtn').onclick = () => game ? endGame() : startGame();
+$('gameExit').onclick = () => endGame();
+
+/* página para colorir: a cena inteira só com contornos */
+let colorURL = null;
+function makeColoring(){
+  const Wc = 1400, Hc = 990, c2 = document.createElement('canvas'); c2.width = Wc; c2.height = Hc; const g = c2.getContext('2d');
+  const keep = {subs:S.subs, interim:S.interim, PX, LPX}; S.subs = []; S.interim = ''; PX = 1; LPX = 1; FULLVIEW = true;
+  try{ render(g, Wc, Hc, clockLive()); } finally { FULLVIEW = false; S.subs = keep.subs; S.interim = keep.interim; PX = keep.PX; LPX = keep.LPX; }
+  const src = g.getImageData(0,0,Wc,Hc).data, L = new Float32Array(Wc*Hc);
+  for (let i=0,j=0;i<L.length;i++,j+=4) L[i] = src[j]*.3 + src[j+1]*.59 + src[j+2]*.11;
+  const out = g.createImageData(Wc,Hc), o = out.data;
+  for (let y=0;y<Hc;y++) for (let x=0;x<Wc;x++){ const i = y*Wc+x, j = i*4; let v = 255;
+    if (x>0 && y>0 && x<Wc-1 && y<Hc-1){ const gx = -L[i-Wc-1]-2*L[i-1]-L[i+Wc-1]+L[i-Wc+1]+2*L[i+1]+L[i+Wc+1], gy = -L[i-Wc-1]-2*L[i-Wc]-L[i-Wc+1]+L[i+Wc-1]+2*L[i+Wc]+L[i+Wc+1];
+      const m = Math.sqrt(gx*gx+gy*gy); if (m > 110) v = 25; else if (m > 70) v = 120; }
+    o[j] = o[j+1] = o[j+2] = v; o[j+3] = 255; }
+  g.putImageData(out,0,0);
+  g.lineWidth = 6; g.strokeStyle = '#222'; g.strokeRect(14,14,Wc-28,Hc-28);
+  return c2;
+}
+$('colorBtn').onclick = () => {
+  audio(); endGame(); const c2 = makeColoring();
+  c2.toBlob(b => { if (colorURL) URL.revokeObjectURL(colorURL); colorURL = URL.createObjectURL(b); $('colorImg').src = colorURL; $('printImg').src = colorURL; $('colorOver').hidden = false; hideWelcome(); }, 'image/png');
+};
+$('closeColor').onclick = () => { $('colorOver').hidden = true; };
+$('printBtn').onclick = () => { try{ window.print(); }catch(e){} };
+$('saveColor').onclick = async () => {
+  if (!colorURL) return; const blob = await (await fetch(colorURL)).blob(), name = 'colorir-historia.png', file = new File([blob], name, {type:'image/png'});
+  if (navigator.canShare && navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:'Desenho para colorir'}); return; }catch(e){} }
+  const a = document.createElement('a'); a.href = colorURL; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+};
 function frame(){
   let T;
   if (play) T = tickPlayback(); else T = clockLive();
