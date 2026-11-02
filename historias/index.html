@@ -163,7 +163,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 
 <footer class="side">
   <form class="type" id="typeForm" autocomplete="off" hidden>
-    <input id="typeIn" type="text" enterkeyhint="send" placeholder="Escreva um pedaço da história e aperte Enter">
+    <input id="typeIn" type="text" enterkeyhint="send" placeholder="Escreva um pedaço da história ou cole uma história inteira">
     <button type="submit">Desenhar</button>
   </form>
   <div class="dock">
@@ -202,7 +202,8 @@ const mr = (a,b) => a+Math.random()*(b-a);
    [nome, emoji(s), palavras, flags]  c=personagem f=voa w=nada número=tamanho
    ========================================================= */
 const LEX = [
- ['Maria','@maria','maria mariazinha mari','c19'],
+ ['Maria','@maria','maria mariazinha mari','c19n'],
+ ['Chapeuzinho','@chapeu','chapeuzinho','c19n'],['caçador','🧑‍🌾','cacador lenhador','c18'],
  ['menino','👦','menino garoto filho moleque','c16'],['menina','👧','menina garota filha','c16'],
  ['bebê','👶','bebe nenem','c12'],['mãe','👩','mae mamae','c17'],['pai','👨','pai papai','c17'],
  ['vovó','👵','vovo avo vovozinha','c16'],['vovô','👴','vovozinho','c16'],
@@ -224,7 +225,7 @@ const LEX = [
  ['tubarão','🦈','tubarao','cw20'],['baleia','🐋','baleia','cw28'],['golfinho','🐬','golfinho','cw16'],['polvo','🐙','polvo','cw13'],
  ['caranguejo','🦀','caranguejo siri','c8'],['camelo','🐪','camelo','c20'],['pinguim','🐧','pinguim','c12'],['foca','🦭','foca','c13'],
  ['panda','🐼','panda','c15'],['jacaré','🐊','jacare crocodilo','c15'],['esquilo','🐿️','esquilo','c9'],['rato','🐁','rato ratinho camundongo','c7'],
- ['flor','🌻,🌷,🌹,🌸','flor florzinha','9'],['árvore','🌳','arvore','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
+ ['flor','🌻,🌷,🌹,🌸','flor florzinha','9'],['árvore','🌳','arvore carvalho','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
  ['bolo','🎂','bolo','11'],['sorvete','🍦','sorvete','9'],['maçã','🍎','maca','7'],['banana','🍌','banana','7'],['morango','🍓','morango','7'],
  ['pizza','🍕','pizza','9'],['doce','🍭','doce bala pirulito','8'],['chocolate','🍫','chocolate','8'],['pão','🍞','pao','8'],
  ['tesouro','💎','tesouro diamante joia','9'],['estrela','⭐','estrela estrelinha','f8'],['coração','❤️','coracao','f8'],
@@ -234,7 +235,8 @@ const LEX = [
  ['varinha','🪄','varinha','8'],['chave','🔑','chave','7'],['cogumelo','🍄','cogumelo','8'],['ovo','🥚','ovo','6'],['mapa','🗺️','mapa','9'],
  ['violão','🎸','violao guitarra','11'],['tambor','🥁','tambor','10'],['chapéu','🎩','chapeu','8'],['ursinho','🧸','ursinho pelucia','9'],
  ['lanterna','🔦','lanterna','8'],['fogueira','🔥','fogueira fogo','10'],['barraca','⛺','barraca tenda','18'],['cama','🛏️','cama','16'],
- ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],
+ ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],['cesta','🧺','cesta cestinha','9'],['vinho','🧃','vinho','8'],['óculos','👓','oculos','7'],
+ ['riacho','🏞️','riacho riachinho rio lago','20'],
  ['loja','🏪','loja vendinha mercado mercadinho padaria supermercado','20'],['leite','🥛','leite','8'],['refrigerante','🥤','refrigerante coca suco','8'],
  ['vizinho','🧑','vizinho vizinha','c16'],['amigo','🧒','amigo amiga amiguinho amiguinha','c15'],['escola','🏫','escola creche','20'],
  ['dinheiro','🪙','dinheiro moeda moedinha','7'],['boneca','🪆','boneca','9'],['biscoito','🍪','biscoito bolacha','7'],['queijo','🧀','queijo','8'],
@@ -249,13 +251,14 @@ function plurals(w){
 }
 LEX.forEach(([label,em,words,flags]) => {
   const key = norm(label).trim();
-  ENT[key] = {key,label,em:em.split(','),char:flags.includes('c'),fly:flags.includes('f'),swim:flags.includes('w'),sz:+(flags.match(/\d+/)||[10])[0]};
+  ENT[key] = {key,label,em:em.split(','),char:flags.includes('c'),fly:flags.includes('f'),swim:flags.includes('w'),sz:+(flags.match(/\d+/)||[10])[0],named:flags.includes('n')};
   words.split(' ').forEach(w => {
     if (!WORD[w]) WORD[w] = {key,plural:false};
     plurals(w).forEach(p => { if (!WORD[p]) WORD[p] = {key,plural:true}; });
   });
 });
-const PHRASES = [['fundo do mar','fundodomar'],['debaixo d agua','fundodomar'],['embaixo d agua','fundodomar'],['arco iris','arcoiris'],
+const PHRASES = [['dente de leao','flordente'],['chapeuzinho vermelho','chapeuzinho'],['la fora','lafora'],['para fora','lafora'],['fora da casa','lafora'],
+ ['fora da casinha','lafora'],['la dentro','ladentro'],['saiu correndo','foiembora'],['nunca mais voltou','foiembora'],['lobo mau','lobo malvado'],['fundo do mar','fundodomar'],['debaixo d agua','fundodomar'],['embaixo d agua','fundodomar'],['arco iris','arcoiris'],
  ['por do sol','pordosol'],['todo mundo','todos'],['foi embora','foiembora'],['foram embora','foiembora'],['dentro de casa','quarto'],
  ['tempo bom','tempobom'],['super heroi','heroi'],['espaco sideral','espaco'],['os dois','todos'],['as duas','todos']];
 const SETW = {floresta:'floresta',mata:'floresta',bosque:'floresta',selva:'floresta',praia:'praia',areia:'praia',mar:'praia',oceano:'fundo',
@@ -265,17 +268,20 @@ const SETW = {floresta:'floresta',mata:'floresta',bosque:'floresta',selva:'flore
  quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo'};
 const NUM = {um:1,uma:1,num:1,numa:1,outro:1,outra:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:5,uns:3,umas:3,alguns:3,algumas:3,
  muitos:5,muitas:5,varios:5,varias:5,mil:5,cem:5};
+const NEG = new Set(['nenhum','nenhuma','sem','nem']);
+// "a voz do caçador": quem vem depois de preposição não é quem faz a ação
+const PREP = new Set(['do','da','dos','das','de','ao','aos','pelo','pela','com','sobre','contra']);
 const ALLW = new Set(['todos','todas','juntos','juntas','ambos','ambas']);
-const TIME = [[/^(noite|noitinha|escur|anoitec)/,'noite'],[/^(dia|manha)$|^amanhec/,'dia'],[/^(tarde|pordosol)$|^entardec/,'tarde']];
+const TIME = [[/^(noite|noitinha|escur|anoitec)/,'noite'],[/^(dia|manha)$|^amanhec/,'dia'],[/^(tarde|tardinha|pordosol)$|^entardec/,'tarde']];
 const WX = [[/^(chuv|chov|garoa)/,'chuva'],[/^(neve|nevou|nevava|nevando|nevar|nevasca|nevad)/,'neve'],[/^(tempestade|trov|relamp|raio)/,'tempestade'],
  [/^(vento|ventania|ventava|ventando)$/,'vento'],[/^arcoiris$/,'arcoiris'],[/^(ensolarad|tempobom)/,'sol'],[/^(nublad|nuvem|nuvens|cinzento)/,'nublado']];
-const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$)/,'feliz'],[/^(trist|chor|magoad)/,'triste'],[/^(medo|assust|apavor)/,'medo'],
- [/^(brav|raiva|zangad|furios)/,'bravo'],[/^(dorm|sono$|cansad|cochil)/,'sono'],[/^(surpres|espant)/,'surpresa'],[/^(amor|amava|amou|apaixon|abrac|beij|carinho)/,'amor']];
+const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$)/,'feliz'],[/^(trist|chor|magoad)/,'triste'],[/^(doente|resfriad|febre)/,'doente'],[/^(medo|assust|apavor|susto|sustos)$|^assust|^apavor/,'medo'],
+ [/^(brav|raiva|zangad|furios|malvad|rosn)/,'bravo'],[/^(dorm|sono$|cansad|cochil|ronc)/,'sono'],[/^(surpres|espant)/,'surpresa'],[/^(amor|amava|amou|amad|apaixon|abrac|beij|carinho)/,'amor']];
 const ACT = [[/^pul(a|ou|ar|ava|ando|aram|avam)$|^brinc/,'pular'],[/^danc/,'dancar'],[/^vo(a|ou|ar|ava|ando|aram|avam)$/,'voar'],
  [/^corr(e|eu|er|ia|endo|eram|iam)$/,'correr'],[/^(and(a|ou|ar|ava|ando|aram|avam)$|passe|caminh)/,'andar'],[/^nad(a|ou|ar|ava|ando|aram|avam)$/,'nadar'],
- [/^cant(a|ou|ar|ava|ando|aram|avam)$/,'cantar'],[/^com(e|eu|er|ia|endo|eram|iam)$/,'comer'],[/^(foiembora|sumiu|desaparec|fugiu|partiu)/,'sair']];
+ [/^cant(a|ou|ar|ava|ando|aram|avam)$/,'cantar'],[/^com(e|eu|er|ia|endo|eram|iam)$/,'comer'],[/^(foiembora|sumiu|desaparec|fugiu|partiu)/,'sair'],[/^engol/,'engolir']];
 const ACTDUR = {pular:1400,dancar:2500,voar:2600,nadar:2400};
-const MOODS = {feliz:['😄','Feliz'],triste:['😢','Triste'],medo:['😱','Com medo'],bravo:['😠','Bravo'],sono:['💤','Com sono'],surpresa:['😮','Surpresa'],amor:['💖','Amor']};
+const MOODS = {doente:['🤒','Doente'],feliz:['😄','Feliz'],triste:['😢','Triste'],medo:['😱','Com medo'],bravo:['😠','Bravo'],sono:['💤','Com sono'],surpresa:['😮','Surpresa'],amor:['💖','Amor']};
 const TIMES = {dia:['☀️','Dia'],tarde:['🌇','Pôr do sol'],noite:['🌙','Noite']};
 const WXS = {sol:['🌤️','Tempo bom'],chuva:['🌧️','Chuva'],neve:['❄️','Neve'],tempestade:['⛈️','Tempestade'],vento:['🍃','Vento'],arcoiris:['🌈','Arco-íris'],nublado:['☁️','Nublado']};
 
@@ -315,7 +321,7 @@ const SET = {
 let S;
 function newScene(seed){
   R = mulberry32(seed);
-  S = {set:'campo',prevSet:null,setT:-1e9,time:'dia',wx:'sol',wxT:-1e9,mood:null,ents:[],ghosts:[],last:[],uid:0,tw:{},
+  S = {sent:0,eaten:new Set(),outSet:'campo',set:'campo',prevSet:null,setT:-1e9,time:'dia',wx:'sol',wxT:-1e9,mood:null,ents:[],ghosts:[],last:[],uid:0,tw:{},
        sky:{from:null,to:skyStops('campo','dia','sol'),t0:-1e9},subs:[],interim:'',flashIdx:0};
   renderChips();
 }
@@ -346,7 +352,7 @@ function pickX(def, self){
 const twv = (o,T) => lerp(o.from,o.to,easeIO(clamp((T-o.t0)/o.dur)));
 function moveTo(o,to,T,dur){ o.from = twv(o,T); o.to = to; o.t0 = T; o.dur = dur; }
 function spawn(def,T){
-  const e = {id:++S.uid,key:def.key,label:def.label,em:pick(def.em),sz:def.sz,fly:def.fly,swim:def.swim,char:def.char,born:T,
+  const e = {id:++S.uid,key:def.key,label:def.label,em:pick(def.em),sz:def.sz,fly:def.fly,swim:def.swim,char:def.char,born:T,named:!!def.named,seen:S.sent,
              mood:null,moodT:0,act:null,actT:0,bub:null,fx:R()<.5?-1:1};
   const x = pickX(def,e), [a,b] = groundRange(def), y = rnd(a,b);
   e.x = {from:x,to:x,t0:T,dur:1}; e.y = {from:y,to:y,t0:T,dur:1};
@@ -360,9 +366,14 @@ function ghost(e,T,quick){
   if (!quick) moveTo(e.x, twv(e.x,T)>50 ? 118 : -18, T, 1700);
   S.ghosts.push(e);
 }
+const GENERIC = new Set(['menina','menino']);
 function mention(ev,T){
   const def = ENT[ev.key], existing = S.ents.filter(x=>x.key===ev.key);
-  if (!ev.num && existing.length) return ev.plural ? existing : [existing[existing.length-1]];
+  // "um lobo" de novo é o mesmo lobo; "outro lobo" ou "dois lobos" desenham mais
+  if (ev.num===1 && !ev.other && def.char && existing.length) ev = Object.assign({}, ev, {num:0});
+  if (!ev.num && existing.length){ const r = ev.plural ? existing : [existing[existing.length-1]]; r.forEach(x=>x.seen=S.sent); return r; }
+  // "a menina" quando já existe uma personagem com nome (Maria, Chapeuzinho…) é ela mesma
+  if (!ev.num && !ev.plural && GENERIC.has(ev.key)){ const nm = S.ents.filter(x=>x.named); if (nm.length){ nm[nm.length-1].seen = S.sent; return [nm[nm.length-1]]; } }
   const n = Math.min(ev.num || (ev.plural?3:1), 5), out = [];
   for (let i=0;i<n;i++) out.push(spawn(def,T));
   sfx('pop'); return out;
@@ -379,7 +390,7 @@ function act(e,a,T){
 }
 function setSetting(v,keep,T){
   if (S.set===v) return;
-  S.prevSet = S.set; S.set = v; S.setT = T; sfx('whoosh');
+  S.prevSet = S.set; S.set = v; S.setT = T; sfx('whoosh'); if (!SET[v].indoor) S.outSet = v;
   S.ents.slice().forEach(e => { if (!e.char && !keep.has(e.id)) ghost(e,T,true); });
   S.ents.forEach(e => { const [a,b] = groundRange(e); moveTo(e.y, rnd(a,b), T, 1400); });
   newSky(T);
@@ -393,31 +404,52 @@ function analyze(s){
   const tk = t.trim().split(' ').filter(Boolean), ev = [];
   tk.forEach((w,i) => {
     const e = WORD[w];
-    if (e){ const nb = NUM[tk[i-1]] || (WORD[tk[i-1]] ? 0 : NUM[tk[i-2]]) || 0; ev.push({type:'ent',key:e.key,plural:e.plural,num:nb}); return; }
+    if (e){
+      if (NEG.has(tk[i-1]) || NEG.has(tk[i-2])) return;            // "nenhum lobo" não desenha lobo
+      const nw = NUM[tk[i-1]] ? tk[i-1] : (WORD[tk[i-1]] ? '' : (NUM[tk[i-2]] ? tk[i-2] : ''));
+      ev.push({type:'ent',key:e.key,plural:e.plural,num:nw?NUM[nw]:0,other:/^outr/.test(nw),prep:PREP.has(tk[i-1])}); return; }
+    if (/^(sairam|salv|resgat|libert)/.test(w)){ ev.push({type:'free'}); return; }
     if (SETW[w]){ ev.push({type:'set',v:SETW[w]}); return; }
     if (w==='lua'){ ev.push({type:'time',v:'noite',weak:1}); return; }
+    if (w==='ladentro'){ ev.push({type:'in',strong:1}); return; }
+    if (w==='lafora'){ ev.push({type:'out'}); return; }
+    if (/^entr(ou|a|ar|aram|ando)$/.test(w)){ ev.push({type:'in'}); return; }
     if (w==='sol'){ ev.push({type:'time',v:'dia',weak:1},{type:'wx',v:'sol'}); return; }
     if (w==='dia' && /^(um|certo|outro|belo|todo)$/.test(tk[i-1]||'')) return;
     for (const [re,v] of TIME) if (re.test(w)){ ev.push({type:'time',v}); return; }
     for (const [re,v] of WX) if (re.test(w)){ ev.push({type:'wx',v}); return; }
-    for (const [re,v] of MOOD) if (re.test(w)){ ev.push({type:'mood',v}); return; }
+    const neg = [tk[i-1],tk[i-2],tk[i-3]].some(x=>NEG.has(x));
+    for (const [re,v] of MOOD) if (re.test(w)){ if (!neg) ev.push({type:'mood',v}); return; }
     for (const [re,v] of ACT) if (re.test(w)){ ev.push({type:'act',v}); return; }
   });
   return {ev, all: tk.some(w=>ALLW.has(w))};
 }
 function applySentence(s,T){
-  const {ev,all} = analyze(s); let local = null; const keep = new Set();
+  S.sent++;
+  const {ev,all} = analyze(s); let local = null, swallow = null; const keep = new Set(), made = [];
+  const hasSet = ev.some(e=>e.type==='set');
   for (const e of ev){
-    if (e.type==='ent'){ const made = mention(e,T); made.forEach(x=>keep.add(x.id)); const ch = made.filter(x=>x.char); if (ch.length){ local = ch; S.last = ch; } }
+    if (e.type==='ent'){ if (S.eaten.has(e.key)) continue;   // quem foi engolido só volta quando for salvo
+      const m = mention(e,T); m.forEach(x=>{ keep.add(x.id); made.push(x); }); const ch = m.filter(x=>x.char);
+      if (ch.length){ if (swallow){ ch.filter(x=>x!==swallow).forEach(x=>{ ghost(x,T,true); S.eaten.add(x.key); }); swallow = null; sfx('boing'); }
+        else if (!e.prep){ local = ch; S.last = ch; } } }
+    else if (e.type==='free') S.eaten.clear();
     else if (e.type==='set') setSetting(e.v,keep,T);
+    else if (e.type==='in'){ if (e.strong || (!hasSet && (S.ents.some(x=>x.key==='casa') || /cas(a|inha)/.test(norm(s))))) setSetting('casa',keep,T); }
+    else if (e.type==='out'){ if (SET[S.set].indoor) setSetting(S.outSet,keep,T); }
     else if (e.type==='time'){ if (!(e.weak && SET[S.set].fixed)) setTime(e.v,T); }
     else if (e.type==='wx') setWx(e.v,T);
     else {
-      const tgt = (all ? S.ents.filter(x=>x.char) : (local || S.last)).filter(x=>S.ents.includes(x));
-      if (e.type==='mood'){ tgt.forEach(x=>setMood(x,e.v,T)); S.mood = e.v; sfx(e.v==='triste'||e.v==='medo' ? 'sad' : 'chime'); }
+      const tgt = (all ? S.ents.filter(x=>x.char) : (local || S.last)).filter(x=>S.ents.includes(x)); tgt.forEach(x=>x.seen=S.sent);
+      if (e.type==='mood'){ tgt.forEach(x=>setMood(x,e.v,T)); S.mood = e.v; sfx(['triste','medo','doente'].includes(e.v) ? 'sad' : 'chime'); }
+      else if (e.v==='engolir'){ swallow = tgt[0] || null; }   // quem for citado depois some na barriga
       else tgt.forEach(x=>act(x,e.v,T));
     }
   }
+  // "uma menina que todos chamavam de Chapeuzinho": fica só a personagem com nome
+  if (/cham|nome/.test(norm(s))){ const nm = made.find(x=>x.named); if (nm) made.filter(x=>GENERIC.has(x.key) && S.ents.includes(x)).forEach(x=>ghost(x,T,true)); }
+  // quem sai da história: objetos esquecidos há 5 frases, personagens há 9
+  S.ents.slice().forEach(x => { if (keep.has(x.id)) return; const age = S.sent - x.seen; if ((!x.char && age>5) || (x.char && age>9)) ghost(x,T,!x.char); });
 }
 function applyText(text,T,join){
   // a fala chega em pedacinhos: junta na mesma legenda até ela ficar comprida
@@ -445,8 +477,8 @@ function emojiImg(em,size){
    Para mudar as cores, edite MARIA. */
 const MARIA = {pele:'#f6cfae', cabelo:'#9a5f2c', cabeloEsc:'#6b3d17', elastico:'#ff8fb8', blusa:'#ffcf96', flor:'#ffffff',
                short:'#e8452c', sandalia:'#e8392c', olho:'#7a4a24', linha:'#3a2416'};
-function drawMaria(g){            // caixa 100 x 140, pés em y=140
-  const M = MARIA, L = (w=1.6)=>{ g.lineWidth = w; g.strokeStyle = M.linha; g.lineJoin = g.lineCap = 'round'; };
+function drawMaria(g, M=MARIA, hood=false){   // caixa 100 x 140, pés em y=140
+  const L = (w=1.6)=>{ g.lineWidth = w; g.strokeStyle = M.linha; g.lineJoin = g.lineCap = 'round'; };
   const circ = (x,y,r,fill,w=1.3)=>{ g.beginPath(); g.arc(x,y,r,0,TAU); g.fillStyle = fill; g.fill(); L(w); g.stroke(); };
   const shape = (pts,fill,w)=>{ g.beginPath(); pts(); g.fillStyle = fill; g.fill(); L(w); g.stroke(); };
   // cachos soltos atrás, até os ombros
@@ -468,8 +500,8 @@ function drawMaria(g){            // caixa 100 x 140, pés em y=140
   circ(29,44,4,M.pele); circ(71,44,4,M.pele);
   circ(50,40,22,M.pele);
   // cachinhos do topo com elástico rosa
-  [[50,13,8],[43,15,6],[57,15,6]].forEach(([x,y,r])=>circ(x,y,r,M.cabelo));
-  g.fillStyle = M.elastico; g.beginPath(); g.ellipse(50,19,6,2.2,0,0,TAU); g.fill(); L(1); g.stroke();
+  if (!hood) [[50,13,8],[43,15,6],[57,15,6]].forEach(([x,y,r])=>circ(x,y,r,M.cabelo));
+  if (!hood){ g.fillStyle = M.elastico; g.beginPath(); g.ellipse(50,19,6,2.2,0,0,TAU); g.fill(); L(1); g.stroke(); }
   // franja cacheada
   [[32,29,7],[39,22,7.5],[47,20,7.5],[55,20,7.5],[62,23,7],[68,30,6.5]].forEach(([x,y,r])=>circ(x,y,r,M.cabelo));
   g.strokeStyle = M.cabeloEsc; g.lineWidth = 1; [[39,22],[55,20],[26,52],[74,52],[30,27],[70,27]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,3,.5,4); g.stroke(); });
@@ -484,7 +516,21 @@ function drawMaria(g){            // caixa 100 x 140, pés em y=140
   g.fillStyle = '#ff9aae'; g.beginPath(); g.ellipse(50,56,3,1.5,0,0,TAU); g.fill();
 }
 if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){ this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r); this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r); this.closePath(); };
-const SPRITES = {maria: drawMaria};
+/* Chapeuzinho Vermelho: mesma família de desenho, com capuz e capa vermelha */
+function drawChapeu(g){
+  const M = Object.assign({}, MARIA, {cabelo:'#5a3418', cabeloEsc:'#3a2010', blusa:'#ffffff', flor:'#ffd6e0', short:'#3d5a98', sandalia:'#6b3d1f'});
+  const red = '#d7263d', redD = '#9e1a2c';
+  g.lineJoin = g.lineCap = 'round';
+  // capuz por trás da cabeça e capa nas costas
+  g.beginPath(); g.arc(50,38,30,0,TAU); g.fillStyle = red; g.fill(); g.lineWidth = 1.6; g.strokeStyle = M.linha; g.stroke();
+  g.beginPath(); g.moveTo(26,56); g.lineTo(74,56); g.lineTo(86,112); g.quadraticCurveTo(50,118,14,112); g.closePath(); g.fillStyle = redD; g.fill(); g.stroke();
+  drawMaria(g, M, true);
+  // aba do capuz em volta do rosto e laço
+  g.beginPath(); g.arc(50,38,26,Math.PI*0.92,Math.PI*2.08); g.lineWidth = 9; g.strokeStyle = red; g.stroke();
+  g.lineWidth = 1.4; g.strokeStyle = M.linha; g.beginPath(); g.arc(50,38,30.5,Math.PI*0.9,Math.PI*2.1); g.stroke(); g.beginPath(); g.arc(50,38,21.5,Math.PI*0.95,Math.PI*2.05); g.stroke();
+  g.beginPath(); g.moveTo(50,62); g.lineTo(42,58); g.lineTo(42,66); g.closePath(); g.moveTo(50,62); g.lineTo(58,58); g.lineTo(58,66); g.closePath(); g.fillStyle = red; g.fill(); g.stroke();
+}
+const SPRITES = {maria: drawMaria, chapeu: drawChapeu};
 /* fotos da família: viram um medalhão redondo com borda branca */
 function photoSprite(img){
   return g => { g.save(); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 6; g.shadowOffsetY = 3;
@@ -633,7 +679,7 @@ function render(c,W,H,T){
   const lines = S.subs.slice(-1).concat(S.interim ? [S.interim] : []);
   if (lines.length){ const fs = Math.max(14,u*(c===xc?4.4:3.6)); c.font = `800 ${fs}px ${UIF}`; c.textAlign = 'center'; c.textBaseline = 'middle';
     let wl = []; lines.forEach((t,i) => wrapLines(c,t,W*.86).forEach(l => wl.push([l, i===lines.length-1 && S.interim ? .7 : 1])));
-    wl = wl.slice(-3); let y = H - u*3 - fs*.8 - (wl.length-1)*fs*1.45;
+    wl = wl.slice(-3); let y = u*3 + fs*.8;
     wl.forEach(([l,al]) => { const w = c.measureText(l).width+fs*1.1; c.globalAlpha = al; c.fillStyle = 'rgba(14,24,14,.72)'; rrect(c,W/2-w/2,y-fs*.72,w,fs*1.44,fs*.35); c.fill(); c.fillStyle = '#fff'; c.fillText(l,W/2,y); y += fs*1.45; });
     c.globalAlpha = 1; }
 }
@@ -851,16 +897,24 @@ const STARTERS = [
  ['🐄','Festa na fazenda',['Era uma vez uma fazenda bem grande.','Lá moravam uma vaca, um porco e três galinhas.','Um dia apareceu um bolo enorme e todo mundo ficou feliz.','Até o cachorro pulou de alegria.']],
  ['🐉','Dragão e o escuro',['Num castelo morava um dragão.','Quando chegava a noite, o dragão tinha medo do escuro.','Uma fada apareceu com uma estrela brilhante.','O dragão ficou feliz e dormiu.']],
  ['🧜‍♀️','A sereia',['No fundo do mar morava uma sereia.','Ela tinha uma amiga tartaruga.','Um tubarão apareceu e a tartaruga ficou com medo.','A sereia cantou e o tubarão foi embora.']],
+ ['🧺','Chapeuzinho',['Era uma vez uma menina que todo mundo chamava de Chapeuzinho Vermelho.','A vovó dela morava na beira da floresta e estava doente.','A mãe colocou um bolo na cesta e Chapeuzinho foi pela trilha da floresta.','De repente, um lobo mau apareceu.','O lobo correu até a casa da vovó, entrou e engoliu a vovó.','Quando Chapeuzinho chegou, o lobo engoliu a menina também.','Depois o lobo dormiu e roncava muito.','Um caçador entrou e salvou a vovó e Chapeuzinho.','Lá fora, o lobo ficou com medo e saiu correndo para as montanhas.','E Chapeuzinho voltou feliz para casa, de tardinha.']],
  ['🌈','Chuva no jardim',['Era uma vez uma menina num jardim cheio de flores.','Começou a chover forte e veio uma tempestade.','A menina ficou triste.','Depois apareceu um arco-íris e uma borboleta, e a menina dançou.']],
 ];
 $('starters').innerHTML = STARTERS.map((s,i)=>`<button type="button" data-i="${i}"><span>${s[0]}</span>${s[1]}</button>`).join('');
 let demoTok = 0;
 $('starters').addEventListener('click', ev => {
   const b = ev.target.closest('button'); if (!b) return; audio();
-  const lines = STARTERS[+b.dataset.i][2], tok = ++demoTok; newStory(true); hideWelcome();
-  let i = 0; const next = () => { if (tok!==demoTok || i>=lines.length || story.demo!==true) return; addText(lines[i++]); speak(lines[i-1], next); };
-  next();
+  playLines(STARTERS[+b.dataset.i][2]);
 });
+/* lê a história em voz alta, frase por frase, e desenha cada uma */
+function playLines(lines){
+  const tok = ++demoTok; newStory(true); hideWelcome();
+  let i = 0; const next = () => { if (tok!==demoTok || i>=lines.length || !story || story.demo!==true) return; addText(lines[i++]); speak(lines[i-1], next); };
+  next();
+}
+function splitSentences(text){
+  return (text.replace(/\s+/g,' ').match(/[^.!?…]+(?:[.!?…]+["”»’]?|$)/g) || []).map(x=>x.trim()).filter(x=>x.length>1);
+}
 
 /* ---------- Interface ---------- */
 function renderChips(){
@@ -884,7 +938,11 @@ $('playBtn').onclick = () => mode==='replay' ? stopPlayback() : startPlayback(fa
 $('vidBtn').onclick = () => startPlayback(true);
 $('newBtn').onclick = () => { demoTok++; if (rec.on) micOff(); stopPlayback(); try{ speechSynthesis.cancel(); }catch(e){} story = null; newScene(1); idleLife(); mode = 'idle'; $('result').hidden = true; $('welcome').hidden = false; updateButtons(); };
 $('kbBtn').onclick = () => { const f = $('typeForm'); f.hidden = !f.hidden; if (!f.hidden) $('typeIn').focus(); };
-$('typeForm').addEventListener('submit', ev => { ev.preventDefault(); audio(); const v = $('typeIn').value; $('typeIn').value = ''; addText(v); });
+$('typeForm').addEventListener('submit', ev => { ev.preventDefault(); audio(); const v = $('typeIn').value; $('typeIn').value = '';
+  // história colada inteira: vira uma apresentação lida em voz alta
+  if (v.length > 160) playLines(splitSentences(v)); else addText(v); });
+// colar um texto grande já começa a apresentação
+$('typeIn').addEventListener('paste', ev => { const t = (ev.clipboardData||window.clipboardData).getData('text'); if (t && t.length > 160){ ev.preventDefault(); audio(); playLines(splitSentences(t)); } });
 
 /* ---------- Laço de desenho ---------- */
 const cv = $('cv'), cx = cv.getContext('2d'); let dpr = 1, VW = 0, VH = 0;
