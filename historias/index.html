@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#173a16">
+<title>Conta que Eu Desenho</title>
+<style>
+/* Tela única: cabeçalho com o que a cena entendeu, palco desenhado em canvas, botões grandes embaixo. */
+:root{
+  --chrome:#173a16; --panel:#1f5121; --line:#2e6b30; --text:#f6f3e8; --muted:#c3d6bc;
+  --sun:#ffc43d; --coral:#ff6b5b; --coral-d:#c94a3d; --leaf:#7fd36b;
+  --ui:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--chrome);color:var(--text);font-family:var(--ui);display:grid;grid-template-rows:auto minmax(0,1fr) auto;grid-template-columns:minmax(0,1fr);overflow:hidden;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);-webkit-tap-highlight-color:transparent}
+button,input{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+[hidden]{display:none!important}
+.side{padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+
+.top{display:flex;align-items:center;gap:10px;padding-block:8px}
+.brand{font-weight:800;font-size:1.15rem;white-space:nowrap}
+.brand b{color:var(--sun)}
+.chips{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-weight:800;font-size:.8rem;white-space:nowrap}
+.chip.on{border-color:var(--sun)}
+
+.wrap{min-height:0}
+.stage{position:relative;height:100%;min-height:220px;border-radius:22px;overflow:hidden;background:#9fd6f5;box-shadow:0 10px 36px rgba(0,0,0,.35)}
+canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.over{position:absolute;inset:0;display:grid;place-items:center;padding:14px;overflow:auto;z-index:5}
+.card{background:rgba(255,253,246,.95);color:#1d3320;border-radius:26px;padding:20px 20px 22px;max-width:560px;width:100%;text-align:center;box-shadow:0 18px 50px rgba(10,30,10,.35)}
+.card h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1;margin:0 0 14px;font-weight:800}
+.go{display:inline-grid;place-items:center;width:112px;height:112px;border-radius:50%;border:0;background:var(--coral);color:#fff;font-size:3.2rem;box-shadow:0 7px 0 var(--coral-d);animation:breathe 2.4s ease-in-out infinite}
+.go:active{transform:translateY(4px);box-shadow:0 3px 0 var(--coral-d)}
+@keyframes breathe{50%{transform:scale(1.06)}}
+.hint{display:block;margin:10px 0 14px;font-weight:800;color:#56705a;font-size:.95rem}
+.starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px}
+.starters button{background:#fff;border:3px solid #dbe8d3;color:#1d3320;border-radius:18px;padding:8px 4px 6px;font-weight:800;font-size:.78rem;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:2px}
+.starters button span{font-size:2.1rem;line-height:1.1}
+.starters button:hover{border-color:var(--sun)}
+.result video{width:100%;max-height:42vh;border-radius:14px;background:#000;margin-bottom:12px}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pill{border:0;border-radius:999px;padding:12px 20px;font-weight:800;font-size:1rem;background:var(--leaf);color:#123016;box-shadow:0 4px 0 #4d9a3f}
+.pill.alt{background:#e9f3e2;color:#1d3320;box-shadow:0 4px 0 #b9cdb0}
+.bar{height:12px;border-radius:99px;background:#e1ead9;overflow:hidden;margin:12px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--leaf);border-radius:99px}
+.small{font-size:.85rem;color:#56705a;font-weight:700}
+.second{margin-top:14px;border:0;background:#e9f3e2;color:#1d3320;border-radius:999px;padding:10px 18px;font-weight:800;font-size:.95rem;box-shadow:0 3px 0 #b9cdb0}
+.people{max-width:520px;text-align:left}
+.people h2{margin:0 0 4px;font-size:1.5rem}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin:12px 0}
+.person{display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800;font-size:.85rem;position:relative}
+.person img,.person canvas{width:72px;height:72px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.18);background:#e9f3e2}
+.person .x{position:absolute;top:-4px;right:6px;width:26px;height:26px;border-radius:50%;border:0;background:#e8473a;color:#fff;font-weight:800;line-height:1}
+.addp{display:grid;gap:8px;background:#f3f8ef;border-radius:16px;padding:12px}
+.addp label{font-weight:800;font-size:.85rem}
+.addp input[type=text]{border:2px solid #dbe8d3;border-radius:12px;padding:10px 12px;font-weight:700;font-size:1rem;color:#1d3320;background:#fff}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.quick button{border:2px solid #dbe8d3;background:#fff;border-radius:999px;padding:4px 10px;font-weight:800;color:#1d3320;font-size:.82rem}
+.photo{display:flex;align-items:center;gap:10px}
+.photo label.pick{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px dashed #9cc38d;border-radius:12px;padding:10px 14px;cursor:pointer;color:#1d3320}
+.photo input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+#pPrev{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.stop{position:absolute;left:12px;top:12px;z-index:6;border:0;border-radius:999px;background:rgba(15,30,15,.7);color:#fff;font-weight:800;padding:9px 16px}
+.tip{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:7;background:#fffbe9;color:#3a3220;border-radius:14px;padding:11px 15px;font-weight:700;width:max-content;max-width:min(92%,540px);box-shadow:0 10px 30px rgba(0,0,0,.3);line-height:1.4;font-size:.92rem}
+
+.dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding-block:10px 12px}
+.l,.r{display:flex;gap:8px;align-items:center}
+.r{justify-content:flex-end}
+.btn{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:16px;padding:7px 10px 6px;min-width:62px;font-weight:800;font-size:.72rem}
+.btn span{font-size:1.5rem;line-height:1.1}
+.btn:disabled{opacity:.35;cursor:default}
+.mic{width:84px;height:84px;border-radius:50%;border:0;background:var(--coral);color:#fff;font-size:2.4rem;box-shadow:0 6px 0 var(--coral-d)}
+.mic.on{background:#e8473a;animation:pulse 1.3s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,107,91,.75),0 6px 0 var(--coral-d)}100%{box-shadow:0 0 0 22px rgba(255,107,91,0),0 6px 0 var(--coral-d)}}
+.type{display:flex;gap:8px;padding-bottom:10px}
+.type input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;color:var(--text);padding:12px 14px;font-weight:700;font-size:1rem}
+.type input::placeholder{color:var(--muted)}
+.type button{border:0;border-radius:14px;background:var(--leaf);color:#123016;font-weight:800;padding:0 16px}
+@media (max-width:560px){
+  .brand{font-size:1rem}
+  .chip .t{display:none}
+  .btn{min-width:44px;padding:5px 4px 4px;font-size:.62rem;border-radius:13px}
+  .btn span{font-size:1.25rem}
+  .l,.r{gap:5px}
+  .dock{gap:6px}
+  .mic{width:68px;height:68px;font-size:2rem}
+}
+@media (prefers-reduced-motion:reduce){.go,.mic.on{animation:none}}
+</style>
+</head>
+<body>
+<header class="top side">
+  <div class="brand">🖍️ Conta que <b>Eu Desenho</b></div>
+  <div class="chips" id="chips" aria-live="polite"></div>
+</header>
+
+<main class="wrap side">
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="Cena da história"></canvas>
+
+    <div class="over" id="welcome">
+      <div class="card">
+        <h1>Era uma vez…</h1>
+        <button class="go" id="goMic" type="button" aria-label="Começar a contar">🎙️</button>
+        <span class="hint">Aperte e conte a sua história</span>
+        <div class="starters" id="starters"></div>
+        <button class="second" id="peopleBtn" type="button">📸 Colocar fotos da família</button>
+      </div>
+    </div>
+
+    <div class="over" id="busy" hidden style="place-items:start center">
+      <div class="card">
+        <h1 style="font-size:1.4rem;margin-bottom:6px">🎬 Fazendo o vídeo…</h1>
+        <div class="bar"><i id="barFill"></i></div>
+        <div class="small">Deixe a tela ligada. O vídeo fica pronto quando a história acabar.</div>
+        <div class="row" style="margin-top:12px"><button class="pill alt" id="cancelExport" type="button">Cancelar</button></div>
+      </div>
+    </div>
+
+    <div class="over" id="peopleOver" hidden>
+      <div class="card people">
+        <h2>📸 Personagens da família</h2>
+        <div class="small">Mande uma foto e dê um nome. Quando alguém falar esse nome na história, a foto aparece na cena. As fotos ficam guardadas só neste aparelho.</div>
+        <div class="plist" id="plist"></div>
+        <form class="addp" id="addPerson" autocomplete="off">
+          <label for="pName">Nome que vai ser falado</label>
+          <input id="pName" type="text" placeholder="Ex.: Mamãe, Papai, Vovó, Theo, Pipoca">
+          <div class="quick" id="quick"></div>
+          <div class="photo">
+            <label class="pick" for="pFile">🖼️ Escolher foto</label>
+            <input id="pFile" type="file" accept="image/*">
+            <img id="pPrev" alt="" hidden>
+          </div>
+          <button class="pill" type="submit">Adicionar personagem</button>
+        </form>
+        <div class="row" style="margin-top:12px"><button class="pill alt" id="peopleDone" type="button">Pronto, vamos contar!</button></div>
+      </div>
+    </div>
+
+    <div class="over result" id="result" hidden>
+      <div class="card">
+        <video id="resVideo" controls playsinline></video>
+        <div class="row">
+          <button class="pill" id="dlBtn" type="button">⬇️ Baixar vídeo</button>
+          <button class="pill" id="shBtn" type="button" hidden>📤 Enviar</button>
+          <button class="pill alt" id="closeRes" type="button">Fechar</button>
+        </div>
+        <div class="small" id="resInfo" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <button class="stop" id="stopPlay" type="button" hidden>⏹ Parar</button>
+  </div>
+</main>
+
+<footer class="side">
+  <form class="type" id="typeForm" autocomplete="off" hidden>
+    <input id="typeIn" type="text" enterkeyhint="send" placeholder="Escreva um pedaço da história e aperte Enter">
+    <button type="submit">Desenhar</button>
+  </form>
+  <div class="dock">
+    <div class="l">
+      <button class="btn" id="kbBtn" type="button"><span>⌨️</span>Escrever</button>
+    </div>
+    <button class="mic" id="mic" type="button" aria-label="Ligar o microfone">🎙️</button>
+    <div class="r">
+      <button class="btn" id="playBtn" type="button" disabled><span>▶️</span>Assistir</button>
+      <button class="btn" id="vidBtn" type="button" disabled><span>🎬</span>Vídeo</button>
+      <button class="btn" id="newBtn" type="button"><span>✨</span>Nova</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+(() => {
+const $ = id => document.getElementById(id);
+// "vovô" e "vovó" ficam iguais sem acento: vovô vira vovozinho (👴)
+const norm = s => s.replace(/vovô/gi,'vovozinho').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s]/g,' ');
+const clamp = (v,a=0,b=1) => Math.max(a,Math.min(b,v));
+const lerp = (a,b,k) => a+(b-a)*k;
+const easeIO = k => k<.5 ? 2*k*k : 1-Math.pow(-2*k+2,2)/2;
+const easeOut = k => 1-Math.pow(1-k,3);
+const backOut = k => { const c1=1.9,c3=c1+1; return 1+c3*Math.pow(k-1,3)+c1*Math.pow(k-1,2); };
+const TAU = Math.PI*2, DEG = Math.PI/180;
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+let R = Math.random;
+const rnd = (a,b) => a+R()*(b-a);
+const pick = a => a[Math.floor(R()*a.length)];
+const mr = (a,b) => a+Math.random()*(b-a);
+
+/* =========================================================
+   Dicionário: o que a criança fala vira desenho
+   [nome, emoji(s), palavras, flags]  c=personagem f=voa w=nada número=tamanho
+   ========================================================= */
+const LEX = [
+ ['Maria','@maria','maria mariazinha mari','c19'],
+ ['menino','👦','menino garoto filho moleque','c16'],['menina','👧','menina garota filha','c16'],
+ ['bebê','👶','bebe nenem','c12'],['mãe','👩','mae mamae','c17'],['pai','👨','pai papai','c17'],
+ ['vovó','👵','vovo avo vovozinha','c16'],['vovô','👴','vovozinho','c16'],
+ ['princesa','👸','princesa rainha','c17'],['príncipe','🤴','principe rei','c17'],
+ ['fada','🧚','fada fadinha','cf13'],['bruxa','🧙‍♀️','bruxa','c17'],['mago','🧙‍♂️','mago feiticeiro','c17'],
+ ['sereia','🧜‍♀️','sereia','cw17'],['astronauta','🧑‍🚀','astronauta','c17'],['herói','🦸','heroi heroina','c17'],
+ ['robô','🤖','robo','c15'],['alien','👽','alien et extraterrestre marciano','c15'],['fantasma','👻','fantasma','cf14'],
+ ['monstro','👾','monstro monstrinho','c15'],['dinossauro','🦖','dinossauro dino tiranossauro','c24'],
+ ['dragão','🐉','dragao','c26'],['unicórnio','🦄','unicornio','c18'],
+ ['gato','🐈','gato gata gatinho gatinha','c12'],['cachorro','🐕','cachorro cachorra cachorrinho cao cadela','c13'],
+ ['cavalo','🐎','cavalo egua','c18'],['vaca','🐄','vaca boi','c18'],['porco','🐖','porco porquinho','c12'],
+ ['galinha','🐔','galinha galo','c10'],['pintinho','🐤','pintinho','c7'],['ovelha','🐑','ovelha carneiro','c13'],
+ ['coelho','🐇','coelho coelhinho','c11'],['urso','🐻','urso','c15'],['leão','🦁','leao leoa','c16'],['tigre','🐅','tigre','c16'],
+ ['macaco','🐒','macaco macaquinho','c13'],['elefante','🐘','elefante','c22'],['girafa','🦒','girafa','c24'],['zebra','🦓','zebra','c17'],
+ ['raposa','🦊','raposa','c12'],['lobo','🐺','lobo','c14'],['sapo','🐸','sapo sapinho','c9'],['tartaruga','🐢','tartaruga','cw11'],
+ ['cobra','🐍','cobra','c11'],['pato','🦆','pato patinho','c11'],['pássaro','🐦','passaro passarinho ave','cf8'],
+ ['coruja','🦉','coruja','cf10'],['borboleta','🦋','borboleta','cf8'],['abelha','🐝','abelha','cf7'],['joaninha','🐞','joaninha','c6'],
+ ['formiga','🐜','formiga formiguinha','c5'],['caracol','🐌','caracol','c7'],['peixe','🐠','peixe peixinho','cw9'],
+ ['tubarão','🦈','tubarao','cw20'],['baleia','🐋','baleia','cw28'],['golfinho','🐬','golfinho','cw16'],['polvo','🐙','polvo','cw13'],
+ ['caranguejo','🦀','caranguejo siri','c8'],['camelo','🐪','camelo','c20'],['pinguim','🐧','pinguim','c12'],['foca','🦭','foca','c13'],
+ ['panda','🐼','panda','c15'],['jacaré','🐊','jacare crocodilo','c15'],['esquilo','🐿️','esquilo','c9'],['rato','🐁','rato ratinho camundongo','c7'],
+ ['flor','🌻,🌷,🌹,🌸','flor florzinha','9'],['árvore','🌳','arvore','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
+ ['bolo','🎂','bolo','11'],['sorvete','🍦','sorvete','9'],['maçã','🍎','maca','7'],['banana','🍌','banana','7'],['morango','🍓','morango','7'],
+ ['pizza','🍕','pizza','9'],['doce','🍭','doce bala pirulito','8'],['chocolate','🍫','chocolate','8'],['pão','🍞','pao','8'],
+ ['tesouro','💎','tesouro diamante joia','9'],['estrela','⭐','estrela estrelinha','f8'],['coração','❤️','coracao','f8'],
+ ['balão','🎈','balao bexiga','f12'],['pipa','🪁','pipa','f11'],['barco','⛵','barco navio','18'],['carro','🚗','carro','14'],
+ ['ônibus','🚌','onibus','16'],['trem','🚂','trem','16'],['avião','✈️','aviao','f13'],['foguete','🚀','foguete','f16'],
+ ['bicicleta','🚲','bicicleta bike','12'],['presente','🎁','presente','10'],['livro','📕','livro','8'],['coroa','👑','coroa','8'],
+ ['varinha','🪄','varinha','8'],['chave','🔑','chave','7'],['cogumelo','🍄','cogumelo','8'],['ovo','🥚','ovo','6'],['mapa','🗺️','mapa','9'],
+ ['violão','🎸','violao guitarra','11'],['tambor','🥁','tambor','10'],['chapéu','🎩','chapeu','8'],['ursinho','🧸','ursinho pelucia','9'],
+ ['lanterna','🔦','lanterna','8'],['fogueira','🔥','fogueira fogo','10'],['barraca','⛺','barraca tenda','18'],['cama','🛏️','cama','16'],
+ ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],
+];
+const ENT = {}, WORD = {};
+function plurals(w){
+  if (/ao$/.test(w)) return [w.slice(0,-2)+'oes', w.slice(0,-2)+'aes', w+'s'];
+  if (/l$/.test(w)) return [w.slice(0,-1)+'is'];
+  if (/[rsz]$/.test(w)) return [w+'es'];
+  if (/m$/.test(w)) return [w.slice(0,-1)+'ns'];
+  return [w+'s'];
+}
+LEX.forEach(([label,em,words,flags]) => {
+  const key = norm(label).trim();
+  ENT[key] = {key,label,em:em.split(','),char:flags.includes('c'),fly:flags.includes('f'),swim:flags.includes('w'),sz:+(flags.match(/\d+/)||[10])[0]};
+  words.split(' ').forEach(w => {
+    if (!WORD[w]) WORD[w] = {key,plural:false};
+    plurals(w).forEach(p => { if (!WORD[p]) WORD[p] = {key,plural:true}; });
+  });
+});
+const PHRASES = [['fundo do mar','fundodomar'],['debaixo d agua','fundodomar'],['embaixo d agua','fundodomar'],['arco iris','arcoiris'],
+ ['por do sol','pordosol'],['todo mundo','todos'],['foi embora','foiembora'],['foram embora','foiembora'],['dentro de casa','quarto'],
+ ['tempo bom','tempobom'],['super heroi','heroi'],['espaco sideral','espaco'],['os dois','todos'],['as duas','todos']];
+const SETW = {floresta:'floresta',mata:'floresta',bosque:'floresta',selva:'floresta',praia:'praia',areia:'praia',mar:'praia',oceano:'fundo',
+ fundodomar:'fundo',submarino:'fundo',espaco:'espaco',planeta:'espaco',galaxia:'espaco',universo:'espaco',cidade:'cidade',rua:'cidade',predio:'cidade',predios:'cidade',
+ fazenda:'fazenda',sitio:'fazenda',roca:'fazenda',curral:'fazenda',celeiro:'fazenda',castelo:'castelo',reino:'castelo',palacio:'castelo',
+ montanha:'montanha',montanhas:'montanha',serra:'montanha',deserto:'deserto',gelo:'gelo',polo:'gelo',iglu:'gelo',geleira:'gelo',
+ quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo'};
+const NUM = {um:1,uma:1,num:1,numa:1,outro:1,outra:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:5,uns:3,umas:3,alguns:3,algumas:3,
+ muitos:5,muitas:5,varios:5,varias:5,mil:5,cem:5};
+const ALLW = new Set(['todos','todas','juntos','juntas','ambos','ambas']);
+const TIME = [[/^(noite|noitinha|escur|anoitec)/,'noite'],[/^(dia|manha)$|^amanhec/,'dia'],[/^(tarde|pordosol)$|^entardec/,'tarde']];
+const WX = [[/^(chuv|chov|garoa)/,'chuva'],[/^(neve|nevou|nevava|nevando|nevar|nevasca|nevad)/,'neve'],[/^(tempestade|trov|relamp|raio)/,'tempestade'],
+ [/^(vento|ventania|ventava|ventando)$/,'vento'],[/^arcoiris$/,'arcoiris'],[/^(ensolarad|tempobom)/,'sol'],[/^(nublad|nuvem|nuvens|cinzento)/,'nublado']];
+const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$)/,'feliz'],[/^(trist|chor|magoad)/,'triste'],[/^(medo|assust|apavor)/,'medo'],
+ [/^(brav|raiva|zangad|furios)/,'bravo'],[/^(dorm|sono$|cansad|cochil)/,'sono'],[/^(surpres|espant)/,'surpresa'],[/^(amor|amava|amou|apaixon|abrac|beij|carinho)/,'amor']];
+const ACT = [[/^pul(a|ou|ar|ava|ando|aram|avam)$|^brinc/,'pular'],[/^danc/,'dancar'],[/^vo(a|ou|ar|ava|ando|aram|avam)$/,'voar'],
+ [/^corr(e|eu|er|ia|endo|eram|iam)$/,'correr'],[/^(and(a|ou|ar|ava|ando|aram|avam)$|passe|caminh)/,'andar'],[/^nad(a|ou|ar|ava|ando|aram|avam)$/,'nadar'],
+ [/^cant(a|ou|ar|ava|ando|aram|avam)$/,'cantar'],[/^com(e|eu|er|ia|endo|eram|iam)$/,'comer'],[/^(foiembora|sumiu|desaparec|fugiu|partiu)/,'sair']];
+const ACTDUR = {pular:1400,dancar:2500,voar:2600,nadar:2400};
+const MOODS = {feliz:['😄','Feliz'],triste:['😢','Triste'],medo:['😱','Com medo'],bravo:['😠','Bravo'],sono:['💤','Com sono'],surpresa:['😮','Surpresa'],amor:['💖','Amor']};
+const TIMES = {dia:['☀️','Dia'],tarde:['🌇','Pôr do sol'],noite:['🌙','Noite']};
+const WXS = {sol:['🌤️','Tempo bom'],chuva:['🌧️','Chuva'],neve:['❄️','Neve'],tempestade:['⛈️','Tempestade'],vento:['🍃','Vento'],arcoiris:['🌈','Arco-íris'],nublado:['☁️','Nublado']};
+
+/* Cenários: céu, chão, morros e enfeites [emoji, x%, base%, tamanho] */
+const SET = {
+ campo:{n:'Campo',i:'🌼',sky:['#55b2ee','#c6eaff'],g:['#86d061','#4da23e'],h:['#a6dc84','#7cc565'],gh:32,clouds:1,
+  d:[['🌳',8,26,24],['🌳',90,24,28],['🌼',30,10,4],['🌼',62,5,4],['🌷',74,15,4],['🌿',46,19,4]]},
+ floresta:{n:'Floresta',i:'🌲',sky:['#55b2ee','#c6eaff'],g:['#6cbd52','#3a8b34'],h:['#8fcd78','#5fae58'],gh:33,clouds:1,
+  d:[['🌲',3,28,20],['🌲',15,30,16],['🌲',27,29,18],['🌲',41,31,15],['🌲',55,30,17],['🌲',68,31,15],['🌲',81,29,19],['🌲',94,28,21],['🌳',2,12,32],['🌳',97,9,34],['🍄',22,6,5],['🍄',72,13,4],['🌿',50,3,5]]},
+ praia:{n:'Praia',i:'🏖️',sky:['#4fb0f0','#d2f0ff'],g:['#f7dea0','#e9c27a'],gh:30,sea:[30,12],clouds:1,
+  d:[['🌴',6,22,30],['🌴',90,20,26],['⛱️',72,15,11],['🐚',30,6,4],['⛵',58,36,8]]},
+ fundo:{n:'Fundo do mar',i:'🫧',sky:['#33b3df','#06406e'],g:['#e8c98a','#c9a35f'],gh:16,fixed:1,rays:1,water:1,
+  d:[['🪸',8,6,15],['🪸',84,7,13],['🌿',24,5,13],['🌿',62,4,11],['🐚',44,3,5],['🫧',20,60,5],['🫧',73,76,4],['🫧',52,44,3]]},
+ espaco:{n:'Espaço',i:'🪐',sky:['#06081f','#24165a'],g:['#b9b9c6','#7d7d8f'],gh:22,fixed:1,space:1,
+  d:[['🪐',78,68,15],['🌍',12,74,10],['☄️',46,84,7],['🌑',30,12,3],['✨',88,46,4]]},
+ cidade:{n:'Cidade',i:'🏙️',sky:['#78c0ee','#dbeefb'],g:['#9aa2ae','#6c7480'],gh:28,clouds:1,road:1,
+  d:[['🏢',4,27,26],['🏬',22,27,21],['🏫',41,27,19],['🏢',62,27,28],['🏠',82,27,17],['🌳',95,23,15]]},
+ fazenda:{n:'Fazenda',i:'🚜',sky:['#55b2ee','#d0eeff'],g:['#93cf5a','#5ea83b'],h:['#b8df8a','#93cf6c'],gh:32,clouds:1,
+  d:[['🏡',8,29,20],['🌳',25,31,14],['🌽',60,27,7],['🌽',66,27,7],['🌽',72,27,7],['🌾',88,23,9],['🌻',36,8,5]]},
+ castelo:{n:'Castelo',i:'🏰',sky:['#6aa9f0','#e1d8ff'],g:['#86d061','#4da23e'],h:['#a6dc84','#7cc565'],gh:30,clouds:1,
+  d:[['🏰',50,26,36],['🌳',6,24,20],['🌳',92,24,22],['🚩',30,28,6]]},
+ montanha:{n:'Montanha',i:'🏔️',sky:['#5aa8e8','#d8efff'],g:['#7fbf5e','#4c8f3c'],gh:30,clouds:1,
+  d:[['🏔️',12,26,40],['⛰️',42,26,30],['🏔️',78,26,46],['🌲',8,20,10],['🌲',88,16,12]]},
+ deserto:{n:'Deserto',i:'🌵',sky:['#7ec3ef','#ffe2ad'],g:['#f1cf86','#d9a957'],h:['#f4d89a','#ebc479'],gh:30,
+  d:[['🌵',10,22,16],['🌵',84,18,20],['🪨',52,8,5],['🌵',64,27,7]]},
+ gelo:{n:'Terra do gelo',i:'🧊',sky:['#9fd2f5','#f1f9ff'],g:['#ffffff','#d6e8f6'],h:['#eef6fd','#e0eef9'],gh:32,clouds:1,
+  d:[['🏔️',14,26,34],['🏔️',72,26,40],['☃️',86,10,12],['🧊',22,8,5],['🌲',42,25,10]]},
+ casa:{n:'Dentro de casa',i:'🏠',sky:['#f7dcbc','#efc89e'],g:['#c98b55','#a36a3c'],gh:26,fixed:1,indoor:1,
+  d:[['🪟',18,52,18],['🖼️',70,58,12],['🛋️',62,22,24],['🪴',90,22,14],['🧸',32,6,6]]},
+ jardim:{n:'Jardim',i:'🌷',sky:['#55b2ee','#c6eaff'],g:['#86d061','#4da23e'],h:['#a6dc84','#7cc565'],gh:32,clouds:1,
+  d:[['⛲',48,27,18],['🌷',8,10,6],['🌹',16,5,6],['🌻',26,12,7],['🌷',70,7,6],['🌻',82,12,7],['🌳',93,24,24],['🌳',4,25,22]]},
+};
+
+/* =========================================================
+   Cena (dados puros; o mesmo "seed" reproduz a mesma cena)
+   ========================================================= */
+let S;
+function newScene(seed){
+  R = mulberry32(seed);
+  S = {set:'campo',prevSet:null,setT:-1e9,time:'dia',wx:'sol',wxT:-1e9,mood:null,ents:[],ghosts:[],last:[],uid:0,tw:{},
+       sky:{from:null,to:skyStops('campo','dia','sol'),t0:-1e9},subs:[],interim:'',flashIdx:0};
+  renderChips();
+}
+function skyStops(set,time,wx){
+  const D = SET[set];
+  if (D.fixed) return D.sky;
+  if (time==='noite') return ['#0a1433','#2b3d78'];
+  if (time==='tarde') return ['#5a4a9c','#ff8e66','#ffd28a'];
+  if (wx==='tempestade') return ['#4c5468','#8a93a6'];
+  if (wx==='chuva'||wx==='nublado') return ['#8aa3bd','#cdd9e4'];
+  if (wx==='neve') return ['#a9c6dd','#e9f2f9'];
+  return D.sky;
+}
+function newSky(T){ S.sky = {from:S.sky.to, to:skyStops(S.set,S.time,S.wx), t0:T}; }
+
+function groundRange(def){
+  const D = SET[S.set];
+  if (D.water) return def.fly ? [55,80] : [8,62];
+  if (def.fly) return [48,76];
+  return [5, Math.max(10, D.gh-12)];
+}
+function pickX(def, self){
+  const same = S.ents.filter(e => e!==self && !!e.fly===!!def.fly);
+  const c = [];
+  for (let x=10;x<=90;x+=4){ const d = same.length ? Math.min(...same.map(e=>Math.abs(e.x.to-x))) : 50; c.push([d+R()*3,x]); }
+  c.sort((a,b)=>b[0]-a[0]); return pick(c.slice(0,3))[1];
+}
+const twv = (o,T) => lerp(o.from,o.to,easeIO(clamp((T-o.t0)/o.dur)));
+function moveTo(o,to,T,dur){ o.from = twv(o,T); o.to = to; o.t0 = T; o.dur = dur; }
+function spawn(def,T){
+  const e = {id:++S.uid,key:def.key,label:def.label,em:pick(def.em),sz:def.sz,fly:def.fly,swim:def.swim,char:def.char,born:T,
+             mood:null,moodT:0,act:null,actT:0,bub:null,fx:R()<.5?-1:1};
+  const x = pickX(def,e), [a,b] = groundRange(def), y = rnd(a,b);
+  e.x = {from:x,to:x,t0:T,dur:1}; e.y = {from:y,to:y,t0:T,dur:1};
+  S.ents.push(e);
+  if (S.ents.length > 16){ const old = S.ents.find(x=>!x.char) || S.ents[0]; ghost(old,T,true); }
+  return e;
+}
+function ghost(e,T,quick){
+  S.ents = S.ents.filter(x=>x!==e); S.last = S.last.filter(x=>x!==e);
+  e.gone = T; e.quick = quick;
+  if (!quick) moveTo(e.x, twv(e.x,T)>50 ? 118 : -18, T, 1700);
+  S.ghosts.push(e);
+}
+function mention(ev,T){
+  const def = ENT[ev.key], existing = S.ents.filter(x=>x.key===ev.key);
+  if (!ev.num && existing.length) return ev.plural ? existing : [existing[existing.length-1]];
+  const n = Math.min(ev.num || (ev.plural?3:1), 5), out = [];
+  for (let i=0;i<n;i++) out.push(spawn(def,T));
+  sfx('pop'); return out;
+}
+function setMood(e,m,T){ e.mood = m; e.moodT = T; }
+function act(e,a,T){
+  if (a==='sair'){ ghost(e,T,false); sfx('whoosh'); return; }
+  if (a==='andar'||a==='correr'){
+    const nx = pickX(e,e); e.fx = nx > e.x.to ? 1 : -1; moveTo(e.x, nx, T, a==='correr'?800:2200); return;
+  }
+  if (a==='cantar'){ e.bub = {em:'🎵',t0:T,dur:2600}; sfx('chime'); return; }
+  if (a==='comer'){ e.bub = {em:'😋',t0:T,dur:2400}; return; }
+  e.act = a; e.actT = T; if (a==='pular') sfx('boing');
+}
+function setSetting(v,keep,T){
+  if (S.set===v) return;
+  S.prevSet = S.set; S.set = v; S.setT = T; sfx('whoosh');
+  S.ents.slice().forEach(e => { if (!e.char && !keep.has(e.id)) ghost(e,T,true); });
+  S.ents.forEach(e => { const [a,b] = groundRange(e); moveTo(e.y, rnd(a,b), T, 1400); });
+  newSky(T);
+}
+function setTime(v,T){ if (S.time===v) return; S.time = v; newSky(T); }
+function setWx(v,T){ if (S.wx===v) return; S.wx = v; S.wxT = T; S.flashIdx = 0; newSky(T); if (v==='tempestade') sfx('thunder'); if (v==='arcoiris') sfx('chime'); }
+
+function analyze(s){
+  let t = ' '+norm(s).replace(/\s+/g,' ')+' ';
+  for (const [a,b] of PHRASES) t = t.split(' '+a+' ').join(' '+b+' ');
+  const tk = t.trim().split(' ').filter(Boolean), ev = [];
+  tk.forEach((w,i) => {
+    const e = WORD[w];
+    if (e){ const nb = NUM[tk[i-1]] || (WORD[tk[i-1]] ? 0 : NUM[tk[i-2]]) || 0; ev.push({type:'ent',key:e.key,plural:e.plural,num:nb}); return; }
+    if (SETW[w]){ ev.push({type:'set',v:SETW[w]}); return; }
+    if (w==='lua'){ ev.push({type:'time',v:'noite',weak:1}); return; }
+    if (w==='sol'){ ev.push({type:'time',v:'dia',weak:1},{type:'wx',v:'sol'}); return; }
+    if (w==='dia' && /^(um|certo|outro|belo|todo)$/.test(tk[i-1]||'')) return;
+    for (const [re,v] of TIME) if (re.test(w)){ ev.push({type:'time',v}); return; }
+    for (const [re,v] of WX) if (re.test(w)){ ev.push({type:'wx',v}); return; }
+    for (const [re,v] of MOOD) if (re.test(w)){ ev.push({type:'mood',v}); return; }
+    for (const [re,v] of ACT) if (re.test(w)){ ev.push({type:'act',v}); return; }
+  });
+  return {ev, all: tk.some(w=>ALLW.has(w))};
+}
+function applySentence(s,T){
+  const {ev,all} = analyze(s); let local = null; const keep = new Set();
+  for (const e of ev){
+    if (e.type==='ent'){ const made = mention(e,T); made.forEach(x=>keep.add(x.id)); const ch = made.filter(x=>x.char); if (ch.length){ local = ch; S.last = ch; } }
+    else if (e.type==='set') setSetting(e.v,keep,T);
+    else if (e.type==='time'){ if (!(e.weak && SET[S.set].fixed)) setTime(e.v,T); }
+    else if (e.type==='wx') setWx(e.v,T);
+    else {
+      const tgt = (all ? S.ents.filter(x=>x.char) : (local || S.last)).filter(x=>S.ents.includes(x));
+      if (e.type==='mood'){ tgt.forEach(x=>setMood(x,e.v,T)); S.mood = e.v; sfx(e.v==='triste'||e.v==='medo' ? 'sad' : 'chime'); }
+      else tgt.forEach(x=>act(x,e.v,T));
+    }
+  }
+}
+function applyText(text,T){
+  S.subs.push(text); if (S.subs.length>3) S.subs.shift();
+  text.split(/[.!?;\n]+|\s+e\s+depois\s+|\s+depois\s+/i).filter(x=>x.trim()).forEach(s=>applySentence(s,T));
+  renderChips();
+}
+
+/* =========================================================
+   Desenho em canvas
+   ========================================================= */
+const EMOJI = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+const UIF = getComputedStyle(document.documentElement).getPropertyValue('--ui');
+const ECACHE = new Map(); let PX = 1;
+function emojiImg(em,size){
+  const b = Math.max(8, Math.round(size*PX/6)*6), k = em+'|'+b; let cv = ECACHE.get(k);
+  if (!cv){ cv = document.createElement('canvas'); const d = Math.ceil(b*1.4); cv.width = cv.height = d;
+    const g = cv.getContext('2d'); g.font = `${b}px ${EMOJI}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(em,d/2,d/2+b*.05);
+    ECACHE.set(k,cv); if (ECACHE.size>500) ECACHE.delete(ECACHE.keys().next().value); }
+  return cv;
+}
+/* Maria: personagem própria, desenhada no estilo dos livrinhos de colorir.
+   Para mudar as cores, edite MARIA. */
+const MARIA = {pele:'#f6cfae', cabelo:'#9a5f2c', cabeloEsc:'#6b3d17', elastico:'#ff8fb8', blusa:'#ffcf96', flor:'#ffffff',
+               short:'#e8452c', sandalia:'#e8392c', olho:'#7a4a24', linha:'#3a2416'};
+function drawMaria(g){            // caixa 100 x 140, pés em y=140
+  const M = MARIA, L = (w=1.6)=>{ g.lineWidth = w; g.strokeStyle = M.linha; g.lineJoin = g.lineCap = 'round'; };
+  const circ = (x,y,r,fill,w=1.3)=>{ g.beginPath(); g.arc(x,y,r,0,TAU); g.fillStyle = fill; g.fill(); L(w); g.stroke(); };
+  const shape = (pts,fill,w)=>{ g.beginPath(); pts(); g.fillStyle = fill; g.fill(); L(w); g.stroke(); };
+  // cachos soltos atrás, até os ombros
+  [[26,40,9],[24,52,8.5],[27,63,7.5],[33,70,6],[74,40,9],[76,52,8.5],[73,63,7.5],[67,70,6],[30,27,10],[70,27,10]].forEach(([x,y,r])=>circ(x,y,r,M.cabelo));
+  // pernas e sandálias vermelhas
+  shape(()=>{ g.roundRect(35,98,11,32,5); g.roundRect(54,98,11,32,5); }, M.pele);
+  shape(()=>{ g.roundRect(31,128,17,10,4); g.roundRect(52,128,17,10,4); }, M.sandalia);
+  g.fillStyle = '#fff'; [[39.5,131],[60.5,131]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,2,0,TAU); g.fill(); });
+  // short vermelho
+  shape(()=>{ g.moveTo(34,84); g.lineTo(66,84); g.lineTo(68,104); g.lineTo(51.5,104); g.lineTo(50,96); g.lineTo(48.5,104); g.lineTo(32,104); g.closePath(); }, M.short);
+  // braços
+  shape(()=>{ g.ellipse(28,79,5.5,13,.4,0,TAU); }, M.pele); shape(()=>{ g.ellipse(72,79,5.5,13,-.4,0,TAU); }, M.pele);
+  // camiseta pêssego com florzinhas e mangas
+  shape(()=>{ g.moveTo(36,62); g.lineTo(64,62); g.lineTo(76,70); g.lineTo(71,78); g.lineTo(66,75); g.lineTo(66,88); g.lineTo(34,88); g.lineTo(34,75); g.lineTo(29,78); g.lineTo(24,70); g.closePath(); }, M.blusa);
+  [[44,78],[56,74],[52,82]].forEach(([x,y])=>{ g.fillStyle = M.flor; for (let i=0;i<5;i++){ g.beginPath(); g.arc(x+Math.cos(i*TAU/5)*1.8,y+Math.sin(i*TAU/5)*1.8,1.3,0,TAU); g.fill(); } g.fillStyle = '#ffb000'; g.beginPath(); g.arc(x,y,1,0,TAU); g.fill(); });
+  // colar de miçangas coloridas
+  ['#ff5d8f','#ffd23f','#5ec8f2','#8fd65a','#b48cf2','#ff9f43','#ff5d8f','#5ec8f2','#ffd23f'].forEach((col,i)=>{ const a = Math.PI*(.15+.7*i/8); g.fillStyle = col; g.beginPath(); g.arc(50+Math.cos(a)*11,60+Math.sin(a)*8,1.6,0,TAU); g.fill(); });
+  // cabeça e orelhas
+  circ(29,44,4,M.pele); circ(71,44,4,M.pele);
+  circ(50,40,22,M.pele);
+  // cachinhos do topo com elástico rosa
+  [[50,13,8],[43,15,6],[57,15,6]].forEach(([x,y,r])=>circ(x,y,r,M.cabelo));
+  g.fillStyle = M.elastico; g.beginPath(); g.ellipse(50,19,6,2.2,0,0,TAU); g.fill(); L(1); g.stroke();
+  // franja cacheada
+  [[32,29,7],[39,22,7.5],[47,20,7.5],[55,20,7.5],[62,23,7],[68,30,6.5]].forEach(([x,y,r])=>circ(x,y,r,M.cabelo));
+  g.strokeStyle = M.cabeloEsc; g.lineWidth = 1; [[39,22],[55,20],[26,52],[74,52],[30,27],[70,27]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,3,.5,4); g.stroke(); });
+  // olhos castanhos grandes, cílios, bochechas e sorrisão
+  [[42,42],[58,42]].forEach(([x,y])=>{ g.beginPath(); g.ellipse(x,y,4.8,5.8,0,0,TAU); g.fillStyle = M.olho; g.fill();
+    g.beginPath(); g.ellipse(x,y+.5,2.6,3.2,0,0,TAU); g.fillStyle = '#2b1a10'; g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(x+1.6,y-2.2,1.8,0,TAU); g.fill(); g.beginPath(); g.arc(x-1.5,y+2.2,.9,0,TAU); g.fill();
+    L(1.3); g.beginPath(); g.ellipse(x,y,4.8,5.8,0,Math.PI*1.1,Math.PI*1.9); g.stroke(); g.beginPath(); g.moveTo(x-5,y-4); g.lineTo(x-7.2,y-6.3); g.moveTo(x+4.6,y-5); g.lineTo(x+6.8,y-7); g.stroke(); });
+  g.fillStyle = 'rgba(255,110,110,.32)'; [[35,50],[65,50]].forEach(([x,y])=>{ g.beginPath(); g.ellipse(x,y,4.2,2.7,0,0,TAU); g.fill(); });
+  shape(()=>{ g.moveTo(43,50.5); g.quadraticCurveTo(50,61,57,50.5); g.closePath(); }, '#c63d52', 1.3);
+  g.fillStyle = '#fff'; g.fillRect(45,51,10,2);
+  g.fillStyle = '#ff9aae'; g.beginPath(); g.ellipse(50,56,3,1.5,0,0,TAU); g.fill();
+}
+if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){ this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r); this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r); this.closePath(); };
+const SPRITES = {maria: drawMaria};
+/* fotos da família: viram um medalhão redondo com borda branca */
+function photoSprite(img){
+  return g => { g.save(); g.shadowColor = 'rgba(0,0,0,.28)'; g.shadowBlur = 6; g.shadowOffsetY = 3;
+    g.beginPath(); g.arc(50,90,48,0,TAU); g.fillStyle = '#fff'; g.fill(); g.restore();
+    g.save(); g.beginPath(); g.arc(50,90,43,0,TAU); g.clip(); g.drawImage(img,7,47,86,86); g.restore(); };
+}
+function clearSprite(name){ for (const k of [...ECACHE.keys()]) if (k.startsWith('@'+name+'|')) ECACHE.delete(k); }
+function spriteImg(name,size){
+  const h = Math.max(16, Math.round(size*1.25*PX/8)*8), k = '@'+name+'|'+h; let cv = ECACHE.get(k);
+  if (!cv){ cv = document.createElement('canvas'); const sc = h/142; cv.height = h; cv.width = Math.ceil(102*sc);
+    const g = cv.getContext('2d'); g.scale(sc,sc); g.translate(1,1); SPRITES[name](g); ECACHE.set(k,cv); }
+  return cv;
+}
+function emoji(c,em,x,yBottom,size){
+  if (em[0]==='@'){ const img = spriteImg(em.slice(1),size), h = size*1.25, w = h*img.width/img.height; c.drawImage(img,x-w/2,yBottom-h,w,h); return; }
+  const d = size*1.4; c.drawImage(emojiImg(em,size), x-d/2, yBottom-d/2-size*.55, d, d); }
+function grad(c,stops,y0,y1){ const g = c.createLinearGradient(0,y0,0,y1); stops.forEach((s,i)=>g.addColorStop(i/(stops.length-1),s)); return g; }
+function tw(key,target,T,dur=1200){
+  let o = S.tw[key];
+  if (!o) o = S.tw[key] = {from:target,to:target,t0:T,dur};
+  if (o.to!==target){ o.from = twv(o,T); o.to = target; o.t0 = T; o.dur = dur; }
+  return twv(o,T);
+}
+const STARS = Array.from({length:90},()=>({x:Math.random(),y:Math.random()*.62,r:mr(.6,1.6),p:mr(0,TAU)}));
+const CLOUDS = Array.from({length:7},()=>({y:mr(.03,.26),s:mr(9,15),off:Math.random(),dur:mr(55000,95000)}));
+const RAIN = Array.from({length:220},()=>({x:Math.random(),y:Math.random(),v:mr(.9,1.5),l:mr(.7,1.2)}));
+const SNOW = Array.from({length:120},()=>({x:Math.random(),y:Math.random(),v:mr(.6,1.6),r:mr(1.5,4),p:mr(0,TAU)}));
+const LEAF = Array.from({length:14},()=>({x:Math.random(),y:Math.random()*.8,v:mr(.7,1.3),p:mr(0,TAU),e:Math.random()<.3?'🍂':'🍃'}));
+
+function drawLand(c,W,H,u,key,T){
+  const D = SET[key], top = H*(1-D.gh/100);
+  if (D.rays){ c.save(); c.globalAlpha = .08; c.fillStyle = '#fff'; for (let i=0;i<7;i++){ const x = W*(i/6)+Math.sin(T/4000+i)*W*.02; c.beginPath(); c.moveTo(x,0); c.lineTo(x+W*.06,0); c.lineTo(x-W*.05,H*.8); c.lineTo(x-W*.12,H*.8); c.fill(); } c.restore(); }
+  if (D.h){ c.fillStyle = D.h[0]; c.beginPath(); c.ellipse(W*.2,top+H*.06,W*.38,H*.17,0,0,TAU); c.fill();
+            c.fillStyle = D.h[1]; c.beginPath(); c.ellipse(W*.82,top+H*.07,W*.42,H*.19,0,0,TAU); c.fill(); }
+  if (D.indoor){ c.save(); c.globalAlpha = .12; c.fillStyle = '#fff'; for (let x=0;x<W;x+=u*7) c.fillRect(x,0,u*2,top); c.restore(); }
+  if (D.sea){ const sb = H*(1-(D.sea[0]-2)/100), sh = H*D.sea[1]/100; c.fillStyle = grad(c,['#3fb4e6','#1d86c4'],sb-sh,sb); c.fillRect(0,sb-sh,W,sh);
+    c.fillStyle = 'rgba(255,255,255,.55)'; for (let x=((T/40)%(u*4));x<W;x+=u*4){ c.beginPath(); c.arc(x,sb-1,u*.6,0,TAU); c.fill(); } }
+  c.fillStyle = grad(c,D.g,top,H); c.beginPath();
+  if (D.indoor) c.rect(0,top,W,H-top);
+  else { const k = H*.035; c.moveTo(-W*.1,H); c.lineTo(-W*.1,top+k); c.quadraticCurveTo(W/2,top-k,W*1.1,top+k); c.lineTo(W*1.1,H); }
+  c.fill();
+  if (D.road){ c.fillStyle = 'rgba(255,255,255,.8)'; for (let x=0;x<W;x+=u*10) c.fillRect(x,H*.88,u*5,u*1.1); }
+  D.d.forEach(([e,x,b,sz]) => emoji(c,e,W*x/100,H*(1-b/100),sz*u));
+}
+function wrapLines(c,text,maxW){
+  const words = text.split(/\s+/), lines = []; let cur = '';
+  for (const w of words){ const t = cur ? cur+' '+w : w; if (c.measureText(t).width > maxW && cur){ lines.push(cur); cur = w; } else cur = t; }
+  if (cur) lines.push(cur); return lines;
+}
+function rrect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+
+function drawEnt(c,e,W,H,u,T,alpha){
+  const size = e.sz*u, x = W*twv(e.x,T)/100, y = H*(1-twv(e.y,T)/100), ph = e.id*1.7;
+  let a = alpha, sc = 1, ox = 0, oy = 0, rot = 0, glow = null;
+  const age = T-e.born;
+  if (age < 700){ const k = clamp(age/700);
+    if (e.fly){ ox = -W*.2*(1-easeOut(k)); oy = -H*.2*(1-easeOut(k)); sc = lerp(.4,1,easeOut(k)); a *= k; }
+    else { sc = Math.max(0,backOut(k)); a *= clamp(k*3); } }
+  const swimNow = e.swim && SET[S.set].water;
+  if (e.fly || swimNow) oy += -Math.sin(T/2600*TAU+ph)*size*.06;
+  else oy += -Math.max(0,Math.sin(T/3200*TAU+ph))*size*.03;
+  switch (e.mood){
+    case 'feliz': oy += -Math.abs(Math.sin(T/800*Math.PI+ph))*size*.14; break;
+    case 'triste': rot += (-5-1.5*Math.sin(T/3400*TAU))*DEG; oy += size*.03; break;
+    case 'medo': ox += Math.sin(T/280*TAU)*size*.04; break;
+    case 'bravo': ox += Math.sin(T/500*TAU)*size*.04; glow = 'rgba(255,70,40,.9)'; break;
+    case 'sono': rot += -14*DEG; break;
+    case 'amor': oy += -Math.abs(Math.sin(T/1400*Math.PI+ph))*size*.12; glow = 'rgba(255,110,170,.95)'; break;
+    case 'surpresa': { const k = (T-e.moodT)/700; if (k<3) sc *= 1+.15*Math.sin(k*TAU); } break;
+  }
+  if (e.act){ const p = (T-e.actT)/ACTDUR[e.act];
+    if (p>=0 && p<1) switch (e.act){
+      case 'pular': oy += -Math.abs(Math.sin(p*TAU))*size*.3; break;
+      case 'dancar': rot += Math.sin(p*5*TAU)*14*DEG; oy += -Math.abs(Math.sin(p*5*TAU))*size*.06; break;
+      case 'voar': oy += -Math.sin(p*Math.PI)*size*1.3; rot += -6*DEG*Math.sin(p*Math.PI); break;
+      case 'nadar': rot += Math.sin(p*2*TAU)*8*DEG; ox += Math.sin(p*2*TAU)*size*.06; break;
+    } }
+  if (!e.fly && !swimNow){ c.save(); c.globalAlpha = a*.2; c.fillStyle = '#000'; c.beginPath(); c.ellipse(x,y,size*.32*sc,size*.07*sc,0,0,TAU); c.fill(); c.restore(); }
+  c.save(); c.globalAlpha = a; c.translate(x+ox,y+oy); c.rotate(rot); c.scale(sc*e.fx,sc);
+  if (glow){ c.shadowColor = glow; c.shadowBlur = size*.25*PX; }
+  emoji(c,e.em,0,0,size); c.restore();
+  // nome embaixo
+  const fs = Math.max(10,u*1.9); c.save(); c.globalAlpha = a; c.font = `800 ${fs}px ${UIF}`;
+  const tw_ = c.measureText(e.label).width+fs*1.2, ty = y+u*.6;
+  c.fillStyle = 'rgba(255,255,255,.92)'; rrect(c,x-tw_/2,ty,tw_,fs*1.5,fs*.75); c.fill();
+  c.fillStyle = '#1d3320'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(e.label,x,ty+fs*.78); c.restore();
+  // balão (sentimento ou ação)
+  let bub = null, fl = 0;
+  if (e.bub && T-e.bub.t0 < e.bub.dur) bub = e.bub.em; else if (e.mood) bub = MOODS[e.mood][0];
+  if (bub){ const bs = Math.max(u*5,size*.42); let bx = x+ox+size*.42, by = y+oy-size*.85, ba = a;
+    if (!(e.bub && T-e.bub.t0 < e.bub.dur) && e.mood==='sono'){ fl = (T/2400)%1; bx += fl*u*3; by -= fl*u*5; ba *= Math.sin(fl*Math.PI); }
+    else { const k = clamp((T-Math.max(e.moodT,e.bub?e.bub.t0:0))/500); if (k<1) ba *= k; }
+    c.save(); c.globalAlpha = ba; emoji(c,bub,bx,by,bs); c.restore(); }
+}
+
+function render(c,W,H,T){
+  const u = Math.min(W,H)/100, D = SET[S.set], night = S.time==='noite', outdoor = !D.fixed;
+  // céu (transição suave)
+  const k = clamp((T-S.sky.t0)/1200);
+  if (S.sky.from && k<1){ c.fillStyle = grad(c,S.sky.from,0,H); c.fillRect(0,0,W,H); c.globalAlpha = k; }
+  c.fillStyle = grad(c,S.sky.to,0,H); c.fillRect(0,0,W,H); c.globalAlpha = 1;
+  // estrelas
+  const sa = tw('stars',(D.space||(night&&outdoor))?1:0,T);
+  if (sa>.01){ c.fillStyle = '#fff'; STARS.forEach(s => { c.globalAlpha = sa*(.55+.45*Math.sin(T/420+s.p)); c.beginPath(); c.arc(s.x*W,s.y*H,s.r*u*.25+.6,0,TAU); c.fill(); }); c.globalAlpha = 1; }
+  // sol e lua
+  const sunVis = outdoor && !night && !['tempestade','chuva','nublado'].includes(S.wx) ? 1 : 0;
+  const sA = tw('sunA',sunVis,T), sY = tw('sunY',S.time==='tarde'?.46:.14,T,1600), sS = tw('sunS',S.time==='tarde'?1.35:1,T,1600);
+  if (sA>.01){ const r = u*6.5*sS, x = W*.78, y = H*sY; c.save(); c.globalAlpha = sA;
+    const g = c.createRadialGradient(x,y,r*.2,x,y,r*2.2); g.addColorStop(0,'rgba(255,214,90,.55)'); g.addColorStop(1,'rgba(255,214,90,0)'); c.fillStyle = g; c.fillRect(x-r*2.3,y-r*2.3,r*4.6,r*4.6);
+    const g2 = c.createRadialGradient(x-r*.3,y-r*.3,r*.1,x,y,r); g2.addColorStop(0,'#fff3b0'); g2.addColorStop(.55,'#ffc43d'); g2.addColorStop(1,'#ff9f1c'); c.fillStyle = g2; c.beginPath(); c.arc(x,y,r,0,TAU); c.fill(); c.restore(); }
+  const mA = tw('moonA',outdoor&&night?1:0,T);
+  if (mA>.01){ c.save(); c.globalAlpha = mA; emoji(c,'🌙',W*.8,H*.22,u*11); c.restore(); }
+  // nuvens
+  if (D.clouds){ const many = ['nublado','chuva','tempestade'].includes(S.wx), n = many?7:3;
+    const em = S.wx==='tempestade' ? '⛈️' : (S.wx==='chuva' ? '🌧️' : '☁️');
+    for (let i=0;i<n;i++){ const cl = CLOUDS[i], x = (((cl.off+T/cl.dur)%1)*1.6-.3)*W; emoji(c,em,x,H*cl.y+cl.s*u*.9,cl.s*u); } }
+  // chão e enfeites (o cenário novo aparece por cima do antigo)
+  const lk = clamp((T-S.setT)/1200);
+  if (S.prevSet && lk<1){ drawLand(c,W,H,u,S.prevSet,T); c.globalAlpha = lk; }
+  drawLand(c,W,H,u,S.set,T); c.globalAlpha = 1;
+  const rA = tw('rain',S.wx==='arcoiris'&&outdoor?.85:0,T,2000);
+  if (rA>.01){ c.save(); c.globalAlpha = rA; emoji(c,'🌈',W*.5,H*.62,u*46); c.restore(); }
+  // tom do céu sobre o fundo (noite, pôr do sol, tempestade)
+  let tint = [0,0,0,0];
+  if (night) tint = D.indoor ? [20,30,80,.25] : (D.fixed ? [0,0,0,0] : [12,22,70,.48]);
+  else if (S.time==='tarde' && outdoor) tint = [255,110,60,.16];
+  else if (S.wx==='tempestade' && outdoor) tint = [30,40,60,.35];
+  else if ((S.wx==='chuva'||S.wx==='nublado') && outdoor) tint = [70,90,110,.18];
+  const ta = tw('ta',tint[3],T,1400);
+  if (ta>.005){ c.fillStyle = `rgba(${tw('tr',tint[0],T,1400)|0},${tw('tg',tint[1],T,1400)|0},${tw('tb',tint[2],T,1400)|0},${ta})`; c.fillRect(0,0,W,H); }
+  // personagens e objetos (de trás para a frente)
+  S.ghosts = S.ghosts.filter(e => T-e.gone < (e.quick?600:1700));
+  const all = S.ents.map(e=>[e,1]).concat(S.ghosts.map(e=>[e, 1-clamp((T-e.gone)/(e.quick?600:1700))]));
+  all.sort((a,b)=>twv(b[0].y,T)-twv(a[0].y,T)).forEach(([e,al]) => drawEnt(c,e,W,H,u,T,al));
+  // tempo (chuva, neve, vento, raio)
+  if (outdoor){
+    if (S.wx==='chuva'||S.wx==='tempestade'){ const n = S.wx==='tempestade'?220:130; c.strokeStyle = 'rgba(220,235,255,.6)'; c.lineWidth = Math.max(1,u*.25); c.beginPath();
+      for (let i=0;i<n;i++){ const p = RAIN[i], yy = ((p.y+T*p.v/800)%1.05)*H-H*.03, xx = p.x*W*1.1-yy*.08; c.moveTo(xx,yy); c.lineTo(xx-u*.3,yy+u*2.6*p.l); } c.stroke(); }
+    if (S.wx==='neve'){ c.fillStyle = 'rgba(255,255,255,.92)'; SNOW.forEach(p => { const yy = ((p.y+T*p.v/9000)%1)*H; c.beginPath(); c.arc(p.x*W+Math.sin(T/1000+p.p)*u*2,yy,p.r*u*.22,0,TAU); c.fill(); }); }
+    if (S.wx==='vento') LEAF.forEach(p => emoji(c,p.e,((p.x+T*p.v/5000)%1.2-.1)*W, p.y*H+Math.sin(T/600+p.p)*u*3, u*5));
+    if (S.wx==='tempestade'){ const dt = T-S.wxT, idx = Math.floor(dt/5200), ph = dt%5200;
+      if (idx>=1){ if (idx!==S.flashIdx && ph>250){ S.flashIdx = idx; sfx('thunder'); }
+        if (ph<700){ const f = ph<70?ph/70*.75 : ph<140?.1 : ph<210?.6 : .6*(1-(ph-210)/490); c.fillStyle = `rgba(255,255,255,${Math.max(0,f)})`; c.fillRect(0,0,W,H); } } }
+  }
+  // legenda
+  const lines = S.subs.slice(-1).concat(S.interim ? [S.interim] : []);
+  if (lines.length){ const fs = Math.max(14,u*3.6); c.font = `800 ${fs}px ${UIF}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    let wl = []; lines.forEach((t,i) => wrapLines(c,t,W*.86).forEach(l => wl.push([l, i===lines.length-1 && S.interim ? .7 : 1])));
+    wl = wl.slice(-3); let y = H - u*3 - fs*.8 - (wl.length-1)*fs*1.45;
+    wl.forEach(([l,al]) => { const w = c.measureText(l).width+fs*1.1; c.globalAlpha = al; c.fillStyle = 'rgba(14,24,14,.72)'; rrect(c,W/2-w/2,y-fs*.72,w,fs*1.44,fs*.35); c.fill(); c.fillStyle = '#fff'; c.fillText(l,W/2,y); y += fs*1.45; });
+    c.globalAlpha = 1; }
+}
+
+/* =========================================================
+   Som: efeitos sintetizados (vão junto para o vídeo)
+   ========================================================= */
+let ac = null, master = null, exportDest = null;
+function audio(){
+  try{ if (!ac){ ac = new (window.AudioContext||window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = 1; master.connect(ac.destination); }
+       if (ac.state==='suspended') ac.resume(); }catch(e){ return null; }
+  return ac;
+}
+function tone(f1,f2,dur,type='sine',vol=.12,delay=0){ const c = ac; if (!c) return; const t = c.currentTime+delay, o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(f1,t); o.frequency.exponentialRampToValueAtTime(f2,t+dur); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+.05); }
+function noise(dur,f1,f2,vol=.15){ const c = ac; if (!c) return; const t = c.currentTime, b = c.createBuffer(1,Math.floor(c.sampleRate*dur),c.sampleRate), d = b.getChannelData(0);
+  for (let i=0;i<d.length;i++) d[i] = Math.random()*2-1; const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = 'bandpass'; f.Q.value = .8;
+  f.frequency.setValueAtTime(f1,t); f.frequency.exponentialRampToValueAtTime(f2,t+dur); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+dur*.25); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t); }
+const SFX = { pop:()=>tone(420,900,.14), whoosh:()=>noise(.7,300,2600,.14), thunder:()=>noise(1.8,500,50,.5),
+  chime:()=>{ tone(880,880,.45,'triangle',.07); tone(1320,1320,.55,'triangle',.05,.12); }, sad:()=>tone(520,390,.5,'triangle',.06), boing:()=>tone(180,620,.25,'square',.035) };
+let quiet = false;
+function sfx(n){ if (!quiet && ac) SFX[n](); }
+
+/* =========================================================
+   História: falas com o tempo em que foram ditas + gravações
+   ========================================================= */
+let story = null;           // {seed, items:[{t,text}], segs:[{offset,blob,buf}], accum, segStart, lastMark, demo}
+let mode = 'idle';          // idle | live | replay | export
+let liveT0 = performance.now();
+const clockLive = () => performance.now()-liveT0;
+const recording = () => !!(rec.mr && rec.mr.state==='recording');
+function newStory(demo){
+  const seed = (Math.random()*4294967296)>>>0;
+  story = {seed, items:[], segs:[], accum:0, segStart:0, lastMark:performance.now(), demo:!!demo};
+  newScene(seed); liveT0 = performance.now(); mode = 'live'; updateButtons();
+}
+function storyTime(){
+  const now = performance.now();
+  if (recording()) return story.accum + (now-story.segStart);
+  const t = story.accum + Math.min(now-story.lastMark, story.items.length ? 4000 : 600);
+  story.accum = t; story.lastMark = now; return t;
+}
+function addText(text){
+  text = (text||'').trim(); if (!text) return;
+  if (mode==='replay'||mode==='export') stopPlayback();
+  if (!story) newStory(false);
+  hideWelcome();
+  story.items.push({t:storyTime(), text});
+  applyText(text, clockLive()); updateButtons();
+}
+
+/* ---------- Microfone: reconhece a fala e grava a voz ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const rec = {stream:null, mr:null, chunks:[], sr:null, on:false, lastFinal:''};
+function pickMime(list){ if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return ''; return list.find(m=>MediaRecorder.isTypeSupported(m)) || ''; }
+async function micOn(){
+  audio(); hideWelcome();
+  if (mode==='replay'||mode==='export') stopPlayback();
+  if (!story || story.demo) newStory(false);
+  rec.on = true; micUI(true); wake(true);
+  // grava a voz (fica só neste aparelho)
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder){
+    try{
+      rec.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+      const mime = pickMime(['audio/mp4','audio/webm;codecs=opus','audio/webm']);
+      rec.mr = new MediaRecorder(rec.stream, mime ? {mimeType:mime} : undefined); rec.chunks = [];
+      const offset = story.accum; story.segStart = performance.now();
+      rec.mr.ondataavailable = e => { if (e.data && e.data.size) rec.chunks.push(e.data); };
+      const seg = {offset, blob:null, buf:null}; story.segs.push(seg);
+      rec.mr.onstop = () => { seg.blob = new Blob(rec.chunks, {type: rec.mr.mimeType || mime || 'audio/webm'}); };
+      rec.mr.start(500);
+    }catch(e){ rec.stream = null; rec.mr = null; }
+  }
+  if (!rec.on) return;
+  startSR();
+}
+function startSR(){
+  if (!SR){ tip('Este navegador não entende a fala. Use o Chrome (Android) ou o Safari (iPhone), ou toque em ⌨️ para escrever.'); if (!rec.mr) micOff(); return; }
+  try{
+    const r = new SR(); rec.sr = r; r.lang = 'pt-BR'; r.continuous = true; r.interimResults = true; rec.lastFinal = '';
+    r.onresult = ev => {
+      let im = '';
+      for (let i=ev.resultIndex;i<ev.results.length;i++){
+        const res = ev.results[i]; let tx = res[0].transcript.trim();
+        if (res.isFinal){
+          // alguns Android repetem a frase inteira: aproveita só o pedaço novo
+          if (rec.lastFinal && tx.toLowerCase().startsWith(rec.lastFinal.toLowerCase())) tx = tx.slice(rec.lastFinal.length).trim();
+          rec.lastFinal = res[0].transcript.trim(); S.interim = ''; addText(tx);
+        } else im += res[0].transcript;
+      }
+      S.interim = im.trim();
+    };
+    r.onerror = ev => { if (['not-allowed','service-not-allowed'].includes(ev.error)){ rec.sr = null; tip('O microfone não foi liberado. Toque no cadeado ao lado do endereço e permita o microfone.'); micOff(); }
+                        else if (ev.error==='audio-capture'){ rec.sr = null; tip('Não consegui ouvir e gravar ao mesmo tempo neste aparelho. A voz está sendo gravada; para desenhar, toque em ⌨️ e escreva.'); } };
+    r.onend = () => { if (rec.on && rec.sr===r){ rec.lastFinal = ''; try{ r.start(); }catch(e){} } };
+    r.start();
+  }catch(e){ tip('Não consegui ligar o reconhecimento de voz. Toque em ⌨️ para escrever.'); }
+}
+function micOff(){
+  rec.on = false; micUI(false); wake(false); S.interim = '';
+  if (rec.sr){ const r = rec.sr; rec.sr = null; try{ r.stop(); }catch(e){} }
+  if (rec.mr && rec.mr.state!=='inactive'){ story.accum += performance.now()-story.segStart; story.lastMark = performance.now(); try{ rec.mr.stop(); }catch(e){} }
+  if (rec.stream){ rec.stream.getTracks().forEach(t=>t.stop()); rec.stream = null; }
+  setTimeout(updateButtons, 300);
+}
+function micUI(on){ $('mic').classList.toggle('on',on); $('mic').textContent = on ? '⏸️' : '🎙️'; $('mic').setAttribute('aria-label', on ? 'Parar de gravar' : 'Ligar o microfone'); }
+
+/* ---------- Assistir e exportar ---------- */
+let play = null; // {t0, items, idx, dur, sources, export:{...}}
+async function decodeSegs(){
+  const out = [];
+  for (const s of story.segs){
+    if (!s.blob) continue;
+    if (!s.buf){ try{ s.buf = await ac.decodeAudioData(await s.blob.arrayBuffer()); }catch(e){ s.buf = null; } }
+    if (s.buf) out.push(s);
+  }
+  return out;
+}
+async function startPlayback(toVideo){
+  if (!story || !story.items.length) return;
+  if (rec.on) micOff();
+  audio(); await new Promise(r=>setTimeout(r,250));
+  const segs = await decodeSegs();
+  const lastT = story.items[story.items.length-1].t;
+  const dur = Math.max(lastT + 4000, ...segs.map(s=>s.offset + s.buf.duration*1000 + 1200));
+  newScene(story.seed);
+  hideWelcome(); $('result').hidden = true;
+  const start = ac.currentTime + .25;
+  const sources = segs.map(s => { const n = ac.createBufferSource(); n.buffer = s.buf; n.connect(master); n.start(start + s.offset/1000); return n; });
+  play = {start, idx:0, dur, sources, tts:!segs.length, exp:null};
+  mode = toVideo ? 'export' : 'replay';
+  $('stopPlay').hidden = !!toVideo;
+  if (toVideo && !setupExport()) { stopPlayback(); return; }
+  wake(true); updateButtons();
+}
+const playT = () => (ac.currentTime - play.start)*1000;
+function tickPlayback(){
+  const T = playT();
+  while (play.idx < story.items.length && story.items[play.idx].t <= T){
+    const it = story.items[play.idx++]; applyText(it.text, Math.max(0,T));
+    if (play.tts && mode==='replay') speak(it.text);
+  }
+  if (play.exp) $('barFill').style.width = clamp(T/play.dur)*100+'%';
+  if (T > play.dur) finishPlayback();
+  return Math.max(0,T);
+}
+function stopPlayback(){
+  if (!play) return;
+  play.sources.forEach(s=>{ try{ s.stop(); }catch(e){} });
+  if (play.exp){ play.exp.cancelled = true; try{ play.exp.mr.stop(); }catch(e){} cleanupExport(); }
+  try{ speechSynthesis.cancel(); }catch(e){}
+  play = null; mode = 'idle'; $('stopPlay').hidden = true; $('busy').hidden = true; wake(false); updateButtons();
+}
+function finishPlayback(){
+  const p = play; play = null; $('stopPlay').hidden = true; wake(false);
+  if (p.exp){ p.exp.mr.stop(); } else { mode = 'idle'; }
+  updateButtons();
+}
+
+/* vídeo: canvas quadrado + voz gravada + efeitos */
+const XC = document.createElement('canvas'), xc = XC.getContext('2d');
+function setupExport(){
+  if (!XC.captureStream || !window.MediaRecorder){ tip('Este navegador não consegue gerar vídeo. Tente no Chrome ou no Safari atualizado.'); return false; }
+  const side = (navigator.maxTouchPoints>0) ? 720 : 1080; XC.width = XC.height = side;
+  exportDest = ac.createMediaStreamDestination(); master.connect(exportDest);
+  const vs = XC.captureStream(30), stream = new MediaStream([...vs.getVideoTracks(), ...exportDest.stream.getAudioTracks()]);
+  const mime = pickMime(['video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']);
+  let mr; try{ mr = new MediaRecorder(stream, mime ? {mimeType:mime, videoBitsPerSecond:4e6} : undefined); }catch(e){ tip('Não consegui começar o vídeo neste aparelho.'); cleanupExport(); return false; }
+  const chunks = [], exp = {mr, chunks, cancelled:false, mime: mr.mimeType || mime};
+  mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  mr.onstop = () => { cleanupExport(); mode = 'idle'; $('busy').hidden = true; updateButtons(); if (!exp.cancelled) showResult(new Blob(chunks,{type:exp.mime||'video/webm'})); };
+  mr.start(1000); play.exp = exp;
+  $('barFill').style.width = '0'; $('busy').hidden = false;
+  return true;
+}
+function cleanupExport(){ if (exportDest){ try{ master.disconnect(exportDest); }catch(e){} exportDest = null; } }
+let lastVideo = null;
+function showResult(blob){
+  if (lastVideo) URL.revokeObjectURL(lastVideo.url);
+  const ext = /mp4/.test(blob.type) ? 'mp4' : 'webm', d = new Date();
+  const name = `historia-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.${ext}`;
+  lastVideo = {blob, url:URL.createObjectURL(blob), name};
+  $('resVideo').src = lastVideo.url; $('result').hidden = false;
+  const file = new File([blob], name, {type:blob.type});
+  $('shBtn').hidden = !(navigator.canShare && navigator.canShare({files:[file]}));
+  $('resInfo').textContent = ext==='webm' ? 'Vídeo em WebM: abre no computador e no Android. Para iPhone, gere pelo Safari.' : '';
+}
+$('dlBtn').onclick = () => { if (!lastVideo) return; const a = document.createElement('a'); a.href = lastVideo.url; a.download = lastVideo.name; document.body.appendChild(a); a.click(); a.remove(); };
+$('shBtn').onclick = async () => { if (!lastVideo) return; try{ await navigator.share({files:[new File([lastVideo.blob], lastVideo.name, {type:lastVideo.blob.type})], title:'Minha história'}); }catch(e){} };
+$('closeRes').onclick = () => { $('result').hidden = true; try{ $('resVideo').pause(); }catch(e){} };
+$('cancelExport').onclick = () => stopPlayback();
+$('stopPlay').onclick = () => stopPlayback();
+
+/* voz sintética: começos prontos e histórias sem gravação */
+function speak(text,onend){
+  let done = false; const fin = () => { if (!done){ done = true; onend && onend(); } };
+  const fb = setTimeout(fin, 1800 + text.length*75);
+  try{ const ss = window.speechSynthesis; if (!ss) return; const u = new SpeechSynthesisUtterance(text); u.lang = 'pt-BR'; u.rate = .95; u.pitch = 1.1;
+    const v = ss.getVoices().find(v=>/pt[-_]BR/i.test(v.lang)); if (v) u.voice = v;
+    u.onend = () => { clearTimeout(fb); setTimeout(fin,350); }; ss.speak(u); }catch(e){}
+}
+const STARTERS = [
+ ['🐈','Gato no espaço',['Era uma vez um gato que morava na cidade.','Um dia ele entrou num foguete e voou para o espaço.','Lá ele encontrou um alien muito feliz.','Os dois dançaram juntos perto da lua.']],
+ ['🐄','Festa na fazenda',['Era uma vez uma fazenda bem grande.','Lá moravam uma vaca, um porco e três galinhas.','Um dia apareceu um bolo enorme e todo mundo ficou feliz.','Até o cachorro pulou de alegria.']],
+ ['🐉','Dragão e o escuro',['Num castelo morava um dragão.','Quando chegava a noite, o dragão tinha medo do escuro.','Uma fada apareceu com uma estrela brilhante.','O dragão ficou feliz e dormiu.']],
+ ['🧜‍♀️','A sereia',['No fundo do mar morava uma sereia.','Ela tinha uma amiga tartaruga.','Um tubarão apareceu e a tartaruga ficou com medo.','A sereia cantou e o tubarão foi embora.']],
+ ['🌈','Chuva no jardim',['Era uma vez uma menina num jardim cheio de flores.','Começou a chover forte e veio uma tempestade.','A menina ficou triste.','Depois apareceu um arco-íris e uma borboleta, e a menina dançou.']],
+];
+$('starters').innerHTML = STARTERS.map((s,i)=>`<button type="button" data-i="${i}"><span>${s[0]}</span>${s[1]}</button>`).join('');
+let demoTok = 0;
+$('starters').addEventListener('click', ev => {
+  const b = ev.target.closest('button'); if (!b) return; audio();
+  const lines = STARTERS[+b.dataset.i][2], tok = ++demoTok; newStory(true); hideWelcome();
+  let i = 0; const next = () => { if (tok!==demoTok || i>=lines.length || story.demo!==true) return; addText(lines[i++]); speak(lines[i-1], next); };
+  next();
+});
+
+/* ---------- Interface ---------- */
+function renderChips(){
+  if (!S) return; const D = SET[S.set], c = [`<span class="chip">${D.i} <span class="t">${D.n}</span></span>`];
+  if (!D.fixed) c.push(`<span class="chip">${TIMES[S.time][0]} <span class="t">${TIMES[S.time][1]}</span></span>`, `<span class="chip">${WXS[S.wx][0]} <span class="t">${WXS[S.wx][1]}</span></span>`);
+  if (S.mood) c.push(`<span class="chip on">${MOODS[S.mood][0]} <span class="t">${MOODS[S.mood][1]}</span></span>`);
+  $('chips').innerHTML = c.join('');
+}
+function updateButtons(){
+  const has = !!(story && story.items.length), busy = mode==='export';
+  $('playBtn').disabled = !has || busy; $('vidBtn').disabled = !has || busy; $('mic').disabled = busy;
+  $('playBtn').innerHTML = mode==='replay' ? '<span>⏹</span>Parar' : '<span>▶️</span>Assistir';
+}
+function hideWelcome(){ $('welcome').hidden = true; }
+let tipT; function tip(msg){ let t = $('stage').querySelector('.tip'); if (!t){ t = document.createElement('div'); t.className = 'tip'; $('stage').appendChild(t); } t.textContent = msg; clearTimeout(tipT); tipT = setTimeout(()=>t.remove(), 8000); }
+let lock = null; async function wake(on){ try{ if (on && !lock && navigator.wakeLock) lock = await navigator.wakeLock.request('screen'); else if (!on && lock){ await lock.release(); lock = null; } }catch(e){} }
+
+$('mic').onclick = () => rec.on ? micOff() : micOn();
+$('goMic').onclick = () => micOn();
+$('playBtn').onclick = () => mode==='replay' ? stopPlayback() : startPlayback(false);
+$('vidBtn').onclick = () => startPlayback(true);
+$('newBtn').onclick = () => { demoTok++; if (rec.on) micOff(); stopPlayback(); try{ speechSynthesis.cancel(); }catch(e){} story = null; newScene(1); idleLife(); mode = 'idle'; $('result').hidden = true; $('welcome').hidden = false; updateButtons(); };
+$('kbBtn').onclick = () => { const f = $('typeForm'); f.hidden = !f.hidden; if (!f.hidden) $('typeIn').focus(); };
+$('typeForm').addEventListener('submit', ev => { ev.preventDefault(); audio(); const v = $('typeIn').value; $('typeIn').value = ''; addText(v); });
+
+/* ---------- Laço de desenho ---------- */
+const cv = $('cv'), cx = cv.getContext('2d'); let dpr = 1, VW = 0, VH = 0;
+function resize(){ const r = cv.getBoundingClientRect(); dpr = Math.min(window.devicePixelRatio||1, 2); VW = r.width; VH = r.height; cv.width = Math.round(VW*dpr); cv.height = Math.round(VH*dpr); }
+new ResizeObserver(resize).observe(cv); resize();
+function frame(){
+  let T;
+  if (play) T = tickPlayback(); else T = clockLive();
+  if (mode==='export' && play && play.exp){
+    PX = 1; render(xc, XC.width, XC.height, T);
+    // mostra o quadro do vídeo no palco
+    cx.setTransform(1,0,0,1,0,0); cx.fillStyle = '#0d1f0d'; cx.fillRect(0,0,cv.width,cv.height);
+    const s = Math.min(cv.width,cv.height); cx.drawImage(XC,(cv.width-s)/2,(cv.height-s)/2,s,s);
+  } else if (VW>0 && VH>0){
+    PX = dpr; cx.setTransform(dpr,0,0,dpr,0,0); render(cx, VW, VH, T);
+  }
+  requestAnimationFrame(frame);
+}
+function idleLife(){ const T = clockLive(); spawn(ENT['passaro'],T); spawn(ENT['borboleta'],T); }
+/* ---------- Personagens com foto (IndexedDB, só neste aparelho) ---------- */
+let people = [];   // {id, name, key, blob, img, base:{key,em,label}|null}
+let pImg = null;
+function idb(){ return new Promise((ok,err)=>{ try{ const r = indexedDB.open('conta-que-eu-desenho',1); r.onupgradeneeded = () => r.result.createObjectStore('people',{keyPath:'id'}); r.onsuccess = () => ok(r.result); r.onerror = () => err(r.error); }catch(e){ err(e); } }); }
+async function dbAll(){ try{ const d = await idb(); return await new Promise(ok=>{ const q = d.transaction('people').objectStore('people').getAll(); q.onsuccess = () => ok(q.result||[]); q.onerror = () => ok([]); }); }catch(e){ return []; } }
+async function dbPut(v){ try{ const d = await idb(); d.transaction('people','readwrite').objectStore('people').put(v); }catch(e){} }
+async function dbDel(id){ try{ const d = await idb(); d.transaction('people','readwrite').objectStore('people').delete(id); }catch(e){} }
+function blobToCanvas(blob){
+  return new Promise((ok,err) => { const url = URL.createObjectURL(blob), im = new Image();
+    im.onload = () => { const s = Math.min(im.naturalWidth, im.naturalHeight), c = document.createElement('canvas'); c.width = c.height = 360;
+      // recorte quadrado, puxado para cima (o rosto costuma ficar no alto da foto)
+      c.getContext('2d').drawImage(im, (im.naturalWidth-s)/2, (im.naturalHeight-s)*.22, s, s, 0, 0, 360, 360); URL.revokeObjectURL(url); ok(c); };
+    im.onerror = () => { URL.revokeObjectURL(url); err(new Error('img')); }; im.src = url; });
+}
+function registerPerson(p){
+  const k = norm(p.name).trim().replace(/\s+/g,' '); if (!k) return;
+  const word = k.replace(/ /g,'');
+  if (k.includes(' ')) PHRASES.unshift([k, word]);
+  const sprite = 'p'+p.id; SPRITES[sprite] = photoSprite(p.img); clearSprite(sprite);
+  const hit = WORD[word] || WORD[k];
+  if (hit && ENT[hit.key]){ const e = ENT[hit.key]; p.base = {key:e.key, em:e.em, label:e.label, sz:e.sz}; e.em = ['@'+sprite]; e.label = p.name; e.sz = Math.max(e.sz,17); p.key = e.key; }
+  else { ENT[word] = {key:word,label:p.name,em:['@'+sprite],char:true,fly:false,swim:false,sz:17}; p.key = word;
+         WORD[word] = {key:word,plural:false}; }
+}
+function unregisterPerson(p){
+  if (p.base){ Object.assign(ENT[p.base.key], {em:p.base.em, label:p.base.label, sz:p.base.sz}); }
+  else { delete ENT[p.key]; for (const w in WORD) if (WORD[w].key===p.key) delete WORD[w]; }
+  const k = norm(p.name).trim().replace(/\s+/g,' '); const i = PHRASES.findIndex(x=>x[0]===k); if (i>=0) PHRASES.splice(i,1);
+}
+function renderPeople(){
+  const maria = `<div class="person"><canvas width="144" height="144" id="mariaThumb"></canvas>Maria<small style="font-weight:700;color:#56705a">desenho</small></div>`;
+  $('plist').innerHTML = maria + people.map(p=>`<div class="person" data-id="${p.id}"><img alt="" src="${p.url}"><span></span><button class="x" type="button" aria-label="Tirar">×</button></div>`).join('');
+  people.forEach(p => { const el = $('plist').querySelector(`[data-id="${p.id}"] span`); el.textContent = p.name; });
+  const mc = $('mariaThumb').getContext('2d'); const sp = spriteImg('maria',100); mc.fillStyle = '#e9f3e2'; mc.fillRect(0,0,144,144);
+  mc.drawImage(sp, 72-60*sp.width/sp.height, 14, 120*sp.width/sp.height, 120);
+}
+$('plist').addEventListener('click', ev => { const b = ev.target.closest('.x'); if (!b) return; const id = +b.parentNode.dataset.id;
+  const p = people.find(x=>x.id===id); if (!p) return; unregisterPerson(p); URL.revokeObjectURL(p.url); people = people.filter(x=>x!==p); dbDel(id); renderPeople(); });
+$('quick').innerHTML = ['Mamãe','Papai','Vovó','Vovô','Maria'].map(n=>`<button type="button">${n}</button>`).join('');
+$('quick').addEventListener('click', ev => { const b = ev.target.closest('button'); if (b){ $('pName').value = b.textContent; } });
+$('pFile').addEventListener('change', async () => { const f = $('pFile').files[0]; if (!f) return;
+  try{ pImg = await blobToCanvas(f); $('pPrev').src = pImg.toDataURL('image/jpeg',.8); $('pPrev').hidden = false; }catch(e){ pImg = null; tip('Não consegui abrir essa foto. Tente outra.'); } });
+$('addPerson').addEventListener('submit', async ev => {
+  ev.preventDefault(); const name = $('pName').value.trim();
+  if (!name){ $('pName').focus(); return; } if (!pImg){ $('pFile').click(); return; }
+  const old = people.find(p=>norm(p.name).trim()===norm(name).trim()); if (old){ unregisterPerson(old); people = people.filter(x=>x!==old); dbDel(old.id); }
+  const blob = await new Promise(ok=>pImg.toBlob(ok,'image/jpeg',.85));
+  const p = {id:Date.now(), name, blob, img:pImg, url:URL.createObjectURL(blob)};
+  registerPerson(p); people.push(p); dbPut({id:p.id,name,blob}); renderPeople();
+  $('pName').value = ''; $('pFile').value = ''; $('pPrev').hidden = true; pImg = null;
+});
+$('peopleBtn').onclick = () => { renderPeople(); $('welcome').hidden = true; $('peopleOver').hidden = false; };
+$('peopleDone').onclick = () => { $('peopleOver').hidden = true; if (!story) $('welcome').hidden = false; };
+(async () => { for (const r of await dbAll()){ try{ const img = await blobToCanvas(r.blob); const p = {id:r.id,name:r.name,blob:r.blob,img,url:URL.createObjectURL(r.blob)}; registerPerson(p); people.push(p); }catch(e){} } })();
+
+newScene(1); idleLife(); updateButtons(); frame();
+document.addEventListener('visibilitychange', () => { if (document.hidden && mode==='export') tip('Volte para esta tela: o vídeo só é gravado com ela aberta.'); });
+})();
+</script>
+</body>
+</html>
