@@ -124,7 +124,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
         <div class="iosnote" id="iosNote" hidden>No iPhone, a página só ouve a fala no <b>Safari</b>. Copie o link e cole no Safari. <button type="button" id="copyLink">Copiar link</button></div>
         <div class="starters" id="starters"></div>
         <button class="second" id="peopleBtn" type="button">📸 Colocar fotos da família</button>
-        <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). 🐷🐻🍭🐔🐭🕊️👸🐟 Recontos livres de contos populares, fábulas (Esopo, Irmãos Grimm) e lendas do folclore brasileiro, de domínio público. 🎵 Cantigas de roda tradicionais. Palavras novas inspiradas na Biblioteca Virtual da rede municipal de Quintana (SP). Os desenhos aqui são feitos pela página.</p>
+        <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). 🐷🐻🍭🐔🐭🕊️👸🐟 Recontos livres de contos populares, fábulas (Esopo, Irmãos Grimm) e lendas do folclore brasileiro, de domínio público. 🎵 Cantigas de roda tradicionais (domínio público). Palavras novas inspiradas na Biblioteca Virtual da rede municipal de Quintana (SP). Os desenhos aqui são feitos pela página.</p>
       </div>
     </div>
 
@@ -265,7 +265,8 @@ const LEX = [
  ['lanterna','🔦','lanterna','8'],['fogueira','🔥','fogueira fogo','10'],['barraca','⛺','barraca tenda','18'],['cama','🛏️','cama','16'],
  ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],['cesta','🧺','cesta cestinha','9'],['vinho','🧃','vinho','8'],['óculos','👓','oculos','7'],
  ['riacho','🏞️','riacho riachinho','20'],['cerejeira','@cherry','cerejeira','26'],
- ['Saci','@p_saci','saci sacizinho','c17n'],['mula sem cabeça','@mula','mulasemcabeca mula','c20'],['boto','@boto','boto','cw19'],['rapaz','@p_rapaz','rapaz moco','c22'],
+ ['Saci','@p_saci','saci sacizinho','c17n'],['alecrim','🌿','alecrim','8'],['limão','🍋','limao','7'],['limoeiro','@tree','limoeiro jacaranda','26'],['bandeira','🚩','bandeira','10'],['polícia','👮','policia policial','c16'],['quartel','🏰','quartel','24'],
+ ['mula sem cabeça','@mula','mulasemcabeca mula','c20'],['boto','@boto','boto','cw19'],['rapaz','@p_rapaz','rapaz moco','c22'],
  ['Naiá','@p_naia','naia','c17n'],['vitória-régia','@vitoria','vitoriaregia','cw18'],['Caipora','@p_caipora','caipora','c17n'],['uirapuru','@uirapuru','uirapuru','cf9n'],['Curupira','@p_curupira','curupira','c17n'],['Iara','@p_iara','iara','cw20n'],['Boitatá','@boitata','boitata','c24n'],
  ['redemoinho','🌪️','redemoinho','16'],['onça','🐆','onca jaguar','c16'],['pegada','🐾','pegada pegadas','6'],['anel','💍','anel','6'],['canoa','🛶','canoa','14'],['pica-pau','🐦','picapau','cf8'],
  ['tatu','🦔','tatu','c9'],['gorro','🧢','gorro carapuca','6'],
@@ -313,7 +314,7 @@ const SETW = {floresta:'floresta',mata:'floresta',bosque:'floresta',selva:'flore
  fundodomar:'fundo',submarino:'fundo',espaco:'espaco',planeta:'espaco',galaxia:'espaco',universo:'espaco',cidade:'cidade',rua:'cidade',predio:'cidade',predios:'cidade',
  fazenda:'fazenda',sitio:'fazenda',roca:'fazenda',curral:'fazenda',celeiro:'fazenda',castelo:'castelo',reino:'castelo',palacio:'castelo',
  montanha:'montanha',montanhas:'montanha',serra:'montanha',deserto:'deserto',gelo:'gelo',polo:'gelo',iglu:'gelo',geleira:'gelo',
- quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo',aldeia:'lago',pasto:'fazenda',rio:'lago',circo:'circo',picadeiro:'circo',horta:'horta',pomar:'horta',plantacao:'horta',acampamento:'floresta',lago:'lago',lagoa:'lago',lagoas:'lago',lagos:'lago'};
+ quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo',lagoa:'lago',aldeia:'lago',pasto:'fazenda',rio:'lago',circo:'circo',picadeiro:'circo',horta:'horta',pomar:'horta',plantacao:'horta',acampamento:'floresta',lago:'lago',lagoa:'lago',lagoas:'lago',lagos:'lago'};
 const NUM = {um:1,uma:1,num:1,numa:1,outro:1,outra:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:5,uns:3,umas:3,alguns:3,algumas:3,
  muitos:5,muitas:5,bando:4,varios:5,varias:5,mil:5,cem:5};
 const NEG = new Set(['nenhum','nenhuma','sem','nem']);
@@ -328,7 +329,7 @@ const WX = [[/^(chuv|chov|garoa)/,'chuva'],[/^(neve|nevou|nevava|nevando|nevar|n
 const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$|acord)/,'feliz'],[/^(trist|chor|magoad)/,'triste'],[/^(doente|resfriad|febre)/,'doente'],[/^(medo|assust|apavor|susto|sustos)$|^assust|^apavor/,'medo'],
  [/^(brav|raiva|zangad|furios|malvad|rosn)/,'bravo'],[/^(dorm|sono$|cansad|cochil|ronc)/,'sono'],[/^(surpres|espant)/,'surpresa'],[/^(amor|amava|amou|amad|apaixon|abrac|beij|carinho)/,'amor']];
 const ACT = [[/^pul(a|ou|ar|ava|ando|aram|avam)$|^brinc/,'pular'],[/^danc/,'dancar'],[/^vo(a|ou|ar|ava|ando|aram|avam)$/,'voar'],
- [/^corr(e|eu|er|ia|endo|eram|iam)$|^rapid/,'correr'],[/^(and(a|ou|ar|ava|ando|aram|avam)$|passe|caminh)/,'andar'],[/^nad(a|ou|ar|ava|ando|aram|avam)$/,'nadar'],
+ [/^corr(e|eu|er|ia|endo|eram|iam)$|^rapid/,'correr'],[/^(and(a|ou|ar|ava|ando|aram|avam)$|passe|caminh|march)/,'andar'],[/^nad(a|ou|ar|ava|ando|aram|avam)$/,'nadar'],
  [/^cant(a|ou|ar|ava|ando|aram|avam)$/,'cantar'],[/^com(e|eu|er|ia|endo|eram|iam)$/,'comer'],[/^(foiembora|sumiu|desaparec|fugiu|partiu)/,'sair'],[/^(engol|devor)/,'engolir'],[/^apag/,'apagar'],[/^(sopr|assopr|derrub)/,'soprar'],[/^(cheg(ou|a|aram|ando)|foi|voltou|correu)$/,'chegar'],[/^(quebr|trinc|rach|choc(ou|aram))/,'quebrar']];
 const MORPH = /^(virou|vira|era|transformou|tornou|transforma)$/;
 const ACTDUR = {pular:1400,dancar:2500,voar:2600,nadar:2400};
@@ -1566,11 +1567,24 @@ const SONGS = [
  ['💃','Ciranda, Cirandinha','No jardim, a menina, o menino e a Maria fazem a ciranda.',['Ciranda, cirandinha, vamos todos cirandar','Vamos dar a meia volta, volta e meia vamos dar','O anel que tu me deste era vidro e se quebrou','O amor que tu me tinhas era pouco e se acabou'],96],
  ['🌹','O Cravo e a Rosa','No jardim, o cravo e a rosa.',['O cravo brigou com a rosa, debaixo de uma sacada','O cravo saiu ferido, e a rosa despedaçada','O cravo ficou doente, a rosa foi visitar','O cravo teve um desmaio, e a rosa pôs-se a chorar'],92],
  ['🛶','A Canoa Virou','No rio, a Maria e a canoa.',['A canoa virou, pois deixaram ela virar','Foi por causa da Maria, que não soube remar','Se eu fosse um peixinho e soubesse nadar','Eu tirava a Maria lá do fundo do mar'],100],
+ ['🐟','Peixe Vivo','No rio, o peixe e a Maria.',['Como pode o peixe vivo viver fora da água fria?','Como pode o peixe vivo viver fora da água fria?','Como poderei viver, como poderei viver','Sem a tua, sem a tua, sem a tua companhia?'],88],
+ ['🌿','Alecrim Dourado','No campo, a menina e o alecrim.',['Alecrim, alecrim dourado','Que nasceu no campo sem ser semeado','Foi meu amor quem me disse assim','Que a flor do campo é o alecrim'],84],
+ ['🍭','Pirulito que Bate Bate','No jardim, a menina, o menino e um pirulito.',['Pirulito que bate bate','Pirulito que já bateu','Quem gosta de mim é ela','Quem gosta dela sou eu'],108],
+ ['💂','Marcha Soldado','Na cidade, três soldados marcham.',['Marcha soldado, cabeça de papel','Se não marchar direito, vai preso pro quartel','O quartel pegou fogo, a polícia deu sinal','Acode, acode, acode a bandeira nacional'],112],
+ ['💎','Se Essa Rua Fosse Minha','Na rua, a menina e o menino.',['Se essa rua, se essa rua fosse minha','Eu mandava, eu mandava ladrilhar','Com pedrinhas, com pedrinhas de brilhante','Para o meu, para o meu amor passar'],84],
+ ['🐸','O Sapo Não Lava o Pé','Na lagoa, o sapo.',['O sapo não lava o pé','Não lava porque não quer','Ele mora lá na lagoa','Não lava o pé porque não quer. Mas que chulé!'],112],
+ ['🎈','Cai, Cai, Balão','Na festa junina, a menina, o menino e três balões.',['Cai, cai, balão, cai, cai, balão','Aqui na minha mão','Não cai não, não cai não, não cai não','Cai na rua do sabão'],104],
+ ['🕊️','Pombinha Branca','No jardim, a pombinha branca.',['Pombinha branca, que está fazendo?','Lavando roupa pro casamento','Vou me lavar, vou me secar','Vou pra janela pra namorar'],96],
+ ['🍋','Meu Limão, Meu Limoeiro','No jardim, a menina e o limoeiro.',['Meu limão, meu limoeiro','Meu pé de jacarandá','Uma vez, tindolelê','Outra vez, tindolalá'],100],
+ ['💃','Fui no Tororó','No rio, a Maria e as crianças fazem a roda.',['Fui no Tororó beber água, não achei','Achei bela morena que no Tororó deixei','Aproveita, minha gente, que uma noite não é nada','Ó Mariazinha, entrarás na roda ou ficarás sozinha?'],100]
 ];
 const CHORDS = [[261.6,329.6,392,523.3],[349.2,440,523.3,698.5],[392,493.9,587.3,784],[261.6,329.6,392,523.3]];
-function musicBox(ci, beat){ if (!ac || quiet) return; CHORDS[ci%4].forEach((f,i)=>{ tone(f, f*1.001, beat*1.6, 'triangle', .06, i*beat*.5); tone(f*2, f*2.002, beat*.9, 'sine', .025, i*beat*.5+beat*.25); }); }
+const CHORDS_B = [[220,261.6,329.6,440],[293.7,349.2,440,587.3],[329.6,415.3,493.9,659.3],[220,261.6,329.6,440]];   // tom menor, para as cantigas mais calmas
+let SONG_CH = CHORDS;
+function musicBox(ci, beat){ if (!ac || quiet) return; SONG_CH[ci%4].forEach((f,i)=>{ tone(f, f*1.001, beat*1.6, 'triangle', .06, i*beat*.5); tone(f*2, f*2.002, beat*.9, 'sine', .025, i*beat*.5+beat*.25); }); }
 function playSong(song){
   const [, title, setup, lines, bpm] = song, beat = 60/bpm, lineMs = beat*8*1000, tok = ++demoTok;
+  SONG_CH = bpm < 90 ? CHORDS_B : CHORDS;
   newStory(true); hideWelcome(); addText('🎵 '+title, false, true); addText(setup);
   let i = 0; const next = () => { if (tok!==demoTok || !story || story.demo!==true) return;
     if (i>=lines.length*2){ addText('🎵 Fim! Vamos cantar de novo?', false, true); return; }   // canta duas vezes
