@@ -52,6 +52,8 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .bar{height:12px;border-radius:99px;background:#e1ead9;overflow:hidden;margin:12px 0 6px}
 .bar i{display:block;height:100%;width:0;background:var(--leaf);border-radius:99px}
 .small{font-size:.85rem;color:#56705a;font-weight:700}
+.iosnote{background:#fff3c4;border-radius:14px;padding:10px 12px;margin:0 0 12px;font-weight:700;font-size:.88rem;color:#5a4a10;line-height:1.4}
+.iosnote button{margin-left:6px;border:0;border-radius:999px;background:#1f5121;color:#fff;font-weight:800;padding:6px 12px}
 .credit{margin:12px auto 0;font-size:.72rem;line-height:1.35;color:#6d806f;font-weight:700;max-width:46ch}
 .second{margin-top:14px;border:0;background:#e9f3e2;color:#1d3320;border-radius:999px;padding:10px 18px;font-weight:800;font-size:.95rem;box-shadow:0 3px 0 #b9cdb0}
 .people{max-width:520px;text-align:left}
@@ -112,6 +114,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
         <h1>Era uma vez…</h1>
         <button class="go" id="goMic" type="button" aria-label="Começar a contar">🎙️</button>
         <span class="hint">Aperte e conte a sua história</span>
+        <div class="iosnote" id="iosNote" hidden>No iPhone, a página só ouve a fala no <b>Safari</b>. Copie o link e cole no Safari. <button type="button" id="copyLink">Copiar link</button></div>
         <div class="starters" id="starters"></div>
         <button class="second" id="peopleBtn" type="button">📸 Colocar fotos da família</button>
         <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). Os desenhos aqui são feitos pela página.</p>
@@ -360,10 +363,13 @@ function groundRange(def){
   return [5, Math.max(10, D.gh-12)];
 }
 function pickX(def, self){
-  const same = S.ents.filter(e => e!==self && !!e.fly===!!def.fly);
-  const c = [];
-  for (let x=10;x<=90;x+=4){ const d = same.length ? Math.min(...same.map(e=>Math.abs(e.x.to-x))) : 50; c.push([d+R()*3,x]); }
-  c.sort((a,b)=>b[0]-a[0]); return pick(c.slice(0,3))[1];
+  // compõe como numa página de livro: perto do grupo, sem encostar em ninguém
+  const same = S.ents.filter(e => e!==self && !!e.fly===!!def.fly), all = S.ents.filter(e => e!==self);
+  const gc = all.length ? all.reduce((a,e)=>a+e.x.to,0)/all.length : 50;
+  const gap = def.char ? 13 : 9, c = [];
+  for (let x=14;x<=86;x+=3){ const d = same.length ? Math.min(...same.map(e=>Math.abs(e.x.to-x))) : 99;
+    const score = (d<gap ? -60+d : 0) - Math.abs(x-gc)*.6 + R()*4; c.push([score,x]); }
+  c.sort((a,b)=>b[0]-a[0]); return pick(c.slice(0,2))[1];
 }
 const twv = (o,T) => lerp(o.from,o.to,easeIO(clamp((T-o.t0)/o.dur)));
 function moveTo(o,to,T,dur){ o.from = twv(o,T); o.to = to; o.t0 = T; o.dur = dur; }
@@ -844,11 +850,12 @@ const SNOW = Array.from({length:120},()=>({x:Math.random(),y:Math.random(),v:mr(
 const LEAF = Array.from({length:14},()=>({x:Math.random(),y:Math.random()*.8,v:mr(.7,1.3),p:mr(0,TAU),e:Math.random()<.3?'🍂':'🍃'}));
 
 const LCACHE = new Map();
+let LPX = 1.5;   // o cenário fica guardado com mais resolução para a câmera poder chegar perto
 function landLayer(key,W,H){
-  const k = key+'|'+Math.round(W)+'|'+Math.round(H)+'|'+PX; let cv = LCACHE.get(k);
-  if (!cv){ cv = document.createElement('canvas'); cv.width = Math.max(1,Math.round(W*PX)); cv.height = Math.max(1,Math.round(H*PX));
-    const g = cv.getContext('2d'); g.setTransform(PX,0,0,PX,0,0); paintLand(g,W,H,Math.min(W,H)/100,key);
-    LCACHE.set(k,cv); if (LCACHE.size>14) LCACHE.delete(LCACHE.keys().next().value); }
+  const k = key+'|'+Math.round(W)+'|'+Math.round(H)+'|'+LPX; let cv = LCACHE.get(k);
+  if (!cv){ cv = document.createElement('canvas'); cv.width = Math.max(1,Math.round(W*LPX)); cv.height = Math.max(1,Math.round(H*LPX));
+    const g = cv.getContext('2d'), save = PX; PX = LPX; g.setTransform(LPX,0,0,LPX,0,0); paintLand(g,W,H,Math.min(W,H)/100,key); PX = save;
+    LCACHE.set(k,cv); if (LCACHE.size>6) LCACHE.delete(LCACHE.keys().next().value); }
   return cv;
 }
 function paintLand(c,W,H,u,key){
@@ -883,7 +890,13 @@ function paintLand(c,W,H,u,key){
     if (grassy){ c.strokeStyle = 'rgba(30,90,30,.45)'; c.lineWidth = Math.max(1,u*.28); c.beginPath(); c.moveTo(x-u*.8,y-u*1.2); c.lineTo(x,y); c.lineTo(x+u*.8,y-u*1.4); c.moveTo(x,y); c.lineTo(x,y-u*1.6); c.stroke(); }
     else if (key==='praia'||key==='deserto'||D.water){ c.fillStyle = 'rgba(150,100,40,.25)'; c.beginPath(); c.arc(x,y,u*.35,0,TAU); c.fill(); }
     else if (D.space){ c.fillStyle = 'rgba(60,60,80,.25)'; c.beginPath(); c.ellipse(x,y,u*1.6,u*.6,0,0,TAU); c.fill(); } }
-  D.d.forEach(([e,x,b,sz]) => emoji(c,e,W*x/100,H*(1-b/100),sz*u));
+  // fundo esmaecido (perspectiva de ar) e sombra embaixo de árvores e casas
+  const far = D.d.filter(d=>d[2] >= D.gh-9 && d[2] < 60), near = D.d.filter(d=>!far.includes(d));
+  const shade = ([e,x,b,sz]) => { if (e[0]==='@' && !D.indoor && !D.water){ c.fillStyle = 'rgba(30,50,20,.18)'; c.beginPath(); c.ellipse(W*x/100,H*(1-b/100),sz*u*.45,sz*u*.07,0,0,TAU); c.fill(); } };
+  far.forEach(d=>{ shade(d); emoji(c,d[0],W*d[1]/100,H*(1-d[2]/100),d[3]*u); });
+  if (!D.indoor && !D.water && !D.space){ const sk = D.sky[D.sky.length-1], hz = c.createLinearGradient(0,top-H*.3,0,top+H*.05);
+    hz.addColorStop(0,sk+'00'); hz.addColorStop(.75,sk+'66'); hz.addColorStop(1,sk+'00'); c.fillStyle = hz; c.fillRect(0,top-H*.3,W,H*.35); }
+  near.forEach(d=>{ shade(d); emoji(c,d[0],W*d[1]/100,H*(1-d[2]/100),d[3]*u); });
 }
 function drawLand(c,W,H,u,key,T){
   const D = SET[key];
@@ -905,6 +918,7 @@ function drawEnt(c,e,W,H,u,T,alpha){
     if (e.fly){ ox = -W*.2*(1-easeOut(k)); oy = -H*.2*(1-easeOut(k)); sc = lerp(.4,1,easeOut(k)); a *= k; }
     else { sc = Math.max(0,backOut(k)); a *= clamp(k*3); } }
   const swimNow = e.swim && SET[S.set].water;
+  { const ky = (T-e.y.t0)/e.y.dur; if (ky>0 && ky<1 && Math.abs(e.y.to-e.y.from)>1) oy -= Math.sin(Math.PI*ky)*size*.22; }   // pulinho ao mudar de lugar
   if (e.fly || swimNow) oy += -Math.sin(T/2600*TAU+ph)*size*.06;
   else oy += -Math.max(0,Math.sin(T/3200*TAU+ph))*size*.03;
   switch (e.mood){
@@ -941,32 +955,73 @@ function drawEnt(c,e,W,H,u,T,alpha){
     c.save(); c.globalAlpha = ba; emoji(c,bub,bx,by,bs); c.restore(); }
 }
 
-function render(c,W,H,T){
-  const u = Math.min(W,H)/100, D = SET[S.set], night = S.time==='noite', outdoor = !D.fixed;
-  // céu (transição suave)
-  const k = clamp((T-S.sky.t0)/1200);
-  if (S.sky.from && k<1){ c.fillStyle = grad(c,S.sky.from,0,H); c.fillRect(0,0,W,H); c.globalAlpha = k; }
-  c.fillStyle = grad(c,S.sky.to,0,H); c.fillRect(0,0,W,H); c.globalAlpha = 1;
-  // estrelas
-  const sa = tw('stars',(D.space||(night&&outdoor))?1:0,T);
+/* fundo de um cenário: céu, estrelas, sol/lua, nuvens e chão */
+function drawBack(c,W,H,u,T,skyStops,key){
+  const D = SET[key], night = S.time==='noite', outdoor = !D.fixed;
+  c.fillStyle = grad(c,skyStops,0,H); c.fillRect(0,0,W,H);
+  const C = SET[S.set], cOut = !C.fixed;   // as transições de luz seguem o cenário atual (evita piscar durante a virada de página)
+  const sa = tw('stars',(C.space||(night&&cOut))?1:0,T) * ((D.space||(night&&outdoor))?1:0);
   if (sa>.01){ c.fillStyle = '#fff'; STARS.forEach(s => { c.globalAlpha = sa*(.55+.45*Math.sin(T/420+s.p)); c.beginPath(); c.arc(s.x*W,s.y*H,s.r*u*.25+.6,0,TAU); c.fill(); }); c.globalAlpha = 1; }
-  // sol e lua
-  const sunVis = outdoor && !night && !['tempestade','chuva','nublado'].includes(S.wx) ? 1 : 0;
+  const sunVis = cOut && !night && !['tempestade','chuva','nublado'].includes(S.wx) ? 1 : 0;
   const sA = tw('sunA',sunVis,T), sY = tw('sunY',S.time==='tarde'?.46:.14,T,1600), sS = tw('sunS',S.time==='tarde'?1.35:1,T,1600);
-  if (sA>.01){ const r = u*6.5*sS, x = W*.78, y = H*sY; c.save(); c.globalAlpha = sA;
+  if (sA>.01 && outdoor){ const r = u*6.5*sS, x = W*.78, y = H*sY; c.save(); c.globalAlpha = sA;
     const g = c.createRadialGradient(x,y,r*.2,x,y,r*2.2); g.addColorStop(0,'rgba(255,214,90,.55)'); g.addColorStop(1,'rgba(255,214,90,0)'); c.fillStyle = g; c.fillRect(x-r*2.3,y-r*2.3,r*4.6,r*4.6);
     const g2 = c.createRadialGradient(x-r*.3,y-r*.3,r*.1,x,y,r); g2.addColorStop(0,'#fff3b0'); g2.addColorStop(.55,'#ffc43d'); g2.addColorStop(1,'#ff9f1c'); c.fillStyle = g2; c.beginPath(); c.arc(x,y,r,0,TAU); c.fill(); c.restore(); }
-  const mA = tw('moonA',outdoor&&night?1:0,T);
-  if (mA>.01){ c.save(); c.globalAlpha = mA; emoji(c,'🌙',W*.8,H*.22,u*11); c.restore(); }
-  // nuvens
+  const mA = tw('moonA',cOut&&night?1:0,T);
+  if (mA>.01 && outdoor){ c.save(); c.globalAlpha = mA; emoji(c,'🌙',W*.8,H*.22,u*11); c.restore(); }
   if (D.clouds){ const many = ['nublado','chuva','tempestade'].includes(S.wx), n = many?7:3;
-    const em = S.wx==='tempestade' ? '⛈️' : (S.wx==='chuva' ? '🌧️' : '☁️');
     const col = S.wx==='tempestade' ? '#8d94a3' : (many ? '#e6ebf2' : '#ffffff');
     for (let i=0;i<n;i++){ const cl = CLOUDS[i], x = (((cl.off+T/cl.dur)%1)*1.6-.3)*W; cloud(c,x,H*cl.y+cl.s*u*.5,cl.s*u*.85,col); } }
-  // chão e enfeites (o cenário novo aparece por cima do antigo)
-  const lk = clamp((T-S.setT)/1200);
-  if (S.prevSet && lk<1){ drawLand(c,W,H,u,S.prevSet,T); c.globalAlpha = lk; }
-  drawLand(c,W,H,u,S.set,T); c.globalAlpha = 1;
+  drawLand(c,W,H,u,key,T);
+}
+/* câmera: chega perto quando há poucos personagens, como nas páginas de livro */
+function camTarget(W,H,u){
+  const ents = S.ents.filter(e=>T_NOW-e.born>0), ch = ents.filter(e=>e.char);
+  if (!story || !ch.length) return [1,W/2];
+  const n = ch.length; let z = n<=1 ? 1.8 : n===2 ? 1.65 : n===3 ? 1.45 : n<=5 ? 1.25 : 1.05;
+  const xs = ents.map(e=>W*e.x.to/100), minx = Math.min(...xs), maxx = Math.max(...xs);
+  z = Math.min(z, W*.94/(maxx-minx+W*.2));
+  const need = Math.max(...ents.map(e=>e.y.to + e.sz*1.5*u/H*100)) + 8;   // topo do personagem mais alto, em % da altura
+  z = Math.min(z, 100/need);
+  z = Math.min(1.8, Math.max(1, Math.round(z*20)/20));
+  let cx = (minx+maxx)/2; cx = Math.min(Math.max(cx, W/(2*z)), W-W/(2*z));
+  return [z, Math.round(cx/(W*.02))*W*.02];
+}
+let T_NOW = 0;
+const GRAIN = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 160; const g = cv.getContext('2d'), d = g.createImageData(160,160);
+  for (let i=0;i<d.data.length;i+=4){ const v = 120+Math.random()*120; d.data[i] = v; d.data[i+1] = v*.96; d.data[i+2] = v*.88; d.data[i+3] = 255; } g.putImageData(d,0,0); return cv; })();
+let PAPER = null;
+function paperOverlay(W,H){   // cantos levemente escuros + grão de papel, preparado uma vez por tamanho
+  const k = Math.round(W)+'x'+Math.round(H); if (PAPER && PAPER.k===k) return PAPER.cv;
+  const cv = document.createElement('canvas'); cv.width = Math.max(1,Math.round(W)); cv.height = Math.max(1,Math.round(H)); const g = cv.getContext('2d');
+  const vg = g.createRadialGradient(W/2,H*.55,Math.min(W,H)*.35,W/2,H*.55,Math.hypot(W,H)*.62); vg.addColorStop(0,'rgba(40,25,10,0)'); vg.addColorStop(1,'rgba(40,25,10,.2)');
+  g.fillStyle = vg; g.fillRect(0,0,W,H);
+  const d = g.getImageData(0,0,cv.width,cv.height), a = d.data;
+  for (let i=0;i<a.length;i+=4){ const n = Math.random(); if (n<.5){ a[i] = a[i]*.5+60; a[i+1] = a[i+1]*.5+45; a[i+2] = a[i+2]*.5+25; a[i+3] = Math.min(255, a[i+3] + n*28); } }
+  g.putImageData(d,0,0); PAPER = {k,cv}; return cv;
+}
+function render(c,W,H,T){
+  T_NOW = T;
+  const u = Math.min(W,H)/100, D = SET[S.set], night = S.time==='noite', outdoor = !D.fixed;
+  const basePX = PX;
+  // câmera suave
+  const [tz,tcx] = camTarget(W,H,u), z = tw('camZ'+(c===xc?'x':''),tz,T,1800), cxw = tw('camX'+(c===xc?'x':''),tcx,T,1800);
+  const ox = Math.min(Math.max(cxw - W/(2*z), 0), W - W/z), oy = H - H/z;
+  c.save(); c.scale(z,z); c.translate(-ox,-oy);
+  PX = basePX*Math.max(1,Math.round(z*4)/4);
+  // cenário: troca de cenário vira página (da direita para a esquerda); troca de hora/tempo funde devagar
+  const wk = S.prevSet ? clamp((T-S.setT)/1300) : 1;
+  if (wk<1){
+    drawBack(c,W,H,u,T,S.sky.from||S.sky.to,S.prevSet);
+    const ex = W*(1-easeIO(wk));
+    c.save(); c.beginPath(); c.rect(ex,0,W-ex+1,H); c.clip(); drawBack(c,W,H,u,T,S.sky.to,S.set); c.restore();
+    const sh = c.createLinearGradient(ex-u*6,0,ex+u*3,0); sh.addColorStop(0,'rgba(0,0,0,0)'); sh.addColorStop(.7,'rgba(40,30,20,.28)'); sh.addColorStop(.72,'rgba(255,255,255,.55)'); sh.addColorStop(1,'rgba(255,255,255,0)');
+    c.fillStyle = sh; c.fillRect(ex-u*6,0,u*9,H);
+  } else {
+    const k = clamp((T-S.sky.t0)/1600);
+    if (S.sky.from && k<1){ drawBack(c,W,H,u,T,S.sky.from,S.set); c.globalAlpha = easeIO(k); }
+    drawBack(c,W,H,u,T,S.sky.to,S.set); c.globalAlpha = 1;
+  }
   const rA = tw('rain',S.wx==='arcoiris'&&outdoor?.85:0,T,2000);
   if (rA>.01){ c.save(); c.globalAlpha = rA; const R0 = Math.min(W*.42,H*.5), lw = R0*.07; c.lineWidth = lw;
     ['#ff595e','#ff924c','#ffca3a','#8ac926','#1982c4','#6a4c93'].forEach((col,i)=>{ c.strokeStyle = col; c.beginPath(); c.arc(W*.5,H*.72,R0-i*lw,Math.PI,0); c.stroke(); }); c.restore(); }
@@ -992,6 +1047,9 @@ function render(c,W,H,T){
       if (idx>=1){ if (idx!==S.flashIdx && ph>250){ S.flashIdx = idx; sfx('thunder'); }
         if (ph<700){ const f = ph<70?ph/70*.75 : ph<140?.1 : ph<210?.6 : .6*(1-(ph-210)/490); c.fillStyle = `rgba(255,255,255,${Math.max(0,f)})`; c.fillRect(0,0,W,H); } } }
   }
+  c.restore(); PX = basePX;
+  // acabamento de livro: cantos levemente escuros e textura de papel
+  c.drawImage(paperOverlay(W,H),0,0,W,H);
   // legenda
   const lines = S.subs.slice(-1).concat(S.interim ? [S.interim] : []);
   if (lines.length){ const fs = Math.max(14,u*(c===xc?4.4:3.6)); c.font = `800 ${fs}px ${UIF}`; c.textAlign = 'center'; c.textBaseline = 'middle';
@@ -1005,7 +1063,16 @@ function render(c,W,H,T){
    Som: efeitos sintetizados (vão junto para o vídeo)
    ========================================================= */
 let ac = null, master = null, exportDest = null;
+/* iPhone: o som da página respeita a chave de silêncio; isto faz tocar como mídia */
+const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const IOS_OTHER = IOS && /CriOS|FxiOS|EdgiOS|OPiOS|GSA\/|FBAN|FBAV|Instagram|WhatsApp|Line\//i.test(navigator.userAgent);
+const SILENT = 'data:audio/wav;base64,UklGRtQEAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YbAEAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA=';
+let iosUnlocked = false;
+function iosAudio(kind){ try{ if (navigator.audioSession) navigator.audioSession.type = kind; }catch(e){} }
+function unlockIOS(){ if (!IOS || iosUnlocked) return; iosUnlocked = true;
+  try{ const a = new Audio(SILENT); a.setAttribute('playsinline',''); a.play().catch(()=>{ iosUnlocked = false; }); }catch(e){} }
 function audio(){
+  if (IOS){ iosAudio(rec && rec.on ? 'play-and-record' : 'playback'); unlockIOS(); }
   try{ if (!ac){ ac = new (window.AudioContext||window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = 1; master.connect(ac.destination); }
        if (ac.state==='suspended') ac.resume(); }catch(e){ return null; }
   return ac;
@@ -1058,7 +1125,7 @@ async function micOn(){
   audio(); hideWelcome();
   if (mode==='replay'||mode==='export') stopPlayback();
   if (!story || story.demo) newStory(false);
-  rec.on = true; micUI(true); wake(true);
+  rec.on = true; micUI(true); wake(true); iosAudio('play-and-record');
   // grava a voz (fica só neste aparelho)
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder){
     try{
@@ -1098,14 +1165,22 @@ function startSR(){
       }
       S.interim = words.slice(Math.min(rec.committed, words.length)).join(' ');
     };
-    r.onerror = ev => { if (['not-allowed','service-not-allowed'].includes(ev.error)){ rec.sr = null; tip('O microfone não foi liberado. Toque no cadeado ao lado do endereço e permita o microfone.'); micOff(); }
+    r.onerror = ev => {
+      if (ev.error==='service-not-allowed' || (IOS_OTHER && ev.error==='not-allowed')){ rec.sr = null;
+        tip(IOS ? (IOS_OTHER ? 'No iPhone, só o Safari deixa a página ouvir a fala. Toque em ⋯ ou em compartilhar e escolha "Abrir no Safari". Para desenhar agora, toque em ⌨️.'
+                             : 'O iPhone está com o Ditado desligado. Vá em Ajustes › Geral › Teclado e ative "Ditado"; depois abra a página de novo.')
+                 : 'Este navegador não deixa reconhecer a fala. Use o Chrome atualizado ou toque em ⌨️ para escrever.', 16000);
+        if (!rec.mr) micOff(); return; }
+      if (ev.error==='not-allowed'){ rec.sr = null;
+        tip(IOS ? 'O microfone foi bloqueado. No Safari, toque em "aA" ao lado do endereço › Ajustes do Site › Microfone › Permitir, e aperte o 🎙️ de novo.'
+                : 'O microfone foi bloqueado. Toque no cadeado ao lado do endereço › Permissões › Microfone › Permitir, e aperte o 🎙️ de novo.', 16000); micOff(); return; }
                         else if (ev.error==='audio-capture'){ rec.sr = null; tip('Não consegui ouvir e gravar ao mesmo tempo neste aparelho. A voz está sendo gravada; para desenhar, toque em ⌨️ e escreva.'); } };
     r.onend = () => { if (rec.on && rec.sr===r){ rec.committed = 0; S.interim = ''; try{ r.start(); }catch(e){} } };
     r.start();
   }catch(e){ tip('Não consegui ligar o reconhecimento de voz. Toque em ⌨️ para escrever.'); }
 }
 function micOff(){
-  rec.on = false; micUI(false); wake(false);
+  rec.on = false; micUI(false); wake(false); iosAudio('playback');
   if (S.interim) addText(S.interim, true);   // o que estava na legenda vale mesmo sem "fim de frase"
   S.interim = '';
   if (rec.sr){ const r = rec.sr; rec.sr = null; try{ r.stop(); }catch(e){} }
@@ -1248,7 +1323,7 @@ function updateButtons(){
   $('playBtn').innerHTML = mode==='replay' ? '<span>⏹</span>Parar' : '<span>▶️</span>Assistir';
 }
 function hideWelcome(){ $('welcome').hidden = true; }
-let tipT; function tip(msg){ let t = $('stage').querySelector('.tip'); if (!t){ t = document.createElement('div'); t.className = 'tip'; $('stage').appendChild(t); } t.textContent = msg; clearTimeout(tipT); tipT = setTimeout(()=>t.remove(), 8000); }
+let tipT; function tip(msg, ms=8000){ let t = $('stage').querySelector('.tip'); if (!t){ t = document.createElement('div'); t.className = 'tip'; $('stage').appendChild(t); } t.textContent = msg; clearTimeout(tipT); tipT = setTimeout(()=>t.remove(), ms); }
 let lock = null; async function wake(on){ try{ if (on && !lock && navigator.wakeLock) lock = await navigator.wakeLock.request('screen'); else if (!on && lock){ await lock.release(); lock = null; } }catch(e){} }
 
 $('mic').onclick = () => rec.on ? micOff() : micOn();
@@ -1271,12 +1346,12 @@ function frame(){
   let T;
   if (play) T = tickPlayback(); else T = clockLive();
   if (mode==='export' && play && play.exp){
-    PX = 1; render(xc, XC.width, XC.height, T);
+    PX = 1; LPX = 1.5; render(xc, XC.width, XC.height, T);
     // mostra o quadro do vídeo no palco
     cx.setTransform(1,0,0,1,0,0); cx.fillStyle = '#0d1f0d'; cx.fillRect(0,0,cv.width,cv.height);
     const s = Math.min(cv.width,cv.height); cx.drawImage(XC,(cv.width-s)/2,(cv.height-s)/2,s,s);
   } else if (VW>0 && VH>0){
-    PX = dpr; cx.setTransform(dpr,0,0,dpr,0,0); render(cx, VW, VH, T);
+    PX = dpr; LPX = Math.min(dpr*1.5, 3); cx.setTransform(dpr,0,0,dpr,0,0); render(cx, VW, VH, T);
   }
   requestAnimationFrame(frame);
 }
@@ -1336,6 +1411,8 @@ $('peopleBtn').onclick = () => { renderPeople(); $('welcome').hidden = true; $('
 $('peopleDone').onclick = () => { $('peopleOver').hidden = true; if (!story) $('welcome').hidden = false; };
 (async () => { for (const r of await dbAll()){ try{ const img = await blobToCanvas(r.blob); const p = {id:r.id,name:r.name,blob:r.blob,img,url:URL.createObjectURL(r.blob)}; registerPerson(p); people.push(p); }catch(e){} } })();
 
+if (IOS_OTHER){ $('iosNote').hidden = false;
+  $('copyLink').onclick = async () => { try{ await navigator.clipboard.writeText(location.href); $('copyLink').textContent = 'Copiado!'; }catch(e){ $('copyLink').textContent = location.href; } }; }
 newScene(1); idleLife(); updateButtons(); frame();
 document.addEventListener('visibilitychange', () => { if (document.hidden && mode==='export') tip('Volte para esta tela: o vídeo só é gravado com ela aberta.'); });
 })();
