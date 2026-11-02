@@ -235,6 +235,9 @@ const LEX = [
  ['violão','🎸','violao guitarra','11'],['tambor','🥁','tambor','10'],['chapéu','🎩','chapeu','8'],['ursinho','🧸','ursinho pelucia','9'],
  ['lanterna','🔦','lanterna','8'],['fogueira','🔥','fogueira fogo','10'],['barraca','⛺','barraca tenda','18'],['cama','🛏️','cama','16'],
  ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],
+ ['loja','🏪','loja vendinha mercado mercadinho padaria supermercado','20'],['leite','🥛','leite','8'],['refrigerante','🥤','refrigerante coca suco','8'],
+ ['vizinho','🧑','vizinho vizinha','c16'],['amigo','🧒','amigo amiga amiguinho amiguinha','c15'],['escola','🏫','escola creche','20'],
+ ['dinheiro','🪙','dinheiro moeda moedinha','7'],['boneca','🪆','boneca','9'],['biscoito','🍪','biscoito bolacha','7'],['queijo','🧀','queijo','8'],
 ];
 const ENT = {}, WORD = {};
 function plurals(w){
@@ -416,8 +419,11 @@ function applySentence(s,T){
     }
   }
 }
-function applyText(text,T){
-  S.subs.push(text); if (S.subs.length>3) S.subs.shift();
+function applyText(text,T,join){
+  // a fala chega em pedacinhos: junta na mesma legenda até ela ficar comprida
+  if (join && S.subs.length && S.subs[S.subs.length-1].length < 60) S.subs[S.subs.length-1] += ' '+text;
+  else S.subs.push(text);
+  if (S.subs.length>3) S.subs.shift();
   text.split(/[.!?;\n]+|\s+e\s+depois\s+|\s+depois\s+/i).filter(x=>x.trim()).forEach(s=>applySentence(s,T));
   renderChips();
 }
@@ -625,7 +631,7 @@ function render(c,W,H,T){
   }
   // legenda
   const lines = S.subs.slice(-1).concat(S.interim ? [S.interim] : []);
-  if (lines.length){ const fs = Math.max(14,u*3.6); c.font = `800 ${fs}px ${UIF}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+  if (lines.length){ const fs = Math.max(14,u*(c===xc?4.4:3.6)); c.font = `800 ${fs}px ${UIF}`; c.textAlign = 'center'; c.textBaseline = 'middle';
     let wl = []; lines.forEach((t,i) => wrapLines(c,t,W*.86).forEach(l => wl.push([l, i===lines.length-1 && S.interim ? .7 : 1])));
     wl = wl.slice(-3); let y = H - u*3 - fs*.8 - (wl.length-1)*fs*1.45;
     wl.forEach(([l,al]) => { const w = c.measureText(l).width+fs*1.1; c.globalAlpha = al; c.fillStyle = 'rgba(14,24,14,.72)'; rrect(c,W/2-w/2,y-fs*.72,w,fs*1.44,fs*.35); c.fill(); c.fillStyle = '#fff'; c.fillText(l,W/2,y); y += fs*1.45; });
@@ -672,13 +678,13 @@ function storyTime(){
   const t = story.accum + Math.min(now-story.lastMark, story.items.length ? 4000 : 600);
   story.accum = t; story.lastMark = now; return t;
 }
-function addText(text){
+function addText(text, join){
   text = (text||'').trim(); if (!text) return;
   if (mode==='replay'||mode==='export') stopPlayback();
   if (!story) newStory(false);
   hideWelcome();
-  story.items.push({t:storyTime(), text});
-  applyText(text, clockLive()); updateButtons();
+  story.items.push({t:storyTime(), text, join:!!join});
+  applyText(text, clockLive(), join); updateButtons();
 }
 
 /* ---------- Microfone: reconhece a fala e grava a voz ---------- */
@@ -710,26 +716,35 @@ function startSR(){
   if (!SR){ tip('Este navegador não entende a fala. Use o Chrome (Android) ou o Safari (iPhone), ou toque em ⌨️ para escrever.'); if (!rec.mr) micOff(); return; }
   try{
     const r = new SR(); rec.sr = r; r.lang = 'pt-BR'; r.continuous = true; r.interimResults = true; rec.lastFinal = '';
+    rec.committed = 0;
     r.onresult = ev => {
-      let im = '';
-      for (let i=ev.resultIndex;i<ev.results.length;i++){
-        const res = ev.results[i]; let tx = res[0].transcript.trim();
-        if (res.isFinal){
-          // alguns Android repetem a frase inteira: aproveita só o pedaço novo
-          if (rec.lastFinal && tx.toLowerCase().startsWith(rec.lastFinal.toLowerCase())) tx = tx.slice(rec.lastFinal.length).trim();
-          rec.lastFinal = res[0].transcript.trim(); S.interim = ''; addText(tx);
-        } else im += res[0].transcript;
+      if (rec.sr !== r) return;
+      // monta tudo o que já foi ouvido nesta sessão (alguns Android repetem a frase inteira em cada resultado)
+      let parts = [], lastFinal = true;
+      for (let i=0;i<ev.results.length;i++){
+        const tx = ev.results[i][0].transcript.trim(); if (!tx) continue;
+        const joined = parts.join(' ').toLowerCase();
+        if (parts.length && tx.toLowerCase().startsWith(joined)) parts = [tx]; else parts.push(tx);
+        lastFinal = ev.results[i].isFinal;
       }
-      S.interim = im.trim();
+      const words = parts.join(' ').split(/\s+/).filter(Boolean);
+      // desenha enquanto a criança fala: a última palavra ainda pode mudar, então espera ela firmar
+      const stable = lastFinal ? words.length : words.length-1;
+      if (stable > rec.committed && (lastFinal || stable-rec.committed >= 3)){
+        addText(words.slice(rec.committed, stable).join(' '), true); rec.committed = stable;
+      }
+      S.interim = words.slice(Math.min(rec.committed, words.length)).join(' ');
     };
     r.onerror = ev => { if (['not-allowed','service-not-allowed'].includes(ev.error)){ rec.sr = null; tip('O microfone não foi liberado. Toque no cadeado ao lado do endereço e permita o microfone.'); micOff(); }
                         else if (ev.error==='audio-capture'){ rec.sr = null; tip('Não consegui ouvir e gravar ao mesmo tempo neste aparelho. A voz está sendo gravada; para desenhar, toque em ⌨️ e escreva.'); } };
-    r.onend = () => { if (rec.on && rec.sr===r){ rec.lastFinal = ''; try{ r.start(); }catch(e){} } };
+    r.onend = () => { if (rec.on && rec.sr===r){ rec.committed = 0; S.interim = ''; try{ r.start(); }catch(e){} } };
     r.start();
   }catch(e){ tip('Não consegui ligar o reconhecimento de voz. Toque em ⌨️ para escrever.'); }
 }
 function micOff(){
-  rec.on = false; micUI(false); wake(false); S.interim = '';
+  rec.on = false; micUI(false); wake(false);
+  if (S.interim) addText(S.interim, true);   // o que estava na legenda vale mesmo sem "fim de frase"
+  S.interim = '';
   if (rec.sr){ const r = rec.sr; rec.sr = null; try{ r.stop(); }catch(e){} }
   if (rec.mr && rec.mr.state!=='inactive'){ story.accum += performance.now()-story.segStart; story.lastMark = performance.now(); try{ rec.mr.stop(); }catch(e){} }
   if (rec.stream){ rec.stream.getTracks().forEach(t=>t.stop()); rec.stream = null; }
@@ -769,7 +784,7 @@ const playT = () => (ac.currentTime - play.start)*1000;
 function tickPlayback(){
   const T = playT();
   while (play.idx < story.items.length && story.items[play.idx].t <= T){
-    const it = story.items[play.idx++]; applyText(it.text, Math.max(0,T));
+    const it = story.items[play.idx++]; applyText(it.text, Math.max(0,T), it.join);
     if (play.tts && mode==='replay') speak(it.text);
   }
   if (play.exp) $('barFill').style.width = clamp(T/play.dur)*100+'%';
