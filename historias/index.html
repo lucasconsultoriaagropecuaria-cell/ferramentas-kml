@@ -370,19 +370,23 @@ function halfW(d){ const em = (d.em && d.em[0]) || ''; let w = 1;
 const isBig = d => !d.char && d.sz >= 15;
 /* cena cheia: todos diminuem juntos e se afastam, para ninguém ficar escondido (como um ilustrador faz numa página cheia) */
 function crowdScale(){
-  const g = S.ents.filter(e=>!e.fly && !isBig(e) && !(e.swim && SET[S.set].pond));
+  const g = S.ents.filter(e=>!e.fly && !isBig(e) && !(e.swim && SET[S.set].pond));   // o lago tem a sua própria conta
   const tot = g.reduce((a,e)=>a + 2*halfW(e), 0);
   return Math.min(1, Math.max(.5, 175/Math.max(1,tot)));
 }
+const inPond = e => e.swim && SET[S.set].pond;
 function relax(T){
   const k = crowdScale(); S.crowd = k;
-  ['front','back'].forEach(row => {
-    const arr = S.ents.filter(e=>!e.fly && !isBig(e) && (e.row||'front')===row).sort((a,b)=>a.x.to-b.x.to);
+  // aves no lago: cabem entre 20% e 80% da largura
+  const sw = S.ents.filter(inPond), tot = sw.reduce((a,e)=>a+2*halfW(e),0); S.crowdPond = Math.min(1, Math.max(.5, 58/Math.max(1,tot)));
+  ['front','back','pond'].forEach(row => {
+    const arr = (row==='pond' ? sw : S.ents.filter(e=>!e.fly && !isBig(e) && !inPond(e) && (e.row||'front')===row)).sort((a,b)=>a.x.to-b.x.to);
     if (arr.length<2) return;
-    const pos = arr.map(e=>e.x.to), hw = arr.map(e=>halfW(e)*k + .5);
+    const kk = row==='pond' ? S.crowdPond : k, lo = row==='pond' ? 20 : 0, hi = row==='pond' ? 80 : 100;
+    const pos = arr.map(e=>e.x.to), hw = arr.map(e=>halfW(e)*kk + .5);
     for (let it=0; it<40; it++){
       for (let i=0;i<arr.length-1;i++){ const need = hw[i]+hw[i+1] - (pos[i+1]-pos[i]); if (need>0){ pos[i] -= need/2; pos[i+1] += need/2; } }
-      for (let i=0;i<arr.length;i++) pos[i] = Math.min(100-hw[i], Math.max(hw[i], pos[i]));
+      for (let i=0;i<arr.length;i++) pos[i] = Math.min(hi-hw[i], Math.max(lo+hw[i], pos[i]));
     }
     arr.forEach((e,i)=>{ if (Math.abs(pos[i]-e.x.to)>.4) moveTo(e.x, pos[i], T, 900); });
   });
@@ -406,7 +410,7 @@ function spawn(def,T){
              mood:null,moodT:0,act:null,actT:0,bub:null,fx:R()<.5?-1:1};
   const [a,b] = groundRange(def); let x = pickX(def,e,'front'), y = isBig(def) ? b - R()*2 : rnd(a, Math.min(b, a+5)); e.row = 'front';
   // fileira da frente cheia: vai para a fileira de trás, um pouco mais alto
-  if (pickX.hit > 1 && !def.fly && !isBig(def)){ const xb = pickX(def,e,'back'); if (pickX.hit < 1){ x = xb; y = Math.min(b, a+5) + 6 + R()*2; e.row = 'back'; } }
+  if (pickX.hit > 1 && !def.fly && !isBig(def) && !(def.swim && SET[S.set].pond)){ const xb = pickX(def,e,'back'); if (pickX.hit < 1){ x = xb; y = Math.min(b, a+5) + 6 + R()*2; e.row = 'back'; } }
   e.x = {from:x,to:x,t0:T,dur:1}; e.y = {from:y,to:y,t0:T,dur:1};
   S.ents.push(e);
   if (S.ents.length > 16){ const old = S.ents.find(x=>!x.char) || S.ents[0]; ghost(old,T,true); }
@@ -920,7 +924,7 @@ function paintLand(c,W,H,u,key){
   if (D.pond){ const px = W*.5, py = H*.84, rx = W*.4, ry = H*.1;
     c.fillStyle = grad(c,['#7fd0f2','#2f93cf'],py-ry,py+ry); c.beginPath(); c.ellipse(px,py,rx,ry,0,0,TAU); c.fill(); c.lineWidth = Math.max(1.5,u*.5); c.strokeStyle = '#6b8f3a'; c.stroke();
     c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = Math.max(1,u*.3); [[-.5,-.3],[.2,-.5],[.45,.1],[-.2,.2]].forEach(([a,b])=>{ const x = px+a*rx, y = py+b*ry; c.beginPath(); c.moveTo(x-u*3,y); c.quadraticCurveTo(x,y-u,x+u*3,y); c.stroke(); });
-    [[-.75,-.1],[.7,-.25],[.6,.35]].forEach(([a,b])=>{ const x = px+a*rx, y = py+b*ry; c.fillStyle = '#5fb04a'; c.beginPath(); c.ellipse(x,y,u*2.6,u*1.1,0,.3,TAU-.3); c.lineTo(x,y); c.fill(); c.fillStyle = '#ff9ec4'; c.beginPath(); c.arc(x+u*.6,y-u*.6,u*.7,0,TAU); c.fill(); }); }
+}
   if (D.rows){ c.strokeStyle = 'rgba(60,40,20,.45)'; c.lineWidth = Math.max(1,u*.6); for (let k=1;k<6;k++){ const y = top+(H-top)*k/6; c.beginPath(); c.moveTo(0,y); c.lineTo(W,y); c.stroke(); } }
   // textura do chão
   const grassy = !D.rows && !D.indoor && !D.road && !D.space && !D.water && key!=='praia' && key!=='deserto' && key!=='gelo';
@@ -940,7 +944,9 @@ function paintLand(c,W,H,u,key){
 function drawLand(c,W,H,u,key,T){
   const D = SET[key];
   if (D.rays){ c.save(); c.globalAlpha = .08; c.fillStyle = '#fff'; for (let i=0;i<7;i++){ const x = W*(i/6)+Math.sin(T/4000+i)*W*.02; c.beginPath(); c.moveTo(x,0); c.lineTo(x+W*.06,0); c.lineTo(x-W*.05,H*.8); c.lineTo(x-W*.12,H*.8); c.fill(); } c.restore(); }
-  c.drawImage(landLayer(key,W,H),0,0,W,H);
+  // só o pedaço que a câmera mostra (mais leve no celular)
+  const L = landLayer(key,W,H), k = L.width/W, vx = Math.max(0,CAM.ox), vy = Math.max(0,CAM.oy), vw = Math.min(W-vx, W/CAM.z+2), vh = Math.min(H-vy, H/CAM.z+2);
+  c.drawImage(L, vx*k, vy*k, vw*k, vh*k, vx, vy, vw, vh);
 }
 function wrapLines(c,text,maxW){
   const words = text.split(/\s+/), lines = []; let cur = '';
@@ -950,7 +956,7 @@ function wrapLines(c,text,maxW){
 function rrect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
 
 function drawEnt(c,e,W,H,u,T,alpha){
-  const size = e.sz*u*(e.fly||isBig(e)||(e.swim&&SET[S.set].pond) ? 1 : CROWD), x = W*twv(e.x,T)/100, y = H*(1-twv(e.y,T)/100), ph = e.id*1.7;
+  const size = e.sz*u*(e.fly||isBig(e) ? 1 : (e.swim&&SET[S.set].pond) ? CROWDP : CROWD), x = W*twv(e.x,T)/100, y = H*(1-twv(e.y,T)/100), ph = e.id*1.7;
   let a = alpha, sc = 1, ox = 0, oy = 0, rot = 0, glow = null;
   const age = T-e.born;
   if (age < 700){ const k = clamp(age/700);
@@ -986,7 +992,7 @@ function drawEnt(c,e,W,H,u,T,alpha){
   if (floatNow){ c.save(); c.globalAlpha = a*.7; c.strokeStyle = '#e8f7ff'; c.lineWidth = Math.max(1,size*.025); const wy = y+oy-size*.2;
     [[.42,0],[.3,size*.05]].forEach(([r,dy])=>{ c.beginPath(); c.ellipse(x+ox,wy+dy,size*r,size*.05,0,0,Math.PI); c.stroke(); }); c.restore(); }
   // nome embaixo
-  LABELS.push({text:e.label, x, y:y+u*.6, a, u});   // nomes são desenhados por último, sem ficar embaixo de ninguém
+  if (e.char || !e.sz || T-e.born < 4000) LABELS.push({text:e.label, x, y:y+u*.6, a, u, obj:!e.char});   // objetos só mostram o nome quando aparecem   // nomes são desenhados por último, sem ficar embaixo de ninguém
   // balão (sentimento ou ação)
   let bub = null, fl = 0;
   if (e.bub && T-e.bub.t0 < e.bub.dur) bub = e.bub.em; else if (e.mood) bub = MOODS[e.mood][0];
@@ -1030,21 +1036,25 @@ function camTarget(W,H,u){
   let cx = (minx+maxx)/2; cx = Math.min(Math.max(cx, W/(2*z)), W-W/(2*z));
   return [z, Math.round(cx/(W*.02))*W*.02];
 }
-let LABELS = [];
+let LABELS = [], LWIDTH = new Map();
 function drawLabels(c,W){
   // de baixo para cima e da esquerda para a direita; se encostar em outro nome, sobe um pouco
-  const placed = [];
+  const placed = []; c.textAlign = 'center'; c.textBaseline = 'middle';
   LABELS.sort((a,b)=>b.y-a.y || a.x-b.x).forEach(L => {
-    const fs = Math.max(10,L.u*1.9); c.font = `800 ${fs}px ${UIF}`;
-    const w = c.measureText(L.text).width+fs*1.2, h = fs*1.5; let x = Math.min(Math.max(L.x, w/2+2), W-w/2-2), y = L.y;
-    for (let k=0;k<6;k++){ const hit = placed.find(p => Math.abs(p.x-x) < (p.w+w)/2+2 && Math.abs(p.y-y) < h+1); if (!hit) break; y = hit.y - h - 2; }
+    const fs = Math.round(Math.max(10,L.u*1.9)), font = `800 ${fs}px ${UIF}`; if (c.font!==font) c.font = font;
+    const mk = L.text+'|'+fs; let mw = LWIDTH.get(mk); if (mw===undefined){ mw = c.measureText(L.text).width; LWIDTH.set(mk,mw); }
+    const w = mw+fs*1.2, h = fs*1.5; let x = Math.min(Math.max(L.x, w/2+2), W-w/2-2), y = L.y;
+    // encostou em outro nome: desliza para o lado (fica debaixo do próprio dono); se não couber, diminui a letra
+    for (let k=0;k<8;k++){ const hit = placed.find(p => Math.abs(p.x-x) < (p.w+w)/2+2 && Math.abs(p.y-y) < h); if (!hit) break;
+      const dir = x >= hit.x ? 1 : -1, nx = hit.x + dir*((hit.w+w)/2+3);
+      if (Math.abs(nx-L.x) < w*.9 && nx-w/2 > 2 && nx+w/2 < W-2) x = nx; else { y = hit.y + h + 1; } }
     placed.push({x,y,w});
-    c.save(); c.globalAlpha = L.a; c.fillStyle = 'rgba(255,255,255,.94)'; rrect(c,x-w/2,y,w,h,h/2); c.fill();
-    c.strokeStyle = 'rgba(29,51,32,.25)'; c.lineWidth = 1; c.stroke();
-    c.fillStyle = '#1d3320'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(L.text,x,y+h*.52); c.restore(); });
+    c.globalAlpha = L.a; c.fillStyle = 'rgba(255,255,255,.94)'; rrect(c,x-w/2,y,w,h,h/2); c.fill();
+    c.fillStyle = '#1d3320'; c.fillText(L.text,x,y+h*.52); });
+  c.globalAlpha = 1;
   LABELS = [];
 }
-let CROWD = 1;
+let CROWD = 1, CROWDP = 1;
 let T_NOW = 0, CAM = {z:1,ox:0,oy:0};
 const GRAIN = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 160; const g = cv.getContext('2d'), d = g.createImageData(160,160);
   for (let i=0;i<d.data.length;i+=4){ const v = 120+Math.random()*120; d.data[i] = v; d.data[i+1] = v*.96; d.data[i+2] = v*.88; d.data[i+3] = 255; } g.putImageData(d,0,0); return cv; })();
@@ -1059,7 +1069,7 @@ function paperOverlay(W,H){   // cantos levemente escuros + grão de papel, prep
   g.putImageData(d,0,0); PAPER = {k,cv}; return cv;
 }
 function render(c,W,H,T){
-  T_NOW = T; ASPECT = Math.min(W,H)/W; CROWD = tw('crowd', S.crowd||1, T, 900);
+  T_NOW = T; ASPECT = Math.min(W,H)/W; CROWD = tw('crowd', S.crowd||1, T, 900); CROWDP = tw('crowdp', S.crowdPond||1, T, 900);
   const u = Math.min(W,H)/100, D = SET[S.set], night = S.time==='noite', outdoor = !D.fixed;
   const basePX = PX;
   // câmera suave
