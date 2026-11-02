@@ -44,6 +44,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px}
 .starters button{background:#fff;border:3px solid #dbe8d3;color:#1d3320;border-radius:18px;padding:8px 4px 6px;font-weight:800;font-size:.78rem;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:2px}
 .starters button span{font-size:2.1rem;line-height:1.1}
+.starters button.song{border-color:#ffd6a0;background:#fffaf0}
 .starters button:hover{border-color:var(--sun)}
 .result video{width:100%;max-height:42vh;border-radius:14px;background:#000;margin-bottom:12px}
 .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
@@ -117,7 +118,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
         <div class="iosnote" id="iosNote" hidden>No iPhone, a página só ouve a fala no <b>Safari</b>. Copie o link e cole no Safari. <button type="button" id="copyLink">Copiar link</button></div>
         <div class="starters" id="starters"></div>
         <button class="second" id="peopleBtn" type="button">📸 Colocar fotos da família</button>
-        <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). 🐷🐻🍭🐔🐭🕊️👸🐟 Recontos livres de contos populares e fábulas de domínio público (Esopo, Irmãos Grimm). Palavras novas inspiradas na Biblioteca Virtual da rede municipal de Quintana (SP). Os desenhos aqui são feitos pela página.</p>
+        <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). 🐷🐻🍭🐔🐭🕊️👸🐟 Recontos livres de contos populares, fábulas (Esopo, Irmãos Grimm) e lendas do folclore brasileiro, de domínio público. 🎵 Cantigas de roda tradicionais. Palavras novas inspiradas na Biblioteca Virtual da rede municipal de Quintana (SP). Os desenhos aqui são feitos pela página.</p>
       </div>
     </div>
 
@@ -231,7 +232,7 @@ const LEX = [
  ['tubarão','🦈','tubarao','cw20'],['baleia','🐋','baleia','cw28'],['golfinho','🐬','golfinho','cw16'],['polvo','🐙','polvo','cw13'],
  ['caranguejo','🦀','caranguejo siri','c8'],['camelo','🐪','camelo','c20'],['pinguim','🐧','pinguim','c12'],['foca','🦭','foca','c13'],
  ['panda','🐼','panda','c15'],['jacaré','🐊','jacare crocodilo','c15'],['esquilo','🐿️','esquilo','c9'],['rato','🐁','rato ratinho camundongo','c7'],['rato da cidade','🐀','ratodacidade','c8'],
- ['flor','🌻,🌷,🌹,🌸','flor florzinha rosa margarida girassol','9'],['árvore','🌳','arvore carvalho','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
+ ['flor','🌻,🌷,🌹,🌸','flor florzinha margarida girassol','9'],['rosa','🌹','rosa roseira','c9'],['cravo','🌺','cravo','c9'],['árvore','🌳','arvore carvalho','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
  ['bolo','🎂','bolo','11'],['sorvete','🍦','sorvete','9'],['maçã','🍎','maca','7'],['banana','🍌','banana','7'],['morango','🍓','morango','7'],
  ['pizza','🍕','pizza','9'],['doce','🍭','doce bala pirulito brigadeiro','8'],['chocolate','🍫','chocolate','8'],['pão','🍞','pao','8'],
  ['tesouro','💎','tesouro diamante joia','9'],['estrela','⭐','estrela estrelinha','f8'],['coração','❤️','coracao','f8'],
@@ -242,7 +243,10 @@ const LEX = [
  ['violão','🎸','violao guitarra','11'],['tambor','🥁','tambor','10'],['chapéu','🎩','chapeu','8'],['ursinho','🧸','ursinho pelucia','9'],
  ['lanterna','🔦','lanterna','8'],['fogueira','🔥','fogueira fogo','10'],['barraca','⛺','barraca tenda','18'],['cama','🛏️','cama','16'],
  ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],['cesta','🧺','cesta cestinha','9'],['vinho','🧃','vinho','8'],['óculos','👓','oculos','7'],
- ['riacho','🏞️','riacho riachinho rio','20'],['cerejeira','@cherry','cerejeira','26'],
+ ['riacho','🏞️','riacho riachinho','20'],['cerejeira','@cherry','cerejeira','26'],
+ ['Saci','@p_saci','saci sacizinho','c17n'],['Curupira','@p_curupira','curupira','c17n'],['Iara','@p_iara','iara','cw20n'],['Boitatá','@boitata','boitata','c24n'],
+ ['redemoinho','🌪️','redemoinho','16'],['onça','🐆','onca jaguar','c16'],['pegada','🐾','pegada pegadas','6'],['anel','💍','anel','6'],['canoa','🛶','canoa','14'],['pica-pau','🐦','picapau','cf8'],
+ ['tatu','🦔','tatu','c9'],['gorro','🧢','gorro carapuca','6'],
  ['professora','@p_professora','professora professor','c22'],['médico','@p_medico','medico medica doutor doutora','c22'],['bailarina','@p_bailarina','bailarina','c18'],['pescador','@p_pescador','pescador','c22'],
  ['palhaço','🤡','palhaco','c15'],['soldado','💂','soldado guarda','c16'],['mosquito','🦟','mosquito mosquitao','cf6'],['burro','🐴','burro jumento','c18'],['bode','🐐','bode cabra','c14'],
  ['beija-flor','🐦','beijaflor','cf7'],['arara','🦜','arara papagaio','cf10'],['garça','🦩','garca flamingo','c14'],['preguiça','🦥','preguica','c12'],['camaleão','🦎','camaleao lagarto lagartixa','c10'],
@@ -279,7 +283,7 @@ LEX.forEach(([label,em,words,flags]) => {
     plurals(w).forEach(p => { if (!WORD[p]) WORD[p] = {key,plural:true}; });
   });
 });
-const PHRASES = [['rato da cidade','ratodacidade'],['rato do campo','rato'],['beija flor','beijaflor'],['guarda chuva','guardachuva'],['fada ma','bruxa'],['peixe dourado','peixe'],['peixe encantado','peixe'],['toda a corte','todos'],['casa de palha','casadepalha'],['casa de madeira','casademadeira'],['casa de tijolos','casadetijolos'],['casa de tijolo','casadetijolos'],['casa de doces','casadedoces'],['casa de doce','casadedoces'],['casa feita de doces','casadedoces'],['cachinhos dourados','cachinhos'],['papai urso','urso grande'],['mamae ursa','ursa'],['bebe urso','ursinho pequeno'],['galinha ruiva','galinha'],['mamae coelha','coelha'],['mae coelha','coelha'],['seu gregorio','fazendeiro'],['senhor gregorio','fazendeiro'],['estrela do mar','estreladomar'],['urso de pelucia','ursinho'],['chave de fenda','chavedefenda'],['dor de barriga','doente'],['aves de pescocos longos','cisnes'],['patinho feio','patinhofeio'],['pato feio','patinhofeio'],['patinho cinzento','patinhofeio'],['dente de leao','flordente'],['chapeuzinho vermelho','chapeuzinho'],['la fora','lafora'],['para fora','lafora'],['fora da casa','lafora'],
+const PHRASES = [['de fogo','flamejante'],['como fogo','flamejante'],['mae d agua','iara'],['mae dagua','iara'],['pica pau','picapau'],['rato da cidade','ratodacidade'],['rato do campo','rato'],['beija flor','beijaflor'],['guarda chuva','guardachuva'],['fada ma','bruxa'],['peixe dourado','peixe'],['peixe encantado','peixe'],['toda a corte','todos'],['casa de palha','casadepalha'],['casa de madeira','casademadeira'],['casa de tijolos','casadetijolos'],['casa de tijolo','casadetijolos'],['casa de doces','casadedoces'],['casa de doce','casadedoces'],['casa feita de doces','casadedoces'],['cachinhos dourados','cachinhos'],['papai urso','urso grande'],['mamae ursa','ursa'],['bebe urso','ursinho pequeno'],['galinha ruiva','galinha'],['mamae coelha','coelha'],['mae coelha','coelha'],['seu gregorio','fazendeiro'],['senhor gregorio','fazendeiro'],['estrela do mar','estreladomar'],['urso de pelucia','ursinho'],['chave de fenda','chavedefenda'],['dor de barriga','doente'],['aves de pescocos longos','cisnes'],['patinho feio','patinhofeio'],['pato feio','patinhofeio'],['patinho cinzento','patinhofeio'],['dente de leao','flordente'],['chapeuzinho vermelho','chapeuzinho'],['la fora','lafora'],['para fora','lafora'],['fora da casa','lafora'],
  ['fora da casinha','lafora'],['la dentro','ladentro'],['saiu correndo','foiembora'],['nunca mais voltou','foiembora'],['lobo mau','lobo malvado'],['fundo do mar','fundodomar'],['debaixo d agua','fundodomar'],['embaixo d agua','fundodomar'],['arco iris','arcoiris'],
  ['por do sol','pordosol'],['todo mundo','todos'],['foi embora','foiembora'],['foram embora','foiembora'],['dentro de casa','quarto'],
  ['tempo bom','tempobom'],['super heroi','heroi'],['espaco sideral','espaco'],['os dois','todos'],['as duas','todos']];
@@ -287,7 +291,7 @@ const SETW = {floresta:'floresta',mata:'floresta',bosque:'floresta',selva:'flore
  fundodomar:'fundo',submarino:'fundo',espaco:'espaco',planeta:'espaco',galaxia:'espaco',universo:'espaco',cidade:'cidade',rua:'cidade',predio:'cidade',predios:'cidade',
  fazenda:'fazenda',sitio:'fazenda',roca:'fazenda',curral:'fazenda',celeiro:'fazenda',castelo:'castelo',reino:'castelo',palacio:'castelo',
  montanha:'montanha',montanhas:'montanha',serra:'montanha',deserto:'deserto',gelo:'gelo',polo:'gelo',iglu:'gelo',geleira:'gelo',
- quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo',circo:'circo',picadeiro:'circo',horta:'horta',pomar:'horta',plantacao:'horta',acampamento:'floresta',lago:'lago',lagoa:'lago',lagoas:'lago',lagos:'lago'};
+ quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo',rio:'lago',circo:'circo',picadeiro:'circo',horta:'horta',pomar:'horta',plantacao:'horta',acampamento:'floresta',lago:'lago',lagoa:'lago',lagoas:'lago',lagos:'lago'};
 const NUM = {um:1,uma:1,num:1,numa:1,outro:1,outra:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:5,uns:3,umas:3,alguns:3,algumas:3,
  muitos:5,muitas:5,bando:4,varios:5,varias:5,mil:5,cem:5};
 const NEG = new Set(['nenhum','nenhuma','sem','nem']);
@@ -303,7 +307,7 @@ const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$|acord)/,'fel
  [/^(brav|raiva|zangad|furios|malvad|rosn)/,'bravo'],[/^(dorm|sono$|cansad|cochil|ronc)/,'sono'],[/^(surpres|espant)/,'surpresa'],[/^(amor|amava|amou|amad|apaixon|abrac|beij|carinho)/,'amor']];
 const ACT = [[/^pul(a|ou|ar|ava|ando|aram|avam)$|^brinc/,'pular'],[/^danc/,'dancar'],[/^vo(a|ou|ar|ava|ando|aram|avam)$/,'voar'],
  [/^corr(e|eu|er|ia|endo|eram|iam)$|^rapid/,'correr'],[/^(and(a|ou|ar|ava|ando|aram|avam)$|passe|caminh)/,'andar'],[/^nad(a|ou|ar|ava|ando|aram|avam)$/,'nadar'],
- [/^cant(a|ou|ar|ava|ando|aram|avam)$/,'cantar'],[/^com(e|eu|er|ia|endo|eram|iam)$/,'comer'],[/^(foiembora|sumiu|desaparec|fugiu|partiu)/,'sair'],[/^(engol|devor)/,'engolir'],[/^(sopr|assopr|derrub)/,'soprar'],[/^(cheg(ou|a|aram|ando)|foi|voltou|correu)$/,'chegar'],[/^(quebr|trinc|rach|choc(ou|aram))/,'quebrar']];
+ [/^cant(a|ou|ar|ava|ando|aram|avam)$/,'cantar'],[/^com(e|eu|er|ia|endo|eram|iam)$/,'comer'],[/^(foiembora|sumiu|desaparec|fugiu|partiu)/,'sair'],[/^(engol|devor)/,'engolir'],[/^apag/,'apagar'],[/^(sopr|assopr|derrub)/,'soprar'],[/^(cheg(ou|a|aram|ando)|foi|voltou|correu)$/,'chegar'],[/^(quebr|trinc|rach|choc(ou|aram))/,'quebrar']];
 const MORPH = /^(virou|vira|era|transformou|tornou|transforma)$/;
 const ACTDUR = {pular:1400,dancar:2500,voar:2600,nadar:2400};
 const MOODS = {doente:['🤒','Doente'],feliz:['😄','Feliz'],triste:['😢','Triste'],medo:['😱','Com medo'],bravo:['😠','Bravo'],sono:['💤','Com sono'],surpresa:['😮','Surpresa'],amor:['💖','Amor']};
@@ -437,7 +441,7 @@ function ghost(e,T,quick){
   S.ghosts.push(e);
 }
 const GENERIC = new Set(['menina','menino']);
-const ALIAS = {urso:{ursinho:'urso',pai:'urso',mae:'urso',bebe:'urso'}, 'patinho feio':{patinho:'patinho feio',pato:'patinho feio'}, pato:{mae:'pato',bebe:'patinho'}, coelho:{mae:'coelho',bebe:'coelho'}};
+const ALIAS = {sapo:{mae:'sapo'}, urso:{ursinho:'urso',pai:'urso',mae:'urso',bebe:'urso'}, 'patinho feio':{patinho:'patinho feio',pato:'patinho feio'}, pato:{mae:'pato',bebe:'patinho'}, coelho:{mae:'coelho',bebe:'coelho'}};
 function mention(ev,T){
   if (ev.key==='casa' && SET[S.set].indoor) return [];
   // "a casa" quando já existe uma casa de palha/madeira/tijolos/doces é essa casa
@@ -508,15 +512,17 @@ function analyze(s){
 }
 function applySentence(s,T){
   S.sent++; S.sentKeys = new Set();
-  const {ev,all} = analyze(s); let local = null, swallow = null, moodTo = null, goers = null, blow = false; const keep = new Set(), made = [];
+  const {ev,all} = analyze(s); let local = null, swallow = null, moodTo = null, goers = null, blow = false, lastNamed = null; const keep = new Set(), made = [];
   const hasSet = ev.some(e=>e.type==='set');
   // "o patinho feio era um cisne", "o sapo virou príncipe": o primeiro personagem se transforma no segundo
   const mv = ev.find(e=>e.type==='morph'), entEv = ev.filter(e=>e.type==='ent');
-  if (mv && entEv.length===2 && entEv[0].i < mv.i && entEv[1].i > mv.i && entEv[1].i - mv.i <= 3 && entEv[0].key!==entEv[1].key && ENT[entEv[1].key].char){
+  if (mv && entEv.length===2 && !GENERIC.has(entEv[1].key) && !ENT[entEv[0].key].named && entEv[0].i < mv.i && entEv[1].i > mv.i && entEv[1].i - mv.i <= 3 && entEv[0].key!==entEv[1].key && ENT[entEv[1].key].char){
     const from = S.ents.filter(x=>x.key===entEv[0].key).pop(), to = ENT[entEv[1].key];
     if (from){ Object.assign(from,{hero:true,key:to.key,label:to.label,em:pick(to.em),sz:to.sz*1.35,fly:to.fly,swim:to.swim,born:T,seen:S.sent});
       from.bub = {em:'✨',t0:T,dur:2600}; sfx('chime'); S.last = [from]; ev.splice(0,ev.length,...ev.filter(e=>e.type!=='ent')); } }
   for (const e of ev){
+    if (e.type==='ent' && lastNamed && e.i - lastNamed.i <= 4 && !ENT[e.key].named && ENT[e.key].char && e.num<=1){ continue; }   // "o Saci, um menino de uma perna só": é o próprio Saci
+    if (e.type==='ent' && ENT[e.key].named) lastNamed = e;
     if (e.type==='ent'){ if (S.eaten.has(e.key)) continue;   // quem foi engolido só volta quando for salvo
       const m = mention(e,T); m.forEach(x=>{ keep.add(x.id); made.push(x); }); const ch = m.filter(x=>x.char);
       if (ch.length){ if (swallow){ ch.filter(x=>x!==swallow).forEach(x=>{ ghost(x,T,true); S.eaten.add(x.key); }); swallow = null; sfx('boing'); }
@@ -533,6 +539,7 @@ function applySentence(s,T){
       if (e.type==='mood'){ (all ? tgt : (moodTo||tgt).filter(x=>S.ents.includes(x))).forEach(x=>setMood(x,e.v,T)); S.mood = e.v; sfx(['triste','medo','doente'].includes(e.v) ? 'sad' : 'chime'); }
       else if (e.v==='chegar'){ goers = tgt; }   // o destino costuma vir depois do verbo: resolve no fim da frase
       else if (e.v==='soprar'){ tgt.forEach(x=>{ x.bub = {em:'💨',t0:T,dur:2200}; }); goers = null; blow = true; }
+      else if (e.v==='apagar'){ S.ents.filter(x=>x.key==='fogueira').forEach(x=>ghost(x,T,false)); }
       else if (e.v==='quebrar'){ const eggs = S.ents.filter(x=>x.key==='ovo'); (made.some(x=>x.key==='ovo') ? made.filter(x=>x.key==='ovo') : eggs.slice(-1)).forEach(x=>{ if (S.ents.includes(x)) ghost(x,T,true); }); }
       else if (e.v==='engolir'){ swallow = tgt[0] || null; }   // quem for citado depois some na barriga
       else tgt.forEach(x=>act(x,e.v,T));
@@ -787,8 +794,16 @@ function drawPerson(o){ return g => {
   if (o.hair==='curly'){ blobs(g,[[cx-r,hy+4,r*.42],[cx-r,hy+r*.7,r*.38],[cx+r,hy+4,r*.42],[cx+r,hy+r*.7,r*.38]],hc); }
   // pernas e sapatos
   const legC = (o.bottom==='pants') ? o.bottomColor : sk;
-  [[cx-11],[cx+2]].forEach(([x])=>{ g.beginPath(); g.roundRect(x,t1-2,9,42,4); fs_(g,legC); });
-  [[cx-7],[cx+7]].forEach(([x])=>{ g.beginPath(); g.ellipse(x,134,8,4.6,0,0,TAU); fs_(g,o.shoes||'#5a3a1a'); });
+  if (o.tail){   // cauda de peixe (Iara)
+    g.beginPath(); g.moveTo(cx-tw,t1-8); g.lineTo(cx+tw,t1-8); g.quadraticCurveTo(cx+tw+2,t1+26,cx+10,t1+36); g.lineTo(cx+2,t1+36); g.quadraticCurveTo(cx-tw,t1+24,cx-tw,t1-8); g.closePath(); fs_(g,lgr(g,t1,t1+36,o.tail,'#1f8a7a'));
+    g.beginPath(); g.moveTo(cx+6,t1+34); g.quadraticCurveTo(cx+22,t1+30,cx+28,t1+46); g.quadraticCurveTo(cx+14,t1+42,cx+6,t1+46); g.quadraticCurveTo(cx-6,t1+42,cx-14,t1+48); g.quadraticCurveTo(cx-8,t1+32,cx+6,t1+34); fs_(g,o.tail);
+    g.strokeStyle = 'rgba(255,255,255,.4)'; g.lineWidth = 1; for (let k=0;k<4;k++){ g.beginPath(); g.arc(cx-4+k*3,t1+4+k*7,4,0,Math.PI); g.stroke(); }
+  } else if (o.oneLeg){   // uma perna só (Saci)
+    g.beginPath(); g.roundRect(cx-4.5,t1-2,9,42,4); fs_(g,legC); g.beginPath(); g.ellipse(cx,134,8,4.6,0,0,TAU); fs_(g,sk);
+  } else {
+    [[cx-11],[cx+2]].forEach(([x])=>{ g.beginPath(); g.roundRect(x,t1-2,9,42,4); fs_(g,legC); });
+    [[cx-7],[cx+7]].forEach(([x])=>{ g.beginPath(); g.ellipse(x,134,8,4.6,0,0,TAU); fs_(g,o.shoes||'#5a3a1a'); });
+  }
   if (o.bottom==='shorts'){ g.beginPath(); g.moveTo(cx-tw,t1-6); g.lineTo(cx+tw,t1-6); g.lineTo(cx+tw+1,t1+10); g.lineTo(cx+1,t1+10); g.lineTo(cx,t1+4); g.lineTo(cx-1,t1+10); g.lineTo(cx-tw-1,t1+10); g.closePath(); fs_(g,o.bottomColor); }
   // braços
   [[-1],[1]].forEach(([d])=>{ g.beginPath(); g.ellipse(cx+d*(tw+4),t0+(t1-t0)*.42,5.5,(t1-t0)*.42,d*-.18,0,TAU); fs_(g,o.sleeve||o.shirt); g.beginPath(); g.arc(cx+d*(tw+6),t1-2,4.6,0,TAU); fs_(g,sk); });
@@ -807,6 +822,8 @@ function drawPerson(o){ return g => {
   // cabelo da frente
   if (o.hair==='bald'){ blobs(g,[[cx-r*.92,hy-2,r*.32],[cx+r*.92,hy-2,r*.32]],hc); }
   else if (o.hair==='curly'){ blobs(g,[[cx-r*.75,hy-r*.45,r*.36],[cx-r*.38,hy-r*.8,r*.38],[cx+r*.05,hy-r*.9,r*.38],[cx+r*.45,hy-r*.78,r*.36],[cx+r*.8,hy-r*.42,r*.33]],hc); }
+  else if (o.hair==='flame'){   // cabelo de fogo (Curupira)
+    [[-.85,.0,.55],[-.5,-.6,.7],[0,-.85,.85],[.5,-.6,.7],[.85,0,.55]].forEach(([dx,dy,hh])=>{ g.beginPath(); g.moveTo(cx+dx*r-r*.32,hy+dy*r*.5); g.quadraticCurveTo(cx+dx*r-r*.1,hy+dy*r*.5-r*hh*.9,cx+dx*r+r*.08,hy+dy*r*.5-r*hh*1.3); g.quadraticCurveTo(cx+dx*r+r*.12,hy+dy*r*.5-r*hh*.5,cx+dx*r+r*.32,hy+dy*r*.5); g.closePath(); fs_(g,lgr(g,hy-r*1.6,hy,'#ffd23f','#f0542c'),1.3); }); }
   else { g.beginPath(); g.arc(cx,hy,r+2,Math.PI*.98,Math.PI*2.02); g.quadraticCurveTo(cx+r*.75,hy-r*.25,cx+r*.15,hy-r*.5); g.quadraticCurveTo(cx-r*.35,hy-r*.25,cx-r*1.02,hy+r*.04); g.closePath(); fs_(g,hc); }
   if (o.bun){ g.beginPath(); g.arc(cx,hy-r-3,r*.42,0,TAU); fs_(g,hc); }
   if (o.bow){ g.beginPath(); g.moveTo(cx+r*.55,hy-r*.75); g.lineTo(cx+r*.2,hy-r*1.05); g.lineTo(cx+r*.25,hy-r*.45); g.closePath(); g.moveTo(cx+r*.55,hy-r*.75); g.lineTo(cx+r*.95,hy-r*1.0); g.lineTo(cx+r*.9,hy-r*.4); g.closePath(); fs_(g,o.bow,1.2); }
@@ -821,6 +838,7 @@ function drawPerson(o){ return g => {
   // chapéus
   if (o.hat==='cacador'){ g.beginPath(); g.ellipse(cx,hy-r*.62,r*1.4,r*.3,0,0,TAU); fs_(g,'#5f7f3a'); g.beginPath(); g.roundRect(cx-r*.8,hy-r*1.5,r*1.6,r*.95,r*.35); fs_(g,'#6f9244'); g.beginPath(); g.rect(cx-r*.8,hy-r*.85,r*1.6,r*.2); fs_(g,'#3a4a24',1);
     g.save(); g.translate(cx+r*.75,hy-r*1.05); g.rotate(-.6); g.beginPath(); g.ellipse(0,-r*.35,r*.14,r*.45,0,0,TAU); fs_(g,'#e8392c',1); g.restore(); }
+  if (o.hat==='gorro'){ g.beginPath(); g.moveTo(cx-r*.95,hy-r*.45); g.quadraticCurveTo(cx-r*.2,hy-r*1.6,cx+r*1.1,hy-r*1.75); g.quadraticCurveTo(cx+r*.5,hy-r*1.05,cx+r*.95,hy-r*.45); g.closePath(); fs_(g,lgr(g,hy-r*1.8,hy,'#ff4d4d','#c41e1e')); g.beginPath(); g.arc(cx+r*1.12,hy-r*1.75,r*.18,0,TAU); fs_(g,'#ffffff',1.2); }
   if (o.hat==='palha'){ g.beginPath(); g.ellipse(cx,hy-r*.6,r*1.6,r*.32,0,0,TAU); fs_(g,'#e8c35a'); g.beginPath(); g.roundRect(cx-r*.75,hy-r*1.4,r*1.5,r*.85,r*.3); fs_(g,'#f0cf6a'); g.beginPath(); g.rect(cx-r*.75,hy-r*.8,r*1.5,r*.18); fs_(g,'#c94235',1); }
   if (o.hat==='coroa'){ g.beginPath(); g.moveTo(cx-r*.7,hy-r*.75); g.lineTo(cx-r*.75,hy-r*1.35); g.lineTo(cx-r*.38,hy-r*1.02); g.lineTo(cx,hy-r*1.5); g.lineTo(cx+r*.38,hy-r*1.02); g.lineTo(cx+r*.75,hy-r*1.35); g.lineTo(cx+r*.7,hy-r*.75); g.closePath(); fs_(g,'#ffcf3f'); dots(g,[[cx,hy-r*.95,r*.1]],'#e8392c'); }
   if (o.hat==='bruxa'){ g.beginPath(); g.ellipse(cx,hy-r*.7,r*1.5,r*.3,0,0,TAU); fs_(g,'#3d2a5c'); g.beginPath(); g.moveTo(cx-r*.85,hy-r*.75); g.lineTo(cx+r*.35,hy-r*2.4); g.lineTo(cx+r*.85,hy-r*.75); g.closePath(); fs_(g,'#4b3470'); g.beginPath(); g.rect(cx-r*.8,hy-r*1.0,r*1.6,r*.2); fs_(g,'#9b6be0',1); }
@@ -844,6 +862,9 @@ const PEOPLE = {
   medico:   {adult:1,skin:'#efc29c',hair:'short',hairColor:'#3a2414',shirt:'#ffffff',sleeve:'#ffffff',buttons:1,bottom:'pants',bottomColor:'#7fb8e8',shoes:'#ffffff'},
   bailarina:{skin:'#f6d0b4',hair:'short',bun:1,hairColor:'#7a4a24',shirt:'#ffc4dd',bottom:'skirt',bottomColor:'#ffe0ee',shoes:'#ff9ec4'},
   pescador: {adult:1,skin:'#e9b98f',hair:'short',hairColor:'#9a9aa2',beard:'#c8c8d0',shirt:'#5a8fd0',bottom:'pants',bottomColor:'#8a6a4a',shoes:'#5a3a1a',hat:'palha'},
+  saci:     {skin:'#7a4a2b',hair:'bald',hairColor:'#2b1a10',brow:'#2b1a10',shirt:'#7a4a2b',sleeve:'#7a4a2b',bottom:'shorts',bottomColor:'#d93a2b',oneLeg:1,hat:'gorro'},
+  curupira: {skin:'#c98a5a',hair:'flame',hairColor:'#f0542c',brow:'#c4361e',shirt:'#4caf50',bottom:'shorts',bottomColor:'#7a5a2c',shoes:'#c98a5a'},
+  iara:     {adult:1,skin:'#c98a5a',hair:'long',hairColor:'#1f1410',brow:'#1f1410',shirt:'#3fc1a8',tail:'#2fb39a',bottom:'none'},
   fazendeiro:{adult:1,skin:'#efc29c',hair:'short',hairColor:'#9a9aa2',beard:'#c8c8d0',shirt:'#e9d8a6',straps:'#3d6fc0',bottom:'pants',bottomColor:'#3d6fc0',shoes:'#5a3a1a',hat:'palha'},
   fada:     {skin:'#f6d0b4',hair:'short',bun:1,hairColor:'#f2c14e',shirt:'#9fe3c7',bottom:'dress',shoes:'#9fe3c7',wings:1},
 };
@@ -893,6 +914,20 @@ function drBear(g){
   [[-1],[1]].forEach(([d])=>{ g.beginPath(); g.ellipse(50+d*9,52,3.3,4,0,0,TAU); g.fillStyle = '#2b1d16'; g.fill(); dots(g,[[50+d*9+1.2,50.6,1.3]],'#fff'); });
   g.fillStyle = 'rgba(255,120,120,.28)'; [[-1],[1]].forEach(([d])=>{ g.beginPath(); g.ellipse(50+d*15,63,3.6,2.2,0,0,TAU); g.fill(); });
 }
+function drBoitata(g){   // cobra de fogo, com olhos que brilham
+  const body = [[150,110],[124,118],[98,104],[78,116],[56,104],[40,86],[36,62]];
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  const path = () => { g.beginPath(); g.moveTo(body[0][0],body[0][1]); for (let i=1;i<body.length;i++){ const [x,y] = body[i], [px,py] = body[i-1]; g.quadraticCurveTo(px,py,(px+x)/2,(py+y)/2); } g.lineTo(36,62); };
+  path(); g.lineWidth = 26; g.strokeStyle = 'rgba(255,170,40,.35)'; g.stroke();
+  path(); g.lineWidth = 19; g.strokeStyle = OL; g.stroke();
+  path(); g.lineWidth = 16; g.strokeStyle = '#ff8a1f'; g.stroke();
+  path(); g.lineWidth = 7; g.strokeStyle = '#ffd23f'; g.stroke();
+  [[120,112],[96,106],[72,110],[52,98]].forEach(([x,y])=>{ g.beginPath(); g.moveTo(x-5,y+2); g.quadraticCurveTo(x,y-14,x+5,y+2); g.closePath(); fs_(g,'#ff5a2a',1.1); });
+  g.beginPath(); g.ellipse(36,54,18,15,0,0,TAU); fs_(g,lgr(g,40,70,'#ffb02e','#f06a1f'));
+  [[29,50],[43,50]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,5.5,0,TAU); fs_(g,'#fffbe0',1.2); dots(g,[[x+.6,y,2.8]],'#2b8af0'); dots(g,[[x+1.6,y-1.4,1]],'#fff'); });
+  g.beginPath(); g.moveTo(28,60); g.quadraticCurveTo(36,66,44,60); g.lineWidth = 1.5; g.strokeStyle = OL; g.stroke();
+  [[24,36],[36,32],[48,36]].forEach(([x,y])=>{ g.beginPath(); g.moveTo(x-4,y+6); g.quadraticCurveTo(x,y-8,x+4,y+6); g.closePath(); fs_(g,'#ffd23f',1); });
+}
 function drNest(g){
   dots(g,[[44,40,11],[60,36,11],[74,42,10]],'#f8f4ea'); [[44,40,11],[60,36,11],[74,42,10]].forEach(([x,y,r])=>{ g.beginPath(); g.ellipse(x,y,r*.8,r,0,0,TAU); fs_(g,'#fbf7ee',1.3); });
   g.beginPath(); g.moveTo(10,44); g.quadraticCurveTo(60,92,110,44); g.quadraticCurveTo(60,60,10,44); fs_(g,lgr(g,44,80,'#a8743f','#6d4426'));
@@ -906,7 +941,7 @@ const ART = { tree:{w:100,h:140,draw:drTree}, cherry:{w:100,h:140,draw:g=>drTree
   marreco:{w:110,h:106,draw:drBird({body:'#a07a55',wing:'#7a5a3c',head:'#2f8a55',beak:'#e8c34a',neck:.15,ring:1})},
   ganso:{w:110,h:106,draw:drBird({body:'#a8aeb8',wing:'#868d98',head:'#a8aeb8',beak:'#f07a2a',neck:.55,hr:12})},
   ninho:{w:120,h:80,draw:drNest}, coelho:{w:100,h:140,draw:drRabbit(false)}, pedro:{w:100,h:140,draw:drRabbit(true)}, pine:{w:70,h:140,draw:drPine}, house:{w:150,h:130,draw:drHouse}, woodhouse:{w:150,h:130,draw:g=>drHouse(g,['#c98e55','#a06a38'],['#7a5a3c','#5a3f28'],true)},
- hut:{w:150,h:130,draw:drHut}, urso:{w:100,h:140,draw:drBear}, candy:{w:150,h:130,draw:drCandyHouse}, table:{w:160,h:90,draw:drTable}, barn:{w:150,h:130,draw:drBarn},
+ hut:{w:150,h:130,draw:drHut}, boitata:{w:160,h:126,draw:drBoitata}, urso:{w:100,h:140,draw:drBear}, candy:{w:150,h:130,draw:drCandyHouse}, table:{w:160,h:90,draw:drTable}, barn:{w:150,h:130,draw:drBarn},
   mount:{w:220,h:150,draw:drMount}, palm:{w:110,h:170,draw:drPalm}, cactus:{w:80,h:130,draw:drCactus}, castle:{w:220,h:190,draw:drCastle},
   bldA:{w:90,h:170,draw:drBuilding(['#9fb7d8','#7590b8'])}, bldB:{w:90,h:170,draw:drBuilding(['#e8b47c','#c98e55'])}, bldC:{w:90,h:170,draw:drBuilding(['#b9d18f','#8fae62'])},
   window:{w:100,h:100,draw:drWindow}, frame:{w:80,h:68,draw:drFrame}, bed:{w:180,h:100,draw:drBed}, fence:{w:220,h:60,draw:drFence}, lobo:{w:150,h:120,draw:drWolf} };
@@ -1437,14 +1472,40 @@ const STARTERS = [
  ['🕊️','A Pomba e a Formiga',['§A Pomba e a Formiga','Era uma vez uma formiga que foi beber água no rio.','A formiga caiu na água e ficou com medo.','Uma pomba viu tudo e jogou uma folha na água.','A formiga subiu na folha e ficou feliz.','Dias depois, um caçador apareceu na floresta.','Ele queria pegar a pomba.','A formiga picou o pé do caçador!','O caçador gritou e a pomba voou para longe.','A pomba e a formiga ficaram amigas para sempre, muito felizes.']],
  ['👸','A Bela Adormecida',['§A Bela Adormecida','Num castelo, o rei e a rainha tiveram uma princesa.','Três fadas vieram dar presentes para a princesa.','Mas uma bruxa ficou brava e disse: — A princesa vai furar o dedo num fuso e dormir!','Os anos passaram e a princesa cresceu.','Um dia, ela furou o dedo num fuso e dormiu.','Todo mundo no castelo dormiu também.','Cem anos depois, um príncipe chegou ao castelo.','Ele deu um beijo na princesa, e ela acordou.','Todo mundo acordou e fez uma grande festa.','E todos ficaram felizes para sempre.']],
  ['🐟','O Pescador e sua Mulher',['§O Pescador e sua Mulher','Era uma vez um pescador que morava com a mulher numa casa de palha perto do mar.','Um dia, o pescador pescou um peixe dourado que falava.','— Me solte e eu realizo um desejo! — disse o peixe.','O pescador soltou o peixe e voltou para casa.','A mulher ficou brava: — Peça uma casa bonita!','O peixe deu uma casa de tijolos para eles.','Mas a mulher quis mais e pediu um castelo.','No castelo, a mulher virou rainha.','Mas ela ainda quis mais, e veio uma tempestade no mar.','O peixe ficou bravo e tudo voltou a ser como antes.','E o pescador e a mulher voltaram para a casa de palha.']],
+ ['🔴','O Saci',['§O Saci','Na mata, perto de uma fazenda, morava o Saci.','O Saci era um menino de uma perna só, com um gorro vermelho.','Ele pulava, pulava e ria muito.','De noite, o Saci gostava de fazer travessuras.','Ele escondeu o chapéu do fazendeiro e deu um nó no rabo do cavalo.','O fazendeiro ficou bravo!','O Saci entrou num redemoinho de vento e sumiu.','Mas de manhã ele voltou, pulando feliz pela mata.']],
+ ['🔥','O Curupira',['§O Curupira','Na floresta mora o Curupira, um menino de cabelo vermelho como fogo.','Os pés do Curupira são virados para trás, e ele deixa pegadas ao contrário.','Ele cuida das árvores e de todos os bichos da floresta.','Um dia, um caçador apareceu para pegar os animais.','O Curupira deixou pegadas para trás, e o caçador se perdeu.','O caçador ficou com medo e foi embora.','O macaco, a onça e os passarinhos fizeram uma festa.','E o Curupira dançou feliz com os bichos.']],
+ ['🧜🏽‍♀️','A Iara',['§A Iara','No rio morava a Iara, a mãe d’água.','Ela tinha cabelos compridos e cantava muito bonito.','Os peixes nadavam para ouvir a Iara cantar.','De noite, a lua brilhava no rio.','Um pescador ouviu a canção e ficou surpreso.','A Iara cuida do rio e de todos os peixes.','E quem cuida do rio é amigo da Iara.']],
+ ['🐍','O Boitatá',['§O Boitatá','Na floresta mora o Boitatá, uma cobra grande de fogo.','Os olhos dele brilham como estrelas.','De noite, o Boitatá cuida da mata.','Um dia, um homem quis fazer uma fogueira perto das árvores.','O Boitatá apareceu, brilhando muito!','O homem ficou com medo e apagou a fogueira.','E a floresta ficou verde e feliz.']],
  ['🌈','Chuva no jardim',['Era uma vez uma menina num jardim cheio de flores.','Começou a chover forte e veio uma tempestade.','A menina ficou triste.','Depois apareceu um arco-íris e uma borboleta, e a menina dançou.']],
 ];
 $('starters').innerHTML = STARTERS.map((s,i)=>`<button type="button" data-i="${i}"><span>${s[0]}</span>${s[1]}</button>`).join('');
 let demoTok = 0;
 $('starters').addEventListener('click', ev => {
   const b = ev.target.closest('button'); if (!b) return; audio();
+  if (b.dataset.s !== undefined){ playSong(SONGS[+b.dataset.s]); return; }
   const L = STARTERS[+b.dataset.i][2]; playLines(typeof L==='string' ? splitSentences(L).map((x,i)=>i===0 ? '§'+x : x) : L);
 });
+/* Cantigas de roda (tradicionais, domínio público): a letra aparece no ritmo,
+   uma caixinha de música acompanha e todo mundo da cena dança */
+const SONGS = [
+ ['🐸','Sapo Cururu','No rio, o sapo e a mulher do sapo.',['Sapo cururu, na beira do rio','Quando o sapo canta, maninha, é porque tem frio','A mulher do sapo deve estar lá dentro','Fazendo rendinha, maninha, para o casamento'],92],
+ ['🦋','Borboletinha','A borboleta e o pica-pau no jardim.',['Borboletinha tá na cozinha','Fazendo chocolate para a madrinha','Poti, poti, perna de pau','Olho de vidro e nariz de pica-pau, pau, pau'],104],
+ ['💃','Ciranda, Cirandinha','No jardim, a menina, o menino e a Maria fazem a ciranda.',['Ciranda, cirandinha, vamos todos cirandar','Vamos dar a meia volta, volta e meia vamos dar','O anel que tu me deste era vidro e se quebrou','O amor que tu me tinhas era pouco e se acabou'],96],
+ ['🌹','O Cravo e a Rosa','No jardim, o cravo e a rosa.',['O cravo brigou com a rosa, debaixo de uma sacada','O cravo saiu ferido, e a rosa despedaçada','O cravo ficou doente, a rosa foi visitar','O cravo teve um desmaio, e a rosa pôs-se a chorar'],92],
+ ['🛶','A Canoa Virou','No rio, a Maria e a canoa.',['A canoa virou, pois deixaram ela virar','Foi por causa da Maria, que não soube remar','Se eu fosse um peixinho e soubesse nadar','Eu tirava a Maria lá do fundo do mar'],100],
+];
+const CHORDS = [[261.6,329.6,392,523.3],[349.2,440,523.3,698.5],[392,493.9,587.3,784],[261.6,329.6,392,523.3]];
+function musicBox(ci, beat){ if (!ac || quiet) return; CHORDS[ci%4].forEach((f,i)=>{ tone(f, f*1.001, beat*1.6, 'triangle', .06, i*beat*.5); tone(f*2, f*2.002, beat*.9, 'sine', .025, i*beat*.5+beat*.25); }); }
+function playSong(song){
+  const [, title, setup, lines, bpm] = song, beat = 60/bpm, lineMs = beat*8*1000, tok = ++demoTok;
+  newStory(true); hideWelcome(); addText('🎵 '+title, false, true); addText(setup);
+  let i = 0; const next = () => { if (tok!==demoTok || !story || story.demo!==true) return;
+    if (i>=lines.length*2){ addText('🎵 Fim! Vamos cantar de novo?', false, true); return; }   // canta duas vezes
+    const l = lines[i % lines.length]; addText(l); musicBox(i, beat); S.ents.filter(x=>x.char).forEach(x=>act(x,'dancar',clockLive())); i++;
+    setTimeout(next, lineMs); };
+  setTimeout(next, 1800);
+}
+$('starters').insertAdjacentHTML('beforeend', SONGS.map((s,i)=>`<button type="button" class="song" data-s="${i}"><span>${s[0]}</span>🎵 ${s[1]}</button>`).join(''));
 /* lê a história em voz alta, frase por frase, e desenha cada uma */
 function playLines(lines){
   const tok = ++demoTok; newStory(true); hideWelcome();
