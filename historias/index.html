@@ -117,7 +117,7 @@ canvas#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
         <div class="iosnote" id="iosNote" hidden>No iPhone, a página só ouve a fala no <b>Safari</b>. Copie o link e cole no Safari. <button type="button" id="copyLink">Copiar link</button></div>
         <div class="starters" id="starters"></div>
         <button class="second" id="peopleBtn" type="button">📸 Colocar fotos da família</button>
-        <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). 🐷🐻🍭🐔 Recontos livres de contos populares de domínio público. Os desenhos aqui são feitos pela página.</p>
+        <p class="credit">Livros 📕 e 🦢: Coleção Conta pra Mim, MEC (2020), licença CC BY 4.0. Chapeuzinho Vermelho, texto de Rosana Mont’Alvernee; O Patinho Feio, texto de Marismar Borém; palavras dos livros Bichos, Coisas e Lugares e Comparar as Coisas (Equipe Sealf/MEC). 🐰 Reconto livre de A história de Pedro Coelho, de Beatrix Potter (1902, domínio público). 🐷🐻🍭🐔🐭🕊️👸🐟 Recontos livres de contos populares e fábulas de domínio público (Esopo, Irmãos Grimm). Palavras novas inspiradas na Biblioteca Virtual da rede municipal de Quintana (SP). Os desenhos aqui são feitos pela página.</p>
       </div>
     </div>
 
@@ -209,14 +209,14 @@ const mr = (a,b) => a+Math.random()*(b-a);
 const LEX = [
  ['Maria','@maria','maria mariazinha mari','c19n'],
  ['Chapeuzinho','@chapeu','chapeuzinho','c19n'],['caçador','🧑‍🌾','cacador lenhador','c18'],
- ['menino','👦','menino garoto filho moleque','c16'],['menina','👧','menina garota filha','c16'],
- ['bebê','👶','bebe nenem','c12'],['mãe','👩','mae mamae','c17'],['pai','👨','pai papai','c17'],
- ['vovó','👵','vovo avo vovozinha','c16'],['vovô','👴','vovozinho','c16'],
- ['princesa','👸','princesa rainha','c17'],['príncipe','🤴','principe rei','c17'],
- ['fada','🧚','fada fadinha','cf13'],['bruxa','🧙‍♀️','bruxa','c17'],['mago','🧙‍♂️','mago feiticeiro','c17'],
+ ['menino','👦','menino garoto filho moleque crianca','c16'],['menina','👧','menina garota filha','c16'],
+ ['bebê','👶','bebe nenem','c12'],['mãe','👩','mae mamae mulher esposa senhora','c17'],['pai','👨','pai papai homem marido','c17'],
+ ['vovó','👵','vovo avo vovozinha velhinha bisa','c16'],['vovô','👴','vovozinho velhinho biso','c16'],
+ ['princesa','👸','princesa princesinha','c17'],['rei','@p_rei','rei','c22'],['rainha','@p_rainha','rainha','c22'],['príncipe','🤴','principe','c17'],
+ ['fada','🧚','fada fadinha','cf13'],['bruxa','🧙‍♀️','bruxa','c17'],['mago','🧙‍♂️','mago feiticeiro magico','c17'],
  ['sereia','🧜‍♀️','sereia','cw17'],['astronauta','🧑‍🚀','astronauta','c17'],['herói','🦸','heroi heroina','c17'],
  ['robô','🤖','robo','c15'],['alien','👽','alien et extraterrestre marciano','c15'],['fantasma','👻','fantasma','cf14'],
- ['monstro','👾','monstro monstrinho','c15'],['dinossauro','🦖','dinossauro dino tiranossauro','c24'],
+ ['monstro','👾','monstro monstrinho ogro fera','c15'],['dinossauro','🦖','dinossauro dino tiranossauro','c24'],
  ['dragão','🐉','dragao','c26'],['unicórnio','🦄','unicornio','c18'],
  ['gato','🐈','gato gata gatinho gatinha','c12'],['cachorro','🐕','cachorro cachorra cachorrinho cao cadela','c13'],
  ['cavalo','🐎','cavalo egua','c18'],['vaca','🐄','vaca boi','c18'],['porco','🐖','porco porquinho','c12'],
@@ -227,13 +227,13 @@ const LEX = [
  ['cobra','🐍','cobra','c11'],['pato','@pata','pato pata patona','cw20'],['patinho','@patinho','patinho filhote filhotinho','cw12'],['patinho feio','@patofeio','patinhofeio avezinha','cw14'],
  ['cisne','@cisne','cisne','cw24'],['marreco','@marreco','marreco marreca','cw17'],['ganso','@ganso','ganso gansa','cw20'],['ninho','@ninho','ninho','14'],['pássaro','🐦','passaro passarinho ave','cf8'],
  ['coruja','🦉','coruja','cf10'],['borboleta','🦋','borboleta','cf8'],['abelha','🐝','abelha','cf7'],['joaninha','🐞','joaninha','c6'],
- ['formiga','🐜','formiga formiguinha','c5'],['caracol','🐌','caracol','c7'],['peixe','🐠','peixe peixinho','cw9'],
+ ['formiga','🐜','formiga formiguinha','c5'],['caracol','🐌','caracol caramujo','c7'],['peixe','🐠','peixe peixinho','cw9'],
  ['tubarão','🦈','tubarao','cw20'],['baleia','🐋','baleia','cw28'],['golfinho','🐬','golfinho','cw16'],['polvo','🐙','polvo','cw13'],
  ['caranguejo','🦀','caranguejo siri','c8'],['camelo','🐪','camelo','c20'],['pinguim','🐧','pinguim','c12'],['foca','🦭','foca','c13'],
- ['panda','🐼','panda','c15'],['jacaré','🐊','jacare crocodilo','c15'],['esquilo','🐿️','esquilo','c9'],['rato','🐁','rato ratinho camundongo','c7'],
- ['flor','🌻,🌷,🌹,🌸','flor florzinha','9'],['árvore','🌳','arvore carvalho','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
+ ['panda','🐼','panda','c15'],['jacaré','🐊','jacare crocodilo','c15'],['esquilo','🐿️','esquilo','c9'],['rato','🐁','rato ratinho camundongo','c7'],['rato da cidade','🐀','ratodacidade','c8'],
+ ['flor','🌻,🌷,🌹,🌸','flor florzinha rosa margarida girassol','9'],['árvore','🌳','arvore carvalho','26'],['casa','🏠','casa casinha','22'],['bola','⚽','bola','7'],
  ['bolo','🎂','bolo','11'],['sorvete','🍦','sorvete','9'],['maçã','🍎','maca','7'],['banana','🍌','banana','7'],['morango','🍓','morango','7'],
- ['pizza','🍕','pizza','9'],['doce','🍭','doce bala pirulito','8'],['chocolate','🍫','chocolate','8'],['pão','🍞','pao','8'],
+ ['pizza','🍕','pizza','9'],['doce','🍭','doce bala pirulito brigadeiro','8'],['chocolate','🍫','chocolate','8'],['pão','🍞','pao','8'],
  ['tesouro','💎','tesouro diamante joia','9'],['estrela','⭐','estrela estrelinha','f8'],['coração','❤️','coracao','f8'],
  ['balão','🎈','balao bexiga','f12'],['pipa','🪁','pipa','f11'],['barco','⛵','barco navio','18'],['carro','🚗','carro','14'],
  ['ônibus','🚌','onibus','16'],['trem','🚂','trem','16'],['avião','✈️','aviao','f13'],['foguete','🚀','foguete','f16'],
@@ -243,12 +243,21 @@ const LEX = [
  ['lanterna','🔦','lanterna','8'],['fogueira','🔥','fogueira fogo','10'],['barraca','⛺','barraca tenda','18'],['cama','🛏️','cama','16'],
  ['trator','🚜','trator','16'],['milho','🌽','milho','8'],['pedra','🪨','pedra','8'],['cesta','🧺','cesta cestinha','9'],['vinho','🧃','vinho','8'],['óculos','👓','oculos','7'],
  ['riacho','🏞️','riacho riachinho rio','20'],['cerejeira','@cherry','cerejeira','26'],
+ ['professora','@p_professora','professora professor','c22'],['médico','@p_medico','medico medica doutor doutora','c22'],['bailarina','@p_bailarina','bailarina','c18'],['pescador','@p_pescador','pescador','c22'],
+ ['palhaço','🤡','palhaco','c15'],['soldado','💂','soldado guarda','c16'],['mosquito','🦟','mosquito mosquitao','cf6'],['burro','🐴','burro jumento','c18'],['bode','🐐','bode cabra','c14'],
+ ['beija-flor','🐦','beijaflor','cf7'],['arara','🦜','arara papagaio','cf10'],['garça','🦩','garca flamingo','c14'],['preguiça','🦥','preguica','c12'],['camaleão','🦎','camaleao lagarto lagartixa','c10'],
+ ['grilo','🦗','grilo gafanhoto','c6'],['lagarta','🐛','lagarta minhoca','c6'],['pomba','🕊️','pomba pombinha','cf10'],
+ ['folha','🍃','folha','6'],['espelho','🪞','espelho','12'],['pipoca','🍿','pipoca','8'],['uva','🍇','uva','7'],['abacaxi','🍍','abacaxi','9'],['tomate','🍅','tomate','7'],['batata','🥔','batata','7'],
+ ['arroz','🍚','arroz','8'],['água','💧','agua','6'],['sofá','🛋️','sofa','18'],['porta','🚪','porta','18'],['relógio','⏰','relogio','8'],['guarda-chuva','☂️','guardachuva sombrinha','10'],
+ ['vassoura','🧹','vassoura','10'],['escada','🪜','escada','16'],['telefone','📱','telefone celular','7'],['computador','💻','computador','10'],['carta','✉️','carta bilhete','7'],['mala','🧳','mala maleta','10'],
+ ['caderno','📓','caderno','7'],['lápis','✏️','lapis','7'],['tinta','🎨','tinta pincel','8'],['copo','🥛','copo','7'],['remédio','💊','remedio','6'],['mamadeira','🍼','mamadeira chupeta','7'],
+ ['vestido','👗','vestido','9'],['fuso','🪡','fuso agulha','7'],['igreja','⛪','igreja','24'],['hospital','🏥','hospital','26'],['pneu','🛞','pneu','8'],
  ['Pedro','@pedro','pedro','c15n'],['fazendeiro','@p_fazendeiro','fazendeiro jardineiro','c22'],['alface','🥬','alface couve','7'],['cenoura','🥕','cenoura','7'],['rabanete','🥕','rabanete beterraba','7'],
  ['amora','🫐','amora mirtilo','6'],['casaco','🧥','casaco jaqueta','8'],['sapato','👞','sapato sapatinho tenis','6'],['regador','🪣','regador balde','8'],['chá','🍵','cha','7'],
  ['estrela-do-mar','🌟','estreladomar','7'],['panela','🍲','panela','8'],['colher','🥄','colher colherzinha','6'],['prato','🍽️','prato','8'],['martelo','🔨','martelo','7'],
  ['serrote','🪚','serrote serra','8'],['chave de fenda','🪛','chavedefenda','7'],['escorregador','🛝','escorregador escorrega gangorra balanco','16'],['onda','🌊','onda','12'],
  ['prancha','🏄','prancha','12'],['boia','🛟','boia','8'],['mesa','@table','mesa','16'],['cadeira','🪑','cadeira cadeirinha','10'],['mingau','🥣','mingau sopa tigela','8'],['trigo','🌾','trigo semente sementinha grao','8'],
- ['forno','🔥','forno','10'],['casa de palha','@hut','casadepalha','24'],['casa de madeira','@woodhouse','casademadeira','26'],['casa de tijolos','@house','casadetijolos','28'],
+ ['forno','🔥','forno','10'],['casa de palha','@hut','casadepalha casebre','24'],['casa de madeira','@woodhouse','casademadeira','26'],['casa de tijolos','@house','casadetijolos','28'],
  ['casa de doces','@candy','casadedoces','30'],['João','@p_joao','joao joaozinho','c17n'],['Cachinhos','@p_cachinhos','cachinhos','c17n'],
  ['loja','🏪','loja vendinha mercado mercadinho padaria supermercado','20'],['leite','🥛','leite','8'],['refrigerante','🥤','refrigerante coca suco','8'],
  ['vizinho','🧑','vizinho vizinha','c16'],['amigo','🧒','amigo amiga amiguinho amiguinha','c15'],['escola','🏫','escola creche','20'],
@@ -270,7 +279,7 @@ LEX.forEach(([label,em,words,flags]) => {
     plurals(w).forEach(p => { if (!WORD[p]) WORD[p] = {key,plural:true}; });
   });
 });
-const PHRASES = [['casa de palha','casadepalha'],['casa de madeira','casademadeira'],['casa de tijolos','casadetijolos'],['casa de tijolo','casadetijolos'],['casa de doces','casadedoces'],['casa de doce','casadedoces'],['casa feita de doces','casadedoces'],['cachinhos dourados','cachinhos'],['papai urso','urso grande'],['mamae ursa','ursa'],['bebe urso','ursinho pequeno'],['galinha ruiva','galinha'],['mamae coelha','coelha'],['mae coelha','coelha'],['seu gregorio','fazendeiro'],['senhor gregorio','fazendeiro'],['estrela do mar','estreladomar'],['urso de pelucia','ursinho'],['chave de fenda','chavedefenda'],['dor de barriga','doente'],['aves de pescocos longos','cisnes'],['patinho feio','patinhofeio'],['pato feio','patinhofeio'],['patinho cinzento','patinhofeio'],['dente de leao','flordente'],['chapeuzinho vermelho','chapeuzinho'],['la fora','lafora'],['para fora','lafora'],['fora da casa','lafora'],
+const PHRASES = [['rato da cidade','ratodacidade'],['rato do campo','rato'],['beija flor','beijaflor'],['guarda chuva','guardachuva'],['fada ma','bruxa'],['peixe dourado','peixe'],['peixe encantado','peixe'],['toda a corte','todos'],['casa de palha','casadepalha'],['casa de madeira','casademadeira'],['casa de tijolos','casadetijolos'],['casa de tijolo','casadetijolos'],['casa de doces','casadedoces'],['casa de doce','casadedoces'],['casa feita de doces','casadedoces'],['cachinhos dourados','cachinhos'],['papai urso','urso grande'],['mamae ursa','ursa'],['bebe urso','ursinho pequeno'],['galinha ruiva','galinha'],['mamae coelha','coelha'],['mae coelha','coelha'],['seu gregorio','fazendeiro'],['senhor gregorio','fazendeiro'],['estrela do mar','estreladomar'],['urso de pelucia','ursinho'],['chave de fenda','chavedefenda'],['dor de barriga','doente'],['aves de pescocos longos','cisnes'],['patinho feio','patinhofeio'],['pato feio','patinhofeio'],['patinho cinzento','patinhofeio'],['dente de leao','flordente'],['chapeuzinho vermelho','chapeuzinho'],['la fora','lafora'],['para fora','lafora'],['fora da casa','lafora'],
  ['fora da casinha','lafora'],['la dentro','ladentro'],['saiu correndo','foiembora'],['nunca mais voltou','foiembora'],['lobo mau','lobo malvado'],['fundo do mar','fundodomar'],['debaixo d agua','fundodomar'],['embaixo d agua','fundodomar'],['arco iris','arcoiris'],
  ['por do sol','pordosol'],['todo mundo','todos'],['foi embora','foiembora'],['foram embora','foiembora'],['dentro de casa','quarto'],
  ['tempo bom','tempobom'],['super heroi','heroi'],['espaco sideral','espaco'],['os dois','todos'],['as duas','todos']];
@@ -278,7 +287,7 @@ const SETW = {floresta:'floresta',mata:'floresta',bosque:'floresta',selva:'flore
  fundodomar:'fundo',submarino:'fundo',espaco:'espaco',planeta:'espaco',galaxia:'espaco',universo:'espaco',cidade:'cidade',rua:'cidade',predio:'cidade',predios:'cidade',
  fazenda:'fazenda',sitio:'fazenda',roca:'fazenda',curral:'fazenda',celeiro:'fazenda',castelo:'castelo',reino:'castelo',palacio:'castelo',
  montanha:'montanha',montanhas:'montanha',serra:'montanha',deserto:'deserto',gelo:'gelo',polo:'gelo',iglu:'gelo',geleira:'gelo',
- quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo',horta:'horta',pomar:'horta',plantacao:'horta',acampamento:'floresta',lago:'lago',lagoa:'lago',lagoas:'lago',lagos:'lago'};
+ quarto:'casa',sala:'casa',cozinha:'casa',jardim:'jardim',parque:'jardim',praca:'jardim',campo:'campo',campos:'campo',circo:'circo',picadeiro:'circo',horta:'horta',pomar:'horta',plantacao:'horta',acampamento:'floresta',lago:'lago',lagoa:'lago',lagoas:'lago',lagos:'lago'};
 const NUM = {um:1,uma:1,num:1,numa:1,outro:1,outra:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:5,uns:3,umas:3,alguns:3,algumas:3,
  muitos:5,muitas:5,bando:4,varios:5,varias:5,mil:5,cem:5};
 const NEG = new Set(['nenhum','nenhuma','sem','nem']);
@@ -290,7 +299,7 @@ const ALLW = new Set(['todos','todas','juntos','juntas','ambos','ambas']);
 const TIME = [[/^(noite|noitinha|escur|anoitec)/,'noite'],[/^(dia|manha)$|^amanhec/,'dia'],[/^(tarde|tardinha|pordosol)$|^entardec/,'tarde']];
 const WX = [[/^(chuv|chov|garoa)/,'chuva'],[/^(neve|nevou|nevava|nevando|nevar|nevasca|nevad)/,'neve'],[/^(tempestade|trov|relamp|raio)/,'tempestade'],
  [/^(vento|ventania|ventava|ventando)$/,'vento'],[/^arcoiris$/,'arcoiris'],[/^inverno$/,'neve'],[/^primavera$/,'sol'],[/^outono$/,'vento'],[/^(ensolarad|tempobom)/,'sol'],[/^(nublad|nuvem|nuvens)/,'nublado']];
-const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$)/,'feliz'],[/^(trist|chor|magoad)/,'triste'],[/^(doente|resfriad|febre)/,'doente'],[/^(medo|assust|apavor|susto|sustos)$|^assust|^apavor/,'medo'],
+const MOOD = [[/^(feliz|alegr|content|sorri|divert|ri(u|a|ndo|ram)$|acord)/,'feliz'],[/^(trist|chor|magoad)/,'triste'],[/^(doente|resfriad|febre)/,'doente'],[/^(medo|assust|apavor|susto|sustos)$|^assust|^apavor/,'medo'],
  [/^(brav|raiva|zangad|furios|malvad|rosn)/,'bravo'],[/^(dorm|sono$|cansad|cochil|ronc)/,'sono'],[/^(surpres|espant)/,'surpresa'],[/^(amor|amava|amou|amad|apaixon|abrac|beij|carinho)/,'amor']];
 const ACT = [[/^pul(a|ou|ar|ava|ando|aram|avam)$|^brinc/,'pular'],[/^danc/,'dancar'],[/^vo(a|ou|ar|ava|ando|aram|avam)$/,'voar'],
  [/^corr(e|eu|er|ia|endo|eram|iam)$|^rapid/,'correr'],[/^(and(a|ou|ar|ava|ando|aram|avam)$|passe|caminh)/,'andar'],[/^nad(a|ou|ar|ava|ando|aram|avam)$/,'nadar'],
@@ -329,6 +338,8 @@ const SET = {
   d:[['@window',33,42,19],['@frame',63,52,11],['🪴',92,22,12],['🧸',32,6,6]]},
  horta:{n:'Horta',i:'🥕',sky:['#55b2ee','#d0eeff'],g:['#8a6a44','#6d5233'],h:['#b8df8a','#93cf6c'],gh:32,clouds:1,rows:1,
   d:[['@fence',18,28,9],['@fence',82,28,9],['@tree',95,27,20],['🥬',18,17,5],['🥬',30,17,5],['🥬',42,17,5],['🥕',58,12,5],['🥕',70,12,5],['🥕',82,12,5],['🥬',24,6,5],['🥬',38,6,5],['🥕',64,4,5],['🥕',78,4,5]]},
+ circo:{n:'Circo',i:'🎪',sky:['#5ab6ee','#d4efff'],g:['#e8c27a','#c99a50'],h:['#b8df8a','#93cf6c'],gh:30,clouds:1,
+  d:[['🎪',50,27,40],['🎈',14,46,8],['🎈',86,50,8],['🎈',22,40,6],['@tree',4,26,18],['@tree',96,25,20]]},
  lago:{n:'Lago',i:'🦆',sky:['#5ab6ee','#cdeeff'],g:['#8fd36a','#4fa43f'],h:['#b2df8e','#86c96c'],gh:34,clouds:1,pond:1,
   d:[['@cherry',8,27,22],['@tree',92,26,24],['@pine',22,31,11],['@pine',78,31,12],['🌾',5,29,7],['🌾',95,28,7],['🌸',72,33,4]]},
  jardim:{n:'Jardim',i:'🌷',sky:['#55b2ee','#c6eaff'],g:['#86d061','#4da23e'],h:['#a6dc84','#7cc565'],gh:32,clouds:1,
@@ -360,6 +371,7 @@ function newSky(T){ S.sky = {from:S.sky.to, to:skyStops(S.set,S.time,S.wx), t0:T
 function groundRange(def){
   const D = SET[S.set];
   if (D.water) return def.fly ? [55,80] : [8,62];
+  if (D.sea && def.swim) return [29,34];   // na praia, peixe fica no mar
   if (D.pond) return def.fly ? [52,76] : def.swim ? [6,11] : [24,31];   // aves aquáticas no lago, o resto na margem
   if (def.fly) return [48,76];
   return [5, Math.max(10, D.gh-12)];
@@ -826,6 +838,12 @@ const PEOPLE = {
   bruxa:    {adult:1,skin:'#e8d6b0',hair:'long',hairColor:'#3a2a4a',shirt:'#5b3a8a',bottom:'dress',long:1,shoes:'#2b1d30',hat:'bruxa'},
   joao:     {skin:'#f2c6a0',hair:'short',hairColor:'#7a4a24',shirt:'#5aa469',straps:'#8a5a33',bottom:'shorts',bottomColor:'#8a5a33',shoes:'#5a3a1a'},
   cachinhos:{skin:'#f6d0b4',hair:'curly',hairColor:'#f2c14e',shirt:'#7fb8e8',bottom:'dress',shoes:'#e8392c',bow:'#e8392c'},
+  rei:      {adult:1,skin:'#efc29c',hair:'short',hairColor:'#8a5a2b',beard:'#8a5a2b',shirt:'#a22b3a',cape:'#5b2b8a',belt:'#ffcf3f',bottom:'pants',bottomColor:'#3a2a4a',shoes:'#3a2a22',hat:'coroa'},
+  rainha:   {adult:1,skin:'#f6d0b4',hair:'long',hairColor:'#5a3418',shirt:'#7a3fb0',bottom:'dress',long:1,shoes:'#5b2b8a',hat:'coroa'},
+  professora:{adult:1,skin:'#e9b98f',hair:'short',bun:1,hairColor:'#4a2a14',glasses:1,shirt:'#ffb3c7',bottom:'skirt',bottomColor:'#3d5a98',shoes:'#3a2a22'},
+  medico:   {adult:1,skin:'#efc29c',hair:'short',hairColor:'#3a2414',shirt:'#ffffff',sleeve:'#ffffff',buttons:1,bottom:'pants',bottomColor:'#7fb8e8',shoes:'#ffffff'},
+  bailarina:{skin:'#f6d0b4',hair:'short',bun:1,hairColor:'#7a4a24',shirt:'#ffc4dd',bottom:'skirt',bottomColor:'#ffe0ee',shoes:'#ff9ec4'},
+  pescador: {adult:1,skin:'#e9b98f',hair:'short',hairColor:'#9a9aa2',beard:'#c8c8d0',shirt:'#5a8fd0',bottom:'pants',bottomColor:'#8a6a4a',shoes:'#5a3a1a',hat:'palha'},
   fazendeiro:{adult:1,skin:'#efc29c',hair:'short',hairColor:'#9a9aa2',beard:'#c8c8d0',shirt:'#e9d8a6',straps:'#3d6fc0',bottom:'pants',bottomColor:'#3d6fc0',shoes:'#5a3a1a',hat:'palha'},
   fada:     {skin:'#f6d0b4',hair:'short',bun:1,hairColor:'#f2c14e',shirt:'#9fe3c7',bottom:'dress',shoes:'#9fe3c7',wings:1},
 };
@@ -1415,6 +1433,10 @@ const STARTERS = [
  ['🐻','Cachinhos Dourados',['§Cachinhos Dourados','Na floresta morava uma família de ursos: o papai urso, a mamãe ursa e o ursinho.','Um dia eles fizeram mingau e foram passear enquanto o mingau esfriava.','Uma menina chamada Cachinhos Dourados entrou na casa.','Ela viu três tigelas de mingau na mesa e comeu o mingau do ursinho.','Depois sentou na cadeira pequena, e a cadeira quebrou!','Cansada, Cachinhos Dourados dormiu na cama do ursinho.','Os ursos voltaram e ficaram surpresos.','O ursinho chorou: — Alguém comeu o meu mingau!','Cachinhos Dourados acordou com medo e correu para fora.','Lá fora, ela pediu desculpas, e todos ficaram amigos.']],
  ['🍭','João e Maria',['§João e Maria','Era uma vez dois irmãos, João e Maria, que moravam perto da floresta.','Um dia eles se perderam na floresta.','De noite, eles ficaram com medo.','De manhã, encontraram uma casa de doces!','Os dois comeram chocolate, bolo e pirulito.','Mas a casa era de uma bruxa malvada.','A bruxa prendeu o João e mandou a Maria acender o forno.','A Maria foi esperta e salvou o João.','A bruxa fugiu para longe.','João e Maria voltaram para casa, e o papai abraçou os dois, muito feliz.']],
  ['🐔','A Galinha Ruiva',['§A Galinha Ruiva','Era uma vez uma galinha ruiva que morava na fazenda com um gato, um cachorro e um pato.','Um dia, a galinha achou umas sementes de trigo.','— Quem me ajuda a plantar o trigo? Eu não, disseram o gato, o cachorro e o pato.','Então a galinha plantou o trigo sozinha.','O trigo cresceu e a galinha colheu tudo.','Ela fez um pão bem gostoso.','— Quem quer comer o pão? Eu quero! Eu quero!, gritaram todos.','A galinha ficou brava.','Mas depois ela dividiu o pão, e todos aprenderam a ajudar.','E na fazenda todo mundo ficou feliz.']],
+ ['🐭','Rato do Campo e Rato da Cidade',['§O Rato do Campo e o Rato da Cidade','Era uma vez um rato que morava no campo, numa toca embaixo de uma árvore.','Um dia, o primo dele, o rato da cidade, veio visitar.','O rato do campo serviu milho, trigo e uma maçã.','— Que comida simples! Venha comigo para a cidade, disse o primo.','Os primos foram juntos para a cidade.','Na casa da cidade tinha queijo, bolo e chocolate em cima da mesa.','De repente, um gato apareceu!','Os ratos ficaram com medo e correram para um buraco.','— Prefiro a minha casa no campo, disse o rato do campo.','Ele voltou para o campo e ficou muito feliz.']],
+ ['🕊️','A Pomba e a Formiga',['§A Pomba e a Formiga','Era uma vez uma formiga que foi beber água no rio.','A formiga caiu na água e ficou com medo.','Uma pomba viu tudo e jogou uma folha na água.','A formiga subiu na folha e ficou feliz.','Dias depois, um caçador apareceu na floresta.','Ele queria pegar a pomba.','A formiga picou o pé do caçador!','O caçador gritou e a pomba voou para longe.','A pomba e a formiga ficaram amigas para sempre, muito felizes.']],
+ ['👸','A Bela Adormecida',['§A Bela Adormecida','Num castelo, o rei e a rainha tiveram uma princesa.','Três fadas vieram dar presentes para a princesa.','Mas uma bruxa ficou brava e disse: — A princesa vai furar o dedo num fuso e dormir!','Os anos passaram e a princesa cresceu.','Um dia, ela furou o dedo num fuso e dormiu.','Todo mundo no castelo dormiu também.','Cem anos depois, um príncipe chegou ao castelo.','Ele deu um beijo na princesa, e ela acordou.','Todo mundo acordou e fez uma grande festa.','E todos ficaram felizes para sempre.']],
+ ['🐟','O Pescador e sua Mulher',['§O Pescador e sua Mulher','Era uma vez um pescador que morava com a mulher numa casa de palha perto do mar.','Um dia, o pescador pescou um peixe dourado que falava.','— Me solte e eu realizo um desejo! — disse o peixe.','O pescador soltou o peixe e voltou para casa.','A mulher ficou brava: — Peça uma casa bonita!','O peixe deu uma casa de tijolos para eles.','Mas a mulher quis mais e pediu um castelo.','No castelo, a mulher virou rainha.','Mas ela ainda quis mais, e veio uma tempestade no mar.','O peixe ficou bravo e tudo voltou a ser como antes.','E o pescador e a mulher voltaram para a casa de palha.']],
  ['🌈','Chuva no jardim',['Era uma vez uma menina num jardim cheio de flores.','Começou a chover forte e veio uma tempestade.','A menina ficou triste.','Depois apareceu um arco-íris e uma borboleta, e a menina dançou.']],
 ];
 $('starters').innerHTML = STARTERS.map((s,i)=>`<button type="button" data-i="${i}"><span>${s[0]}</span>${s[1]}</button>`).join('');
